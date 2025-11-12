@@ -1,0 +1,1 @@
+# Functions for trend and seasonality extraction
