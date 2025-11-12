@@ -7,21 +7,69 @@ It ingests multi-store, multi-SKU sales data, detects trends and anomalies, simu
 
 ---
 
-## 🚀 Features
-- **Automated Data Ingestion:** Load and preprocess large, complex datasets using PySpark or pandas.  
-- **Trend & Anomaly Detection:** Identify seasonality, promotions, and unexpected shifts in sales.  
-- **Scenario Simulation:** Run “what-if” simulations such as price hikes or promo campaigns.  
-- **AI-Generated Insights:** Summarize and explain outcomes in natural language.  
-- **Agentic Loop:** Use LangChain or CrewAI to choose and execute analysis tools automatically.  
-- **Interactive UI:** Streamlit dashboard or CLI interface for conversational insights.  
+## 🚀 Quick Start (5 Minutes)
+
+### Step 1: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Step 2: Set Up API Key (Choose ONE Option)
+
+#### Option A: Hugging Face (FREE! ⭐ Recommended for Testing)
+```bash
+# Install Hugging Face support (if not already installed)
+pip install langchain-huggingface langchain-community transformers torch
+
+# Create .env file (optional - works without token but has rate limits)
+echo "HUGGINGFACE_API_TOKEN=your_token_here" > .env
+```
+Get free token: https://huggingface.co/settings/tokens
+
+#### Option B: OpenAI (Paid, High Quality)
+```bash
+# Create .env file
+echo "OPENAI_API_KEY=sk-your-key-here" > .env
+```
+Get your API key: https://platform.openai.com/api-keys
+
+#### Option C: Azure OpenAI
+```bash
+# Create .env file
+echo "AZURE_OPENAI_API_KEY=your-key" > .env
+echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" >> .env
+```
+
+### Step 3: Generate Sample Data
+```bash
+python scripts/generate_sample_data.py
+```
+Or use the provided `data/cpg_sales_data.parquet.csv` (convert to parquet if needed).
+
+### Step 4: Run the Application
+```bash
+streamlit run src/ui/streamlit_app.py
+```
+
+---
+
+## 📋 Features
+
+- **Automated Data Ingestion:** Load and preprocess large, complex datasets using PySpark or pandas
+- **Trend & Anomaly Detection:** Identify seasonality, promotions, and unexpected shifts in sales
+- **Scenario Simulation:** Run "what-if" simulations such as price hikes or promo campaigns
+- **AI-Generated Insights:** Summarize and explain outcomes in natural language
+- **Agentic Loop:** Use LangChain/LangGraph to choose and execute analysis tools automatically
+- **Interactive UI:** Streamlit dashboard for conversational insights
 
 ---
 
 ## 🧱 Project Structure
+
 ```
 smart-cpg-decision-agent/
 ├── data/
-│   └── cpg_sales_data.parquet
+│   └── cpg_sales_data.parquet          # Sales data (parquet format)
 │
 ├── notebooks/
 │   ├── 01_EDA_and_Data_Loading.ipynb
@@ -30,28 +78,85 @@ smart-cpg-decision-agent/
 │   └── 04_Agent_Loop_Prototype.ipynb
 │
 ├── src/
-│   ├── data_loader.py
+│   ├── data_loader.py                  # Data loading utilities
 │   ├── tools/
-│   │   ├── trend_analysis.py
-│   │   ├── anomaly_detection.py
-│   │   └── scenario_simulation.py
+│   │   ├── trend_analysis.py          # Trend extraction tools
+│   │   ├── anomaly_detection.py       # Anomaly detection tools
+│   │   └── scenario_simulation.py     # Scenario simulation tools
 │   ├── genai/
-│   │   └── llm_interface.py
+│   │   └── llm_interface.py           # LLM interface (OpenAI/Azure/HF)
 │   ├── agent/
-│   │   ├── agent_core.py
-│   │   └── memory.py
+│   │   ├── agent_core.py              # Main agent logic
+│   │   └── memory.py                  # Conversation memory
 │   └── ui/
-│       ├── streamlit_app.py
-│       └── cli.py
+│       ├── streamlit_app.py           # Streamlit web UI
+│       └── cli.py                     # Command-line interface
 │
-├── tests/
-│   ├── test_data_loader.py
-│   ├── test_tools.py
-│   └── test_agent.py
-│
-├── requirements.txt
-├── .gitignore
-└── README.md
+├── tests/                              # Unit tests
+├── requirements.txt                    # Python dependencies
+├── .env                                # API keys (not committed)
+└── README.md                           # This file
+```
+
+---
+
+## 📦 Dependencies & Imports
+
+### Core Dependencies (requirements.txt)
+```
+pyspark>=3.4.0
+pandas>=2.0.0
+pyarrow>=12.0.0
+streamlit>=1.28.0
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-huggingface>=0.0.1
+langchain-community>=0.0.20
+openai>=1.0.0
+crewai>=0.1.0
+matplotlib>=3.7.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+seaborn>=0.12.0
+python-dotenv>=1.0.0
+```
+
+### Optional Dependencies (for Hugging Face Local Models)
+```
+transformers>=4.35.0
+torch>=2.0.0
+accelerate>=0.24.0
+huggingface-hub>=0.19.0
+```
+
+### Key Imports Used in Project
+
+**LLM Interface (`src/genai/llm_interface.py`):**
+```python
+from langchain_openai import ChatOpenAI, AzureChatOpenAI
+from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
+from langchain_community.llms import HuggingFacePipeline
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from huggingface_hub import InferenceClient
+from dotenv import load_dotenv
+import torch
+```
+
+**Agent Core (`src/agent/agent_core.py`):**
+```python
+from langgraph.prebuilt import create_react_agent
+from langchain_core.tools import Tool
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+```
+
+**Data Tools:**
+```python
+import pandas as pd
+import numpy as np
+from datetime import datetime
+from sklearn.preprocessing import StandardScaler
+from scipy import stats
 ```
 
 ---
@@ -64,11 +169,13 @@ git clone https://github.com/<your-username>/smart-cpg-decision-agent.git
 cd smart-cpg-decision-agent
 ```
 
-### 2. Create and Activate a Virtual Environment
+### 2. Create and Activate Virtual Environment
 ```bash
 python -m venv .venv
+
 # macOS / Linux
 source .venv/bin/activate
+
 # Windows
 .venv\Scripts\activate
 ```
@@ -78,58 +185,53 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Run Tests
-```bash
-pytest -q
+### 4. Set Up Environment Variables
+
+Create a `.env` file in the project root:
+
+**For Hugging Face (FREE):**
+```env
+HUGGINGFACE_API_TOKEN=your_token_here
+HUGGINGFACE_MODEL=mistralai/Mistral-7B-Instruct-v0.2
 ```
 
----
-
-## ☁️ Databricks Integration
-
-1. Upload your dataset (`.csv` or `.parquet`) to **Azure Databricks**.  
-2. Connect this repository to **Databricks Repos**.  
-3. Run the notebooks in sequence:
-   - `01_EDA_and_Data_Loading.ipynb`
-   - `02_Trend_Anomaly_Detection.ipynb`
-   - `03_Scenario_Simulation.ipynb`
-   - `04_Agent_Loop_Prototype.ipynb`
-
-Example snippet:
-```python
-spark_df = spark.read.parquet("/dbfs/mnt/data/cpg_sales_data.parquet")
-display(spark_df.limit(100))
+**For OpenAI:**
+```env
+OPENAI_API_KEY=sk-your-key-here
 ```
 
----
+**For Azure OpenAI:**
+```env
+AZURE_OPENAI_API_KEY=your-azure-key-here
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_API_VERSION=2024-02-15-preview
+```
 
-## 🧠 Agentic Architecture
+### 5. Prepare Data
 
-| Layer | Purpose |
-|-------|----------|
-| **Data Layer** | Load, clean, and validate historical sales data |
-| **Tool Layer** | Trend, anomaly, and simulation utilities |
-| **GenAI Layer** | Use OpenAI / Azure OpenAI for generating insights |
-| **Agent Layer** | Manage tool orchestration and context (LangChain / CrewAI) |
-| **UI Layer** | Streamlit and CLI interfaces for interaction |
+The agent expects data in parquet format at `data/cpg_sales_data.parquet`.
 
-**Flow Example:**
-1. User asks, “What if we apply a 10% discount on Beverages in the North region?”  
-2. Agent picks the right simulation tools.  
-3. Simulation produces new KPIs.  
-4. LLM generates a summary memo with recommendations.  
-5. UI displays graphs and text insights.
+**Expected Schema:**
+- `date` - Date/time column
+- `store_id` - Store identifier
+- `store_region` - Geographic region
+- `sku_id` - Product SKU identifier
+- `category` - Product category
+- `units_sold` - Units sold
+- `revenue` - Revenue amount
+- `promo_flag` - Promotion indicator (0/1)
+- `promo_type` - Type of promotion
+- `price` - Product price
+- `inventory_level` - Inventory level
+- `store_size` - Store size category
+- `holiday_flag` - Holiday indicator (0/1)
 
----
-
-## 💡 Synthetic Dataset Generator
-
+**Generate Sample Data:**
 ```python
 import pandas as pd
 import numpy as np
 
 np.random.seed(123)
-
 num_rows = 5000
 date_range = pd.date_range('2022-01-01', periods=365)
 stores = list(range(1, 11))
@@ -170,18 +272,191 @@ print("✅ Synthetic dataset created at data/cpg_sales_data.parquet")
 
 ---
 
-## 🔐 Environment Variables
-Create a `.env` file (never commit it):
+## 🖥️ Usage
+
+### Streamlit UI (Recommended)
+
+```bash
+streamlit run src/ui/streamlit_app.py
 ```
-OPENAI_API_KEY=your_openai_key
-AZURE_OPENAI_ENDPOINT=
-AZURE_OPENAI_KEY=
+
+The app will open in your browser. You can:
+- Select Hugging Face (FREE) or OpenAI
+- Load your data file
+- Ask questions about sales trends, anomalies, and scenarios
+- View AI-generated strategy memos
+- See analysis results and tool usage
+
+**Example Questions:**
+- "What are the sales trends for the last quarter?"
+- "Compare performance across different stores"
+- "What would happen if we run a 15% discount promotion?"
+- "Detect any anomalies in sales data"
+- "What are the seasonal patterns in our sales?"
+
+### CLI Interface
+
+```bash
+# Interactive mode
+python -m src.ui.cli --data data/cpg_sales_data.parquet
+
+# Single question mode
+python -m src.ui.cli --data data/cpg_sales_data.parquet --question "What are the sales trends?"
+
+# Use Azure OpenAI
+python -m src.ui.cli --data data/cpg_sales_data.parquet --azure
+```
+
+### Python API
+
+```python
+from src.agent.agent_core import CPGDecisionAgent
+from src.genai.llm_interface import LLMInterface
+from src.agent.memory import SessionMemory
+
+# Option 1: Hugging Face (FREE)
+llm = LLMInterface(
+    use_huggingface=True,
+    huggingface_model="mistralai/Mistral-7B-Instruct-v0.2"
+)
+
+# Option 2: OpenAI
+llm = LLMInterface(model="gpt-4")
+
+# Option 3: Azure OpenAI
+llm = LLMInterface(
+    model="gpt-4",
+    use_azure=True
+)
+
+# Initialize agent
+memory = SessionMemory()
+agent = CPGDecisionAgent(
+    llm=llm,
+    memory=memory,
+    data_path="data/cpg_sales_data.parquet"
+)
+
+# Ask a question
+result = agent.run("What are the sales trends for the last quarter?")
+print(result['response'])
+print(result['strategy_memo'])
+```
+
+---
+
+## 🧠 Agentic Architecture
+
+| Layer | Purpose |
+|-------|----------|
+| **Data Layer** | Load, clean, and validate historical sales data |
+| **Tool Layer** | Trend, anomaly, and simulation utilities |
+| **GenAI Layer** | Use OpenAI / Azure OpenAI / Hugging Face for generating insights |
+| **Agent Layer** | Manage tool orchestration and context (LangChain/LangGraph) |
+| **UI Layer** | Streamlit and CLI interfaces for interaction |
+
+**Flow Example:**
+1. User asks, "What if we apply a 10% discount on Beverages in the North region?"
+2. Agent picks the right simulation tools
+3. Simulation produces new KPIs
+4. LLM generates a summary memo with recommendations
+5. UI displays graphs and text insights
+
+### Available Tools
+
+The agent has access to these tools:
+- **extract_trends** - Analyze sales trends over time
+- **detect_seasonality** - Find seasonal patterns in sales
+- **detect_anomalies** - Identify unusual sales patterns
+- **compare_stores** - Compare performance across stores
+- **simulate_promotion** - Simulate promotional campaigns
+- **simulate_price_change** - Simulate price increases/decreases
+- **get_data_summary** - Get dataset statistics and overview
+
+---
+
+## 🤗 Hugging Face Setup (Free Alternative)
+
+### Quick Setup
+
+**Step 1: Get Free Token (Optional but Recommended)**
+1. Go to https://huggingface.co/settings/tokens
+2. Sign up (free)
+3. Create a new token (read access is enough)
+4. Copy the token
+
+**Step 2: Install Dependencies**
+```bash
+pip install langchain-huggingface langchain-community transformers torch
+```
+
+**Step 3: Set Up `.env` File**
+```env
+HUGGINGFACE_API_TOKEN=your_token_here
+HUGGINGFACE_MODEL=mistralai/Mistral-7B-Instruct-v0.2
+```
+
+**Step 4: Use in Code**
+```python
+from src.genai.llm_interface import LLMInterface
+
+llm = LLMInterface(
+    use_huggingface=True,
+    huggingface_model="mistralai/Mistral-7B-Instruct-v0.2"
+)
+```
+
+### Recommended Models
+
+**For Inference API (Free Tier):**
+- `mistralai/Mistral-7B-Instruct-v0.2` - Fast, good quality ⭐
+- `microsoft/phi-2` - Very small, fast
+- `google/flan-t5-large` - Smaller, faster
+- `meta-llama/Llama-2-7b-chat-hf` - Requires access request
+
+**For Local Models (If You Have GPU):**
+- `mistralai/Mistral-7B-Instruct-v0.2` - Best balance
+- `microsoft/phi-2` - Smallest, works on CPU
+
+### Comparison: OpenAI vs Hugging Face
+
+| Feature | OpenAI | Hugging Face (API) | Hugging Face (Local) |
+|---------|--------|-------------------|---------------------|
+| **Cost** | Pay-per-use | Free (rate limits) | Free |
+| **Setup** | API key | Token (optional) | Install packages |
+| **Speed** | Fast | Medium | Depends on hardware |
+| **Quality** | Excellent | Good | Good |
+| **Privacy** | Data sent to OpenAI | Data sent to HF | Fully local |
+| **GPU Required** | No | No | Recommended |
+
+---
+
+## 🔐 Environment Variables
+
+Create a `.env` file in the project root (never commit it):
+
+```env
+# Hugging Face (FREE - Recommended for testing)
+HUGGINGFACE_API_TOKEN=your_token_here
+HUGGINGFACE_MODEL=mistralai/Mistral-7B-Instruct-v0.2
+
+# OpenAI (Paid)
+OPENAI_API_KEY=sk-your-key-here
+
+# Azure OpenAI (For Azure deployments)
+AZURE_OPENAI_API_KEY=your-azure-key-here
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_API_VERSION=2024-02-15-preview
+
+# Data path (optional)
 DATA_PATH=data/cpg_sales_data.parquet
 ```
 
 ---
 
 ## 🧰 .gitignore
+
+The following are already in `.gitignore`:
 ```
 __pycache__/
 *.pyc
@@ -196,59 +471,113 @@ Thumbs.db
 
 ---
 
-## 🧩 requirements.txt
-```
-pandas>=1.5
-pyspark>=3.3
-streamlit>=1.20
-langchain>=0.1
-openai>=0.27
-scikit-learn>=1.1
-matplotlib>=3.5
-pytest>=7.0
-python-dotenv>=0.21
+## 🧪 Testing
+
+```bash
+# Run all tests
+pytest tests/
+
+# Run specific test file
+pytest tests/test_agent.py
 ```
 
 ---
 
-## 🖥️ Running Components
+## 🔧 Troubleshooting
 
-### Streamlit UI
+### Error: "ModuleNotFoundError: No module named 'dotenv'"
 ```bash
-streamlit run src/ui/streamlit_app.py
+pip install python-dotenv
 ```
 
-### CLI Interface
+### Error: "API key not found"
+- Make sure `.env` file exists in project root
+- Check that the key name is exactly `OPENAI_API_KEY`, `AZURE_OPENAI_API_KEY`, or `HUGGINGFACE_API_TOKEN`
+- Verify the key is not wrapped in quotes in `.env` file
+
+### Error: "Hugging Face packages required"
 ```bash
-python src/ui/cli.py
+pip install langchain-huggingface langchain-community transformers torch
 ```
 
-### Run Tests
-```bash
-pytest tests/
+### Error: "Rate limit exceeded" (Hugging Face)
+- Get a free token at https://huggingface.co/settings/tokens
+- Add to `.env`: `HUGGINGFACE_API_TOKEN=your_token`
+- Or wait a few minutes and try again
+
+### Error: "Data file not found"
+- Make sure `data/cpg_sales_data.parquet` exists
+- Or generate sample data: `python scripts/generate_sample_data.py`
+- Or load data manually in the Streamlit UI
+
+### Error: "Model not supported for task"
+- For Mistral models, the system automatically uses conversational API
+- If issues persist, try a different model like `microsoft/phi-2`
+
+---
+
+## ☁️ Databricks Integration
+
+1. Upload your dataset (`.csv` or `.parquet`) to **Azure Databricks**
+2. Connect this repository to **Databricks Repos**
+3. Run the notebooks in sequence:
+   - `01_EDA_and_Data_Loading.ipynb`
+   - `02_Trend_Anomaly_Detection.ipynb`
+   - `03_Scenario_Simulation.ipynb`
+   - `04_Agent_Loop_Prototype.ipynb`
+
+Example snippet:
+```python
+spark_df = spark.read.parquet("/dbfs/mnt/data/cpg_sales_data.parquet")
+display(spark_df.limit(100))
 ```
 
 ---
 
 ## 🔮 Future Enhancements
-- Connect to **Azure Data Lake** for large-scale ingestion  
-- Add **forecasting models** (Prophet / ARIMA)  
-- Support **real-time streaming** via Kafka  
-- Enable **multi-agent collaboration**  
-- Fine-tune **memo generation** using structured prompts  
+
+- Connect to **Azure Data Lake** for large-scale ingestion
+- Add **forecasting models** (Prophet / ARIMA)
+- Support **real-time streaming** via Kafka
+- Enable **multi-agent collaboration**
+- Fine-tune **memo generation** using structured prompts
 
 ---
 
 ## 🤝 Contributing
-1. Fork the repo  
-2. Create a branch (`feature/your-feature`)  
-3. Commit and push changes  
-4. Open a Pull Request  
+
+1. Fork the repo
+2. Create a branch (`feature/your-feature`)
+3. Commit and push changes
+4. Open a Pull Request
 
 Keep functions modular, include tests, and follow clean code principles.
 
 ---
 
 ## 📜 License
-**MIT License © 2025**  
+
+**MIT License © 2025**
+
 Created and maintained as part of the **Smart Decision Support Agent Capstone Project**.
+
+---
+
+## 📞 Need Help?
+
+1. Check the troubleshooting section above
+2. Verify your `.env` file is in the project root
+3. Ensure all dependencies are installed: `pip install -r requirements.txt`
+4. Check the error message - it usually tells you what's missing
+
+---
+
+## 💡 Pro Tips
+
+1. **Start with Hugging Face** - It's free and works great for testing!
+2. **Get a HF token** - Optional but gives higher rate limits
+3. **Use smaller models for testing** - Faster responses
+4. **Switch to OpenAI for production** - Better quality for final deployments
+5. **Monitor API usage** - Check dashboards for costs (OpenAI) or rate limits (HF)
+6. **Use `.env` file** - Keeps keys out of code
+7. **Never commit `.env`** - Already in `.gitignore`
