@@ -18,10 +18,8 @@ pip install -r requirements.txt
 
 #### Option A: Hugging Face (FREE! ⭐ Recommended for Testing)
 ```bash
-# Install Hugging Face support (if not already installed)
-pip install langchain-huggingface langchain-community transformers torch
-
-# Create .env file (optional - works without token but has rate limits)
+# All Hugging Face dependencies are already in requirements.txt
+# Just create .env file (optional - works without token but has rate limits)
 echo "HUGGINGFACE_API_TOKEN=your_token_here" > .env
 ```
 Get free token: https://huggingface.co/settings/tokens
@@ -104,29 +102,44 @@ smart-cpg-decision-agent/
 
 ### Core Dependencies (requirements.txt)
 ```
+# Core data processing
 pyspark>=3.4.0
 pandas>=2.0.0
 pyarrow>=12.0.0
+numpy>=1.24.0
+
+# UI
 streamlit>=1.28.0
+
+# LangChain and AI frameworks
 langchain>=0.1.0
 langchain-openai>=0.0.5
 langchain-huggingface>=0.0.1
 langchain-community>=0.0.20
-openai>=1.0.0
-crewai>=0.1.0
-matplotlib>=3.7.0
-scikit-learn>=1.3.0
-numpy>=1.24.0
-seaborn>=0.12.0
-python-dotenv>=1.0.0
-```
+langgraph>=0.0.1
+langchain-core>=0.1.0
 
-### Optional Dependencies (for Hugging Face Local Models)
-```
+# LLM providers
+openai>=1.0.0
+huggingface-hub>=0.19.0
+
+# Hugging Face models (required for Hugging Face integration)
 transformers>=4.35.0
 torch>=2.0.0
 accelerate>=0.24.0
-huggingface-hub>=0.19.0
+
+# Machine learning
+scikit-learn>=1.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+python-dotenv>=1.0.0
+
+# Optional (not actively used but listed for completeness)
+crewai>=0.1.0
 ```
 
 ### Key Imports Used in Project
@@ -387,7 +400,8 @@ The agent has access to these tools:
 
 **Step 2: Install Dependencies**
 ```bash
-pip install langchain-huggingface langchain-community transformers torch
+# All dependencies are in requirements.txt
+pip install -r requirements.txt
 ```
 
 **Step 3: Set Up `.env` File**
@@ -497,7 +511,8 @@ pip install python-dotenv
 
 ### Error: "Hugging Face packages required"
 ```bash
-pip install langchain-huggingface langchain-community transformers torch
+# All Hugging Face dependencies are in requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Error: "Rate limit exceeded" (Hugging Face)
