@@ -1,0 +1,1674 @@
+/* ============================================
+   CPG Decision Support Agent - Styles
+   Full Dark Mode Support
+   ============================================ */
+
+/* Main container styling */
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Metric cards styling */
+[data-testid="stMetricValue"] {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* Sidebar styling */
+.css-1d391kg {
+    padding-top: 2rem;
+}
+
+/* Navigation button styling */
+.nav-button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-button:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.nav-button.active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+    font-weight: 600;
+}
+
+/* Enhanced Button Styling - Global */
+.stButton>button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.stButton>button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.stButton>button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.stButton>button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+.stButton>button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Secondary button styling */
+.stButton>button[kind="secondary"] {
+    background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+    color: #2d3748;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stButton>button[kind="secondary"]:hover {
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Chat message styling */
+.stChatMessage {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+/* Success/Info boxes */
+.stSuccess, .stInfo {
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Hero Section Styling */
+.hero-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    padding: 4rem 2rem;
+    border-radius: 25px;
+    color: white;
+    text-align: center;
+    margin-bottom: 3rem;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    opacity: 0.95;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Feature Cards */
+.feature-card {
+    background: white;
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid transparent;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.feature-card:hover::before {
+    left: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    border-color: #667eea;
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.feature-title {
+    color: #667eea;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.feature-text {
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+/* Metric Cards */
+.metric-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-left: 5px solid #667eea;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+    transition: transform 0.6s;
+}
+
+.metric-card:hover::after {
+    transform: scale(1.2);
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.25);
+}
+
+.metric-value {
+    color: #667eea;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0.5rem 0;
+    position: relative;
+    z-index: 1;
+    animation: countUp 0.8s ease-out;
+}
+
+.metric-label {
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 2.5rem 2rem;
+    border-radius: 25px;
+    color: white;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(245, 87, 108, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-banner::before {
+    content: '✨';
+    position: absolute;
+    font-size: 8rem;
+    opacity: 0.1;
+    top: -2rem;
+    right: -2rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-text {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
+}
+
+/* Action Buttons */
+.action-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin: 0.5rem 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.action-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+.action-btn span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Insight Cards */
+.insight-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin: 0.75rem 0;
+    border-left: 5px solid #48bb78;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    color: #2d3748;
+}
+
+.insight-card strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.insight-card span, .insight-card p {
+    color: #2d3748;
+}
+
+.insight-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.2);
+    border-left-width: 8px;
+}
+
+.insight-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.insight-item:last-child {
+    border-bottom: none;
+}
+
+.insight-item:hover {
+    background: #f7fafc;
+    padding-left: 0.5rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+/* Loading Animation */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* Animated Counter */
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Pulse Animation for Important Elements */
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
+}
+
+.pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Interactive Guide Cards */
+.guide-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.guide-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+    transform: translateY(-3px);
+}
+
+/* Example Question Cards */
+.question-card {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    margin: 0.5rem 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.question-card:hover {
+    background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
+    border-left-width: 6px;
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+/* Stats Badge */
+.stats-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0.25rem;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Data File Status */
+.file-status {
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 1rem 0 0 0;
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 80px;
+    flex: 1;
+}
+
+.file-status:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Column alignment for file status and button */
+.stColumns {
+    display: flex;
+    align-items: stretch;
+}
+
+.stColumns > div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* File status card alignment - already defined above, this is for additional styling */
+
+/* Button alignment - match file status height */
+[data-testid="column"] .stButton {
+    height: fit-content;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Feature Highlight */
+.feature-highlight {
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-highlight::after {
+    content: '✨';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 2rem;
+    opacity: 0.3;
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ============================================
+   FORM ELEMENTS - CONSISTENT THEME STYLING
+   ============================================ */
+
+/* Text Input Styling */
+.stTextInput>div>div>input {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    background: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stTextInput>div>div>input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15), 0 4px 12px rgba(102, 126, 234, 0.2);
+    outline: none;
+}
+
+.stTextInput>div>div>input:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Selectbox Styling */
+.stSelectbox>div>div>select {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    background: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+.stSelectbox>div>div>select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15), 0 4px 12px rgba(102, 126, 234, 0.2);
+    outline: none;
+}
+
+.stSelectbox>div>div>select:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Selectbox container */
+.stSelectbox>div {
+    border-radius: 12px;
+}
+
+/* Date Input Styling */
+.stDateInput>div>div>input {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    background: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stDateInput>div>div>input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15), 0 4px 12px rgba(102, 126, 234, 0.2);
+    outline: none;
+}
+
+.stDateInput>div>div>input:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Chat Input Styling - Match theme */
+.stChatInput>div>div>input {
+    border-radius: 25px;
+    border: 2px solid #e2e8f0;
+    padding: 1rem 1.5rem;
+    background: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stChatInput>div>div>input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15), 0 6px 20px rgba(102, 126, 234, 0.25);
+    outline: none;
+}
+
+.stChatInput>div>div>input:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.stChatInput>div>div>input::placeholder {
+    color: #a0aec0;
+}
+
+/* Number Input Styling */
+.stNumberInput>div>div>input {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    background: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stNumberInput>div>div>input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15), 0 4px 12px rgba(102, 126, 234, 0.2);
+    outline: none;
+}
+
+/* Slider Styling */
+.stSlider>div>div>div {
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+/* Tabs styling */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 10px 10px 0 0;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+/* Dataframe and table styling for better visibility */
+.stDataFrame, .dataframe {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stDataFrame table, .dataframe table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stDataFrame th, .dataframe th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 5px 5px 0 0;
+}
+
+.stDataFrame td, .dataframe td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: #2d3748;
+}
+
+.stDataFrame tr:hover, .dataframe tr:hover {
+    background: #f7fafc;
+}
+
+/* Summary card styling */
+.summary-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin: 1rem 0;
+}
+
+.summary-card h4 {
+    color: #667eea;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.summary-card p, .summary-card span {
+    color: #2d3748;
+    line-height: 1.8;
+}
+
+/* Section headers - ALL HEADINGS */
+h1, h2, h3, h4, h5, h6 {
+    color: #2d3748;
+}
+
+/* Caption and info text */
+.stCaption, .stMarkdown p {
+    color: #4a5568;
+}
+
+/* Warning and info boxes */
+.stWarning {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-left: 4px solid #f56565;
+    color: #742a2a;
+}
+
+.stInfo {
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+    border-left: 4px solid #4299e1;
+    color: #2c5282;
+}
+
+.stSuccess {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    border-left: 4px solid #48bb78;
+    color: #22543d;
+}
+
+.stError {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-left: 4px solid #f56565;
+    color: #742a2a;
+}
+
+/* Metric containers */
+[data-testid="stMetricValue"] {
+    color: #2d3748;
+}
+
+[data-testid="stMetricLabel"] {
+    color: #4a5568;
+}
+
+/* Radio buttons styling */
+.stRadio > div {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+}
+
+.stRadio label {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* Checkbox styling */
+.stCheckbox label {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* Slider styling */
+.stSlider label {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Form Element Labels - Consistent Styling */
+.stSelectbox label,
+.stTextInput label,
+.stDateInput label,
+.stNumberInput label,
+.stChatInput label,
+.stSlider label {
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Form element containers - consistent spacing */
+.stSelectbox,
+.stTextInput,
+.stDateInput,
+.stNumberInput,
+.stChatInput {
+    margin-bottom: 1rem;
+}
+
+/* Form element wrapper for better visual grouping */
+.stSelectbox>div,
+.stTextInput>div,
+.stDateInput>div,
+.stNumberInput>div {
+    margin-bottom: 0.5rem;
+}
+
+/* Chat message styling */
+.stChatMessage {
+    background: white;
+    border-radius: 15px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.stChatMessage[data-testid="user"] {
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+    border-left: 4px solid #4299e1;
+}
+
+.stChatMessage[data-testid="assistant"] {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    border-left: 4px solid #48bb78;
+}
+
+/* Expander styling */
+.streamlit-expanderHeader {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 8px;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.streamlit-expanderContent {
+    background: white;
+    padding: 1rem;
+    border-radius: 0 0 8px 8px;
+}
+
+/* Date input styling */
+.stDateInput label {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Number input styling */
+.stNumberInput label {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Ensure all text is visible */
+.main .block-container {
+    color: #2d3748;
+}
+
+/* Markdown text styling - ALL HEADINGS */
+.stMarkdown {
+    color: #2d3748;
+}
+
+.stMarkdown strong {
+    color: #2d3748;
+}
+
+.stMarkdown h1, 
+.stMarkdown h2, 
+.stMarkdown h3, 
+.stMarkdown h4,
+.stMarkdown h5,
+.stMarkdown h6 {
+    color: #2d3748;
+}
+
+/* JSON viewer styling */
+.stJson {
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Spinner text */
+.stSpinner label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Ensure all divs with text have proper color */
+div[class*="insight"], 
+div[class*="summary"], 
+div[class*="metric"] {
+    color: #2d3748;
+}
+
+/* ============================================
+   DARK MODE SUPPORT - COMPREHENSIVE
+   ============================================ */
+
+/* Dark mode base styles - ALL TEXT ELEMENTS */
+[data-theme="dark"] .main .block-container,
+[data-theme="dark"] .stMarkdown,
+[data-theme="dark"] .stMarkdown p,
+[data-theme="dark"] .stMarkdown strong,
+[data-theme="dark"] .stMarkdown h1,
+[data-theme="dark"] .stMarkdown h2,
+[data-theme="dark"] .stMarkdown h3,
+[data-theme="dark"] .stMarkdown h4,
+[data-theme="dark"] .stMarkdown h5,
+[data-theme="dark"] .stMarkdown h6,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - ALL markdown headings in Streamlit */
+[data-theme="dark"] .element-container h1,
+[data-theme="dark"] .element-container h2,
+[data-theme="dark"] .element-container h3,
+[data-theme="dark"] .element-container h4,
+[data-theme="dark"] .element-container h5,
+[data-theme="dark"] .element-container h6 {
+    color: #f7fafc !important;
+}
+
+/* Dark mode cards */
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .insight-card,
+[data-theme="dark"] .guide-card,
+[data-theme="dark"] .summary-card {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+    border-color: #475569 !important;
+}
+
+[data-theme="dark"] .insight-card strong,
+[data-theme="dark"] .insight-card span,
+[data-theme="dark"] .insight-card p,
+[data-theme="dark"] .summary-card p,
+[data-theme="dark"] .summary-card span,
+[data-theme="dark"] .summary-card h4 {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - guide card headings */
+[data-theme="dark"] .guide-card h4 {
+    color: #93c5fd !important;
+}
+
+/* Dark mode metric cards */
+[data-theme="dark"] .metric-card {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+}
+
+[data-theme="dark"] .metric-value {
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] .metric-label {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode question cards */
+[data-theme="dark"] .question-card {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    color: #f7fafc !important;
+}
+
+/* Dark mode dataframes */
+[data-theme="dark"] .stDataFrame,
+[data-theme="dark"] .dataframe {
+    background: #1e293b !important;
+}
+
+[data-theme="dark"] .stDataFrame td,
+[data-theme="dark"] .dataframe td {
+    color: #f7fafc !important;
+    border-bottom-color: #475569 !important;
+}
+
+[data-theme="dark"] .stDataFrame tr:hover,
+[data-theme="dark"] .dataframe tr:hover {
+    background: #334155 !important;
+}
+
+/* Dark mode chat messages */
+[data-theme="dark"] .stChatMessage {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] .stChatMessage[data-testid="user"] {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%) !important;
+}
+
+[data-theme="dark"] .stChatMessage[data-testid="assistant"] {
+    background: linear-gradient(135deg, #1e3a2e 0%, #1e4a3e 100%) !important;
+}
+
+/* Dark mode radio buttons */
+[data-theme="dark"] .stRadio > div {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+}
+
+[data-theme="dark"] .stRadio label {
+    color: #f7fafc !important;
+}
+
+/* Dark mode checkboxes */
+[data-theme="dark"] .stCheckbox label {
+    color: #f7fafc !important;
+}
+
+/* Dark mode sliders */
+[data-theme="dark"] .stSlider label {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Form Element Labels */
+[data-theme="dark"] .stSelectbox label,
+[data-theme="dark"] .stTextInput label,
+[data-theme="dark"] .stDateInput label,
+[data-theme="dark"] .stNumberInput label,
+[data-theme="dark"] .stChatInput label,
+[data-theme="dark"] .stSlider label {
+    color: #f7fafc !important;
+    font-weight: 600 !important;
+}
+
+/* Dark mode expander */
+[data-theme="dark"] .streamlit-expanderHeader {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] .streamlit-expanderContent {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+}
+
+/* Dark mode metrics */
+[data-theme="dark"] [data-testid="stMetricValue"] {
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] [data-testid="stMetricLabel"] {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode caption */
+[data-theme="dark"] .stCaption {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode JSON viewer */
+[data-theme="dark"] .stJson {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+}
+
+/* Dark mode spinner */
+[data-theme="dark"] .stSpinner label {
+    color: #93c5fd !important;
+}
+
+/* Dark mode secondary buttons */
+[data-theme="dark"] .stButton>button[kind="secondary"] {
+    background: linear-gradient(135deg, #334155 0%, #475569 100%) !important;
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] .stButton>button[kind="secondary"]:hover {
+    background: linear-gradient(135deg, #475569 0%, #64748b 100%) !important;
+}
+
+/* Dark mode info/warning/success boxes */
+[data-theme="dark"] .stInfo {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%) !important;
+    color: #dbeafe !important;
+    border-left-color: #60a5fa !important;
+}
+
+[data-theme="dark"] .stWarning {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%) !important;
+    color: #fecaca !important;
+    border-left-color: #f87171 !important;
+}
+
+[data-theme="dark"] .stSuccess {
+    background: linear-gradient(135deg, #14532d 0%, #166534 100%) !important;
+    color: #bbf7d0 !important;
+    border-left-color: #4ade80 !important;
+}
+
+[data-theme="dark"] .stError {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%) !important;
+    color: #fecaca !important;
+    border-left-color: #f87171 !important;
+}
+
+/* Dark mode tabs */
+[data-theme="dark"] .stTabs [data-baseweb="tab"] {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+}
+
+/* ============================================
+   DARK MODE - FORM ELEMENTS
+   ============================================ */
+
+/* Dark mode - Text Input */
+[data-theme="dark"] .stTextInput>div>div>input {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+    border-color: #475569 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+[data-theme="dark"] .stTextInput>div>div>input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3), 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+}
+
+[data-theme="dark"] .stTextInput>div>div>input:hover {
+    border-color: #64748b !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+[data-theme="dark"] .stTextInput>div>div>input::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Dark mode - Selectbox */
+[data-theme="dark"] .stSelectbox>div>div>select {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+    border-color: #475569 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2393c5fd' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    padding-right: 2.5rem !important;
+}
+
+[data-theme="dark"] .stSelectbox>div>div>select:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3), 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+}
+
+[data-theme="dark"] .stSelectbox>div>div>select:hover {
+    border-color: #64748b !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+/* Dark mode - Date Input */
+[data-theme="dark"] .stDateInput>div>div>input {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+    border-color: #475569 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+[data-theme="dark"] .stDateInput>div>div>input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3), 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+}
+
+[data-theme="dark"] .stDateInput>div>div>input:hover {
+    border-color: #64748b !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+
+/* Dark mode - Chat Input */
+[data-theme="dark"] .stChatInput>div>div>input {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+    border-color: #475569 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+}
+
+[data-theme="dark"] .stChatInput>div>div>input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3), 0 6px 20px rgba(102, 126, 234, 0.25) !important;
+}
+
+[data-theme="dark"] .stChatInput>div>div>input:hover {
+    border-color: #64748b !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+}
+
+[data-theme="dark"] .stChatInput>div>div>input::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Dark mode - Number Input */
+[data-theme="dark"] .stNumberInput>div>div>input {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+    border-color: #475569 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+[data-theme="dark"] .stNumberInput>div>div>input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3), 0 4px 12px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Dark mode - Selectbox dropdown options */
+[data-theme="dark"] .stSelectbox select option {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Date picker calendar */
+[data-theme="dark"] .stDateInput [data-baseweb="calendar"],
+[data-theme="dark"] .stDateInput [data-baseweb="popover"] {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+    border-color: #475569 !important;
+}
+
+/* Dark mode insight items */
+[data-theme="dark"] .insight-item {
+    border-bottom-color: #475569 !important;
+}
+
+[data-theme="dark"] .insight-item:hover {
+    background: #334155 !important;
+}
+
+/* Dark mode - catch all text elements (more specific) */
+[data-theme="dark"] .element-container,
+[data-theme="dark"] .stText,
+[data-theme="dark"] .stMarkdownContainer,
+[data-theme="dark"] label:not([class*="st"]):not([for]) {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - ensure specific inline styled elements are visible */
+[data-theme="dark"] div[style*="color: #2d3748"],
+[data-theme="dark"] span[style*="color: #2d3748"],
+[data-theme="dark"] strong[style*="color: #2d3748"],
+[data-theme="dark"] h3[style*="color: #667eea"],
+[data-theme="dark"] h4[style*="color: #667eea"] {
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] div[style*="color: #4a5568"],
+[data-theme="dark"] span[style*="color: #4a5568"],
+[data-theme="dark"] ul[style*="color: #4a5568"],
+[data-theme="dark"] li[style*="color: #4a5568"] {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - file status and other status indicators */
+[data-theme="dark"] .file-status {
+    background: #1e293b !important;
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] .file-status strong,
+[data-theme="dark"] .file-status span {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - stats badge */
+[data-theme="dark"] .stats-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+}
+
+/* Dark mode - ensure all markdown content is visible */
+[data-theme="dark"] .main .block-container * {
+    color: inherit;
+}
+
+/* Override Streamlit's default dark text colors */
+[data-theme="dark"] .stMarkdown code {
+    background: #334155 !important;
+    color: #fbbf24 !important;
+}
+
+/* Dark mode - ensure table headers remain visible */
+[data-theme="dark"] .stDataFrame th,
+[data-theme="dark"] .dataframe th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+}
+
+/* Dark mode - feature title */
+[data-theme="dark"] .feature-title {
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] .feature-text {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - inline styled containers with backgrounds */
+[data-theme="dark"] div[style*="background: #f7fafc"],
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f7fafc"],
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f5f7fa"],
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #edf2f7"] {
+    background: #1e293b !important;
+}
+
+[data-theme="dark"] div[style*="background: #f7fafc"] h3,
+[data-theme="dark"] div[style*="background: #f7fafc"] h4,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f7fafc"] h3,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f7fafc"] h4,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f5f7fa"] h3,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f5f7fa"] h4,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #edf2f7"] h3,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #edf2f7"] h4 {
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] div[style*="background: #f7fafc"] p,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f7fafc"] p,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f5f7fa"] p,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #edf2f7"] p {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] div[style*="background: #f7fafc"] ul,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f7fafc"] ul,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f5f7fa"] ul,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #edf2f7"] ul {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] div[style*="background: #f7fafc"] li,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f7fafc"] li,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #f5f7fa"] li,
+[data-theme="dark"] div[style*="background: linear-gradient(135deg, #edf2f7"] li {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - status cards with white background */
+[data-theme="dark"] div[style*="background: white"] {
+    background: #1e293b !important;
+}
+
+[data-theme="dark"] div[style*="background: white"] div {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - all inline styled h3 and h4 with specific colors */
+[data-theme="dark"] h3[style*="color: #667eea"],
+[data-theme="dark"] h4[style*="color: #667eea"] {
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] p[style*="color: #4a5568"],
+[data-theme="dark"] p[style*="color: #718096"] {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - divs with text-align center and specific colors */
+[data-theme="dark"] div[style*="text-align: center"] div[style*="color: #667eea"] {
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] div[style*="text-align: center"] div[style*="color: #718096"] {
+    color: #cbd5e1 !important;
+}
+
+/* ============================================
+   AGGRESSIVE DARK MODE OVERRIDES
+   Force all black text to be visible in dark mode
+   ============================================ */
+
+/* Dark mode - Target ALL text elements in main container */
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container *,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container h1,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container h2,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container h3,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container h4,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container h5,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container h6,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container p,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container span,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container div,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container strong,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main .block-container em {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Streamlit's markdown containers - ALL variations */
+[data-theme="dark"] [data-testid="stMarkdownContainer"],
+[data-theme="dark"] [data-testid="stMarkdownContainer"] *,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] h1,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] h2,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] h3,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] h4,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] h5,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] h6,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] p,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] span,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] div,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] strong,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] em,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] ul,
+[data-theme="dark"] [data-testid="stMarkdownContainer"] li {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Element containers - ALL text */
+[data-theme="dark"] [class*="element-container"],
+[data-theme="dark"] [class*="element-container"] *,
+[data-theme="dark"] [class*="element-container"] h1,
+[data-theme="dark"] [class*="element-container"] h2,
+[data-theme="dark"] [class*="element-container"] h3,
+[data-theme="dark"] [class*="element-container"] h4,
+[data-theme="dark"] [class*="element-container"] h5,
+[data-theme="dark"] [class*="element-container"] h6,
+[data-theme="dark"] [class*="element-container"] p,
+[data-theme="dark"] [class*="element-container"] span,
+[data-theme="dark"] [class*="element-container"] div,
+[data-theme="dark"] [class*="element-container"] strong {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Force ALL headings to be light, regardless of inline styles */
+[data-theme="dark"] .main h1,
+[data-theme="dark"] .main h2,
+[data-theme="dark"] .main h3,
+[data-theme="dark"] .main h4,
+[data-theme="dark"] .main h5,
+[data-theme="dark"] .main h6,
+[data-theme="dark"] .block-container h1,
+[data-theme="dark"] .block-container h2,
+[data-theme="dark"] .block-container h3,
+[data-theme="dark"] .block-container h4,
+[data-theme="dark"] .block-container h5,
+[data-theme="dark"] .block-container h6 {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Override ANY inline color styles for headings */
+[data-theme="dark"] h1[style*="color"],
+[data-theme="dark"] h2[style*="color"],
+[data-theme="dark"] h3[style*="color"],
+[data-theme="dark"] h4[style*="color"],
+[data-theme="dark"] h5[style*="color"],
+[data-theme="dark"] h6[style*="color"] {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Override black/dark colors specifically */
+[data-theme="dark"] *[style*="color: #2d3748"],
+[data-theme="dark"] *[style*="color: #4a5568"],
+[data-theme="dark"] *[style*="color: #718096"],
+[data-theme="dark"] *[style*="color: rgb(45, 55, 72)"],
+[data-theme="dark"] *[style*="color: rgb(74, 85, 104)"],
+[data-theme="dark"] *[style*="color: rgb(113, 128, 150)"],
+[data-theme="dark"] *[style*="color: black"],
+[data-theme="dark"] *[style*="color: #000"],
+[data-theme="dark"] *[style*="color: #000000"] {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Force paragraphs and spans to be visible */
+[data-theme="dark"] .main p:not([style*="color: white"]):not([style*="color: #fff"]),
+[data-theme="dark"] .main span:not([style*="color: white"]):not([style*="color: #fff"]),
+[data-theme="dark"] .block-container p:not([style*="color: white"]):not([style*="color: #fff"]),
+[data-theme="dark"] .block-container span:not([style*="color: white"]):not([style*="color: #fff"]) {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - Streamlit's internal text rendering */
+[data-theme="dark"] .stMarkdown *,
+[data-theme="dark"] [class*="stMarkdown"] *,
+[data-theme="dark"] [class*="markdown"] * {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Paragraphs in markdown should be slightly lighter */
+[data-theme="dark"] .stMarkdown p,
+[data-theme="dark"] [class*="stMarkdown"] p,
+[data-theme="dark"] [class*="markdown"] p {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - Force visibility for ALL text nodes */
+[data-theme="dark"] .main .block-container > *:not(button):not([class*="stButton"]):not([class*="stMetric"]) {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Override Streamlit's computed styles */
+[data-theme="dark"] section[data-testid="stAppViewContainer"] {
+    color: #f7fafc !important;
+}
+
+/* Don't use inherit - explicitly set colors */
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main {
+    color: #f7fafc !important;
+}
+
+[data-theme="dark"] section[data-testid="stAppViewContainer"] .main * {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Specific override for headings that might have computed black color */
+[data-theme="dark"] section[data-testid="stAppViewContainer"] h1,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] h2,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] h3,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] h4,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] h5,
+[data-theme="dark"] section[data-testid="stAppViewContainer"] h6 {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Override any computed color that's dark */
+[data-theme="dark"] * {
+    /* Only override if color is dark/black */
+}
+
+/* Dark mode - Use CSS filter as last resort for any remaining black text */
+/* This is a nuclear option - only use if nothing else works */
+/* [data-theme="dark"] .main .block-container {
+    filter: invert(0) hue-rotate(0deg);
+} */
+
+/* Dark mode - Target Streamlit's specific class patterns - but don't override buttons */
+[data-theme="dark"] [class^="st"]:not(button):not([class*="Button"]):not([class*="Metric"]) {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Ensure metric labels and values are visible */
+[data-theme="dark"] [data-testid="stMetricLabel"],
+[data-theme="dark"] [data-testid="stMetricValue"],
+[data-theme="dark"] [data-testid="stMetricDelta"] {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Caption text */
+[data-theme="dark"] .stCaption,
+[data-theme="dark"] [class*="caption"] {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - All list items */
+[data-theme="dark"] ul,
+[data-theme="dark"] ol,
+[data-theme="dark"] li {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - Links */
+[data-theme="dark"] a {
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] a:hover {
+    color: #60a5fa !important;
+}
+
+/* Dark mode - Code blocks */
+[data-theme="dark"] code,
+[data-theme="dark"] pre {
+    background: #334155 !important;
+    color: #fbbf24 !important;
+}
+
+/* Dark mode - Blockquotes */
+[data-theme="dark"] blockquote {
+    border-left-color: #475569 !important;
+    color: #cbd5e1 !important;
+}
+
+/* ============================================
+   ULTIMATE DARK MODE FIX
+   Target body/html level and force all text
+   ============================================ */
+
+/* Dark mode - Body level overrides */
+body[data-theme="dark"],
+html[data-theme="dark"],
+[data-theme="dark"] body,
+[data-theme="dark"] html {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Force ALL text in the entire app when dark */
+body[data-theme="dark"] *:not(button):not([class*="Button"]):not([class*="Metric"]):not([style*="color: white"]):not([style*="color: #fff"]),
+html[data-theme="dark"] *:not(button):not([class*="Button"]):not([class*="Metric"]):not([style*="color: white"]):not([style*="color: #fff"]),
+[data-theme="dark"] body *:not(button):not([class*="Button"]):not([class*="Metric"]):not([style*="color: white"]):not([style*="color: #fff"]),
+[data-theme="dark"] html *:not(button):not([class*="Button"]):not([class*="Metric"]):not([style*="color: white"]):not([style*="color: #fff"]) {
+    color: #f7fafc !important;
+}
+
+/* Dark mode - Paragraphs should be slightly lighter */
+body[data-theme="dark"] p:not([style*="color: white"]):not([style*="color: #fff"]),
+html[data-theme="dark"] p:not([style*="color: white"]):not([style*="color: #fff"]),
+[data-theme="dark"] body p:not([style*="color: white"]):not([style*="color: #fff"]),
+[data-theme="dark"] html p:not([style*="color: white"]):not([style*="color: #fff"]) {
+    color: #cbd5e1 !important;
+}
+
+/* Dark mode - Override computed styles using CSS custom properties if needed */
+[data-theme="dark"] {
+    --text-color: #f7fafc;
+    --text-color-secondary: #cbd5e1;
+}
+
+/* Dark mode - Nuclear option: Force ALL text in main container to be light */
+[data-theme="dark"] .main .block-container,
+[data-theme="dark"] .main .block-container * {
+    color: #f7fafc !important;
+}
+
+/* Exception: Keep white text white, buttons, and metrics */
+[data-theme="dark"] .main .block-container [style*="color: white"],
+[data-theme="dark"] .main .block-container [style*="color: #fff"],
+[data-theme="dark"] .main .block-container button,
+[data-theme="dark"] .main .block-container [class*="Button"],
+[data-theme="dark"] .main .block-container [class*="Metric"] {
+    color: inherit !important;
+}
+

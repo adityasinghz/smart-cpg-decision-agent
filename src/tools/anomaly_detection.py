@@ -130,6 +130,200 @@ def _calculate_anomalies(
     }
 
 
+def get_anomaly_summary(
+    df: Union[pd.DataFrame, SparkDataFrame],
+    metric: str = 'revenue',
+    include_multivariate: bool = True
+) -> Dict:
+    """
+    Get comprehensive anomaly detection summary matching reference implementation.
+    
+    Args:
+        df: DataFrame with sales data
+        metric: Column to analyze
+        include_multivariate: Whether to include multivariate detection
+    
+    Returns:
+        Dictionary with comprehensive anomaly information matching reference format
+    """
+    if isinstance(df, SparkDataFrame):
+        df = df.toPandas()
+    
+    df = df.copy()
+    if 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+        df = df.sort_values('date').reset_index(drop=True)
+    
+    summary = {}
+    
+    # Statistical outliers using IQR method (matching reference default)
+    stat_result = detect_anomalies(df, date_col='date', value_col=metric, method='iqr', threshold=1.5)
+    stat_anomalies = stat_result.get('anomalies', [])
+    
+    # Classify high/low outliers
+    if len(stat_anomalies) > 0:
+        median_value = df[metric].median()
+        high_outliers = [a for a in stat_anomalies if a.get('value', 0) > median_value]
+        low_outliers = [a for a in stat_anomalies if a.get('value', 0) < median_value]
+    else:
+        high_outliers = []
+        low_outliers = []
+    
+    summary['statistical_outliers'] = {
+        'count': len(stat_anomalies),
+        'percentage': (len(stat_anomalies) / len(df)) * 100 if len(df) > 0 else 0,
+        'high_outliers': len(high_outliers),
+        'low_outliers': len(low_outliers),
+        'examples': stat_anomalies[:5] if len(stat_anomalies) > 0 else []
+    }
+    
+    # Time series anomalies using rolling window statistics (matching reference exactly)
+    # Reference uses rolling mean and std with threshold of 2.0 standard deviations
+    df_ts = df.copy()
+    window = 7
+    threshold = 2.0
+    
+    # Calculate rolling mean and std (matching reference exactly)
+    df_ts['rolling_mean'] = df_ts[metric].rolling(window=window, min_periods=1).mean()
+    df_ts['rolling_std'] = df_ts[metric].rolling(window=window, min_periods=1).std()
+    
+    # Calculate deviation from rolling mean
+    df_ts['deviation'] = np.abs(df_ts[metric] - df_ts['rolling_mean'])
+    df_ts['threshold_value'] = threshold * df_ts['rolling_std']
+    
+    # Flag anomalies (matching reference exactly - no fillna, pandas handles NaN comparison as False)
+    df_ts['is_anomaly'] = df_ts['deviation'] > df_ts['threshold_value']
+    df_ts['anomaly_score'] = df_ts['deviation'] / (df_ts['rolling_std'] + 1e-6)  # For score calculation only
+    
+    # Classify anomaly type (matching reference exactly)
+    df_ts['anomaly_type'] = 'normal'
+    df_ts.loc[df_ts['is_anomaly'] & (df_ts[metric] > df_ts['rolling_mean']), 'anomaly_type'] = 'spike'
+    df_ts.loc[df_ts['is_anomaly'] & (df_ts[metric] < df_ts['rolling_mean']), 'anomaly_type'] = 'drop'
+    
+    # Get anomalies (matching reference - returns DataFrame with is_anomaly=True)
+    ts_anomalies_df = df_ts[df_ts['is_anomaly']].copy()
+    
+    # Count spikes and drops directly from DataFrame (matching reference exactly)
+    spikes = len(ts_anomalies_df[ts_anomalies_df['anomaly_type'] == 'spike']) if len(ts_anomalies_df) > 0 else 0
+    drops = len(ts_anomalies_df[ts_anomalies_df['anomaly_type'] == 'drop']) if len(ts_anomalies_df) > 0 else 0
+    
+    # Convert to list format for examples (matching reference)
+    ts_anomalies = []
+    for idx, row in ts_anomalies_df.iterrows():
+        ts_anomalies.append({
+            'date': pd.Timestamp(row['date']),
+            'value': float(row[metric]),
+            'index': int(idx)
+        })
+    
+    # Use DataFrame length for count (matching reference - counts DataFrame rows, not list)
+    summary['time_series_anomalies'] = {
+        'count': len(ts_anomalies_df),  # Use DataFrame length, matching reference
+        'percentage': (len(ts_anomalies_df) / len(df)) * 100 if len(df) > 0 else 0,
+        'spikes': spikes,
+        'drops': drops,
+        'examples': ts_anomalies[:5] if len(ts_anomalies) > 0 else []
+    }
+    
+    # Multivariate anomalies using Isolation Forest on multiple features (matching reference)
+    if include_multivariate:
+        try:
+            # Select numeric features (matching reference implementation)
+            # Reference uses ALL numeric columns, including the metric
+            features = df.select_dtypes(include=[np.number]).columns.tolist()
+            # Remove date-related numeric columns only
+            features = [f for f in features if f not in ['year', 'month', 'quarter', 'week', 'day_of_week']]
+            # Keep metric column - reference includes it in multivariate detection
+            
+            if len(features) >= 2:
+                # Prepare data
+                X = df[features].fillna(df[features].median())
+                
+                # Standardize features
+                scaler = StandardScaler()
+                X_scaled = scaler.fit_transform(X)
+                
+                # Fit Isolation Forest (matching reference: contamination=0.05)
+                iso_forest = IsolationForest(
+                    contamination=0.05,
+                    random_state=42,
+                    n_estimators=100
+                )
+                
+                predictions = iso_forest.fit_predict(X_scaled)
+                anomaly_scores = iso_forest.score_samples(X_scaled)
+                
+                # Get anomalies
+                mv_mask = predictions == -1
+                mv_indices = np.where(mv_mask)[0]
+                
+                # Convert to anomaly list format matching other methods
+                mv_anomalies = []
+                for idx in mv_indices:
+                    if 'date' in df.columns and idx < len(df):
+                        mv_anomalies.append({
+                            'date': pd.Timestamp(df.iloc[idx]['date']),
+                            'value': float(df.iloc[idx][metric]),
+                            'index': int(idx)
+                        })
+                
+                summary['multivariate_anomalies'] = {
+                    'count': len(mv_anomalies),
+                    'percentage': (len(mv_anomalies) / len(df)) * 100 if len(df) > 0 else 0,
+                    'examples': mv_anomalies[:5] if len(mv_anomalies) > 0 else []
+                }
+            else:
+                summary['multivariate_anomalies'] = {
+                    'count': 0,
+                    'percentage': 0,
+                    'examples': []
+                }
+        except Exception as e:
+            summary['multivariate_anomalies'] = {
+                'count': 0,
+                'percentage': 0,
+                'examples': []
+            }
+    
+    # Ensure multivariate_anomalies exists even if not included
+    if 'multivariate_anomalies' not in summary:
+        summary['multivariate_anomalies'] = {
+            'count': 0,
+            'percentage': 0,
+            'examples': []
+        }
+    
+    # Overall assessment
+    total_anomalies = (
+        summary['statistical_outliers']['count'] +
+        summary['time_series_anomalies']['count']
+    )
+    if include_multivariate:
+        total_anomalies += summary.get('multivariate_anomalies', {}).get('count', 0)
+    
+    anomaly_rate = (total_anomalies / len(df)) * 100 if len(df) > 0 else 0
+    
+    if anomaly_rate < 2:
+        assessment = 'low_anomaly_rate'
+    elif anomaly_rate < 5:
+        assessment = 'moderate_anomaly_rate'
+    else:
+        assessment = 'high_anomaly_rate'
+    
+    summary['overall_assessment'] = {
+        'total_anomalies': total_anomalies,
+        'anomaly_rate': anomaly_rate,
+        'assessment': assessment,
+        'data_quality': 'good' if anomaly_rate < 5 else 'needs_review'
+    }
+    
+    summary['metric'] = metric
+    from datetime import datetime
+    summary['analysis_date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    return summary
+
+
 def detect_sales_drop(
     df: Union[pd.DataFrame, SparkDataFrame],
     date_col: str = 'date',

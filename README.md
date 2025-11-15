@@ -551,20 +551,20 @@ display(spark_df.limit(100))
 
 ## 🔮 Future Enhancements
 
-- Connect to **Azure Data Lake** for large-scale ingestion
-- Add **forecasting models** (Prophet / ARIMA)
-- Support **real-time streaming** via Kafka
-- Enable **multi-agent collaboration**
-- Fine-tune **memo generation** using structured prompts
+- Connect to **Azure Data Lake** for large-scale ingestion  
+- Add **forecasting models** (Prophet / ARIMA)  
+- Support **real-time streaming** via Kafka  
+- Enable **multi-agent collaboration**  
+- Fine-tune **memo generation** using structured prompts  
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the repo
-2. Create a branch (`feature/your-feature`)
-3. Commit and push changes
-4. Open a Pull Request
+1. Fork the repo  
+2. Create a branch (`feature/your-feature`)  
+3. Commit and push changes  
+4. Open a Pull Request  
 
 Keep functions modular, include tests, and follow clean code principles.
 
@@ -572,7 +572,7 @@ Keep functions modular, include tests, and follow clean code principles.
 
 ## 📜 License
 
-**MIT License © 2025**
+**MIT License © 2025**  
 
 Created and maintained as part of the **Smart Decision Support Agent Capstone Project**.
 
