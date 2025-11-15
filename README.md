@@ -7,12 +7,97 @@ It ingests multi-store, multi-SKU sales data, detects trends and anomalies, simu
 
 ---
 
-## 🚀 Quick Start (5 Minutes)
+## 📥 Prerequisites & Downloads
 
-### Step 1: Install Dependencies
+### Quick Checklist
+
+Before starting, ensure you have:
+
+- [ ] **Python 3.8+** installed ([Download](https://www.python.org/downloads/))
+- [ ] **Git** installed ([Download](https://git-scm.com/downloads)) - for cloning repository
+- [ ] **Internet connection** - for downloading packages and API access
+- [ ] **~2-5 GB free disk space** - for Python packages and dependencies
+- [ ] **API Key** (optional but recommended) - Hugging Face (free) or OpenAI (paid)
+
+### Required Software
+
+1. **Python 3.8 or higher**
+   - Download from: https://www.python.org/downloads/
+   - Verify installation: `python --version` or `python3 --version`
+   - ⚠️ **Important (Windows)**: Check "Add Python to PATH" during installation
+   - **Recommended**: Python 3.9 or 3.10 for best compatibility
+
+2. **Git** (for cloning the repository)
+   - Download from: https://git-scm.com/downloads
+   - Verify installation: `git --version`
+   - **Alternative**: Download repository as ZIP if you don't need Git
+
+### Required Python Packages
+
+All packages are listed in `requirements.txt` and will be installed automatically with:
 ```bash
 pip install -r requirements.txt
 ```
+
+**What gets downloaded (~500MB-2GB total):**
+
+| Category | Packages | Size | Purpose |
+|----------|----------|------|---------|
+| **Data Processing** | pandas, numpy, pyarrow, pyspark | ~200MB | Data manipulation and analysis |
+| **UI Framework** | streamlit | ~50MB | Web interface |
+| **AI/ML Core** | scikit-learn, transformers, torch | ~1-2GB | Machine learning models (PyTorch is largest) |
+| **Visualization** | plotly, matplotlib, seaborn | ~100MB | Charts and graphs |
+| **LLM Integration** | openai, huggingface-hub, langchain | ~200MB | AI model access |
+| **Utilities** | python-dotenv | ~1MB | Environment variable management |
+
+**Installation Notes:**
+- First-time installation: 5-15 minutes (depends on internet speed)
+- PyTorch will auto-detect your system (CPU/GPU) and install appropriate version
+- If you have GPU, PyTorch will install CUDA-enabled version (~2GB)
+- If CPU-only, PyTorch installs CPU version (~500MB)
+
+### Optional: API Keys (Choose ONE)
+
+**Option 1: Hugging Face (FREE - Recommended for Testing)**
+- Get free token: https://huggingface.co/settings/tokens
+- No credit card required
+- Rate limits apply (higher limits with token)
+
+**Option 2: OpenAI (Paid)**
+- Get API key: https://platform.openai.com/api-keys
+- Requires credit card
+- Pay-per-use pricing
+
+**Option 3: Azure OpenAI**
+- Requires Azure subscription
+- Get endpoint and key from Azure Portal
+
+### Data File
+
+The application requires sales data in parquet or CSV format:
+- **Location**: `data/cpg_sales_data.parquet` or `data/cpg_sales_data.parquet.csv`
+- **Format**: Parquet (preferred) or CSV
+- **Schema**: See "Expected Schema" section below
+- **Sample data**: Included in repository or can be generated
+
+---
+
+## 🚀 Quick Start (5 Minutes)
+
+### Step 1: Install Dependencies
+
+**Install all required packages:**
+```bash
+pip install -r requirements.txt
+```
+
+**Note**: This will download and install:
+- ~500MB-2GB of packages (depending on your system)
+- PyTorch (for ML models) - largest package
+- Streamlit and visualization libraries
+- LangChain and AI framework packages
+
+**Installation time**: 5-15 minutes depending on internet speed
 
 ### Step 2: Set Up API Key (Choose ONE Option)
 
@@ -38,11 +123,26 @@ echo "AZURE_OPENAI_API_KEY=your-key" > .env
 echo "AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/" >> .env
 ```
 
-### Step 3: Generate Sample Data
+### Step 3: Prepare Data
+
+**Option A: Use Provided Sample Data**
+- The repository includes `data/cpg_sales_data.parquet.csv`
+- If using CSV, the app will automatically load it
+- For better performance, convert to parquet:
+  ```python
+  import pandas as pd
+  df = pd.read_csv('data/cpg_sales_data.parquet.csv')
+  df.to_parquet('data/cpg_sales_data.parquet', index=False)
+  ```
+
+**Option B: Generate New Sample Data**
 ```bash
 python scripts/generate_sample_data.py
 ```
-Or use the provided `data/cpg_sales_data.parquet.csv` (convert to parquet if needed).
+
+**Option C: Use Your Own Data**
+- Place your data file at `data/cpg_sales_data.parquet` or `data/cpg_sales_data.parquet.csv`
+- Ensure it matches the expected schema (see below)
 
 ### Step 4: Run the Application
 ```bash
@@ -222,9 +322,9 @@ AZURE_OPENAI_API_VERSION=2024-02-15-preview
 
 ### 5. Prepare Data
 
-The agent expects data in parquet format at `data/cpg_sales_data.parquet`.
+The agent expects data in parquet or CSV format at `data/cpg_sales_data.parquet` or `data/cpg_sales_data.parquet.csv`.
 
-**Expected Schema:**
+**Expected Schema (Required Columns):**
 - `date` - Date/time column
 - `store_id` - Store identifier
 - `store_region` - Geographic region
@@ -239,7 +339,14 @@ The agent expects data in parquet format at `data/cpg_sales_data.parquet`.
 - `store_size` - Store size category
 - `holiday_flag` - Holiday indicator (0/1)
 
-**Generate Sample Data:**
+**Download/Generate Sample Data:**
+
+You can either:
+1. Use the provided `data/cpg_sales_data.parquet.csv` file (already in repository)
+2. Generate new sample data using the script below
+3. Use your own data (must match schema)
+
+**Generate Sample Data Script:**
 ```python
 import pandas as pd
 import numpy as np
