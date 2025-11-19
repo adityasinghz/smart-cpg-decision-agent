@@ -123,27 +123,30 @@ def initialize_agent():
 def render_sidebar():
     """Render sidebar with navigation and configuration."""
     with st.sidebar:
-        st.markdown("# 📊 CPG Agent")
+        st.markdown("# CPG Decision Support")
         st.markdown("---")
-        
-        # Navigation with beautiful buttons
-        st.markdown("## 🎯 Navigation")
+    
         
         # Initialize current page if not set
         if 'current_page' not in st.session_state:
-            st.session_state.current_page = "🏠 Home"
+            st.session_state.current_page = "Overview"
         
         # Navigation pages - Enhanced with modern analytics features
         pages = {
-            "🏠 Home": "🏠 Home",
-            "💬 AI Chat": "💬 AI Chat",
-            "✨ Smart Insights": "✨ Smart Insights",
-            "📊 Data Export": "📊 Data Export",
-            "🔍 Comparison Tool": "🔍 Comparison Tool",
-            "🔮 Forecasting": "🔮 Forecasting",
-            "📋 Custom Reports": "📋 Custom Reports",
-            "✅ Data Quality": "✅ Data Quality",
-            "🎯 Benchmarking": "🎯 Benchmarking"
+            "Overview": "Overview",
+            "AI Assistant": "AI Assistant",
+            "Business Insights": "Business Insights",
+            "Data Export": "Data Export",
+            "Data Comparison": "Data Comparison",
+            "Forecasting": "Forecasting",
+            "Custom Reports": "Custom Reports",
+            "Data Quality": "Data Quality",
+            "Performance Benchmarking": "Performance Benchmarking",
+            "Alert Management": "Alert Management",
+            "Scenario Planning": "Scenario Planning",
+            "KPI Dashboard": "KPI Dashboard",
+            "A/B Testing": "A/B Testing",
+            "Data Profiling": "Data Profiling"
         }
         
         # Create navigation buttons
@@ -244,6 +247,19 @@ def render_sidebar():
 
 def render_home():
     """Render modern interactive home page with enhanced styling."""
+    st.markdown("## Overview")
+    st.markdown("""
+    **Welcome to CPG Decision Support Platform**
+    
+    This is your central hub for data-driven decision making. Load your sales data to get started with comprehensive analytics, 
+    AI-powered insights, and advanced business intelligence tools.
+    
+    **Key Features:**
+    - 📊 **Data Loading & Management**: Upload and manage your CPG sales data
+    - 💬 **AI Assistant**: Get intelligent answers about your data using natural language
+    - 📈 **Analytics Tools**: Access 12+ specialized analytics features
+    - 🔍 **Real-time Insights**: Monitor performance and detect anomalies
+    """)
     
     # Hero Section
     if not st.session_state.data_loaded:
@@ -454,7 +470,7 @@ def render_home():
         action_col1, action_col2, action_col3, action_col4 = st.columns(4)
         
         actions = [
-            ("💬", "Go to AI Chat", "💬 AI Chat"),
+            ("💬", "Go to AI Assistant", "AI Assistant"),
             ("📈", "View Analytics", "📈 Analytics"),
             ("📊", "Open Dashboard", "📊 Dashboard"),
             ("🔄", "Reload Data", None)
@@ -613,7 +629,7 @@ def render_home():
             </div>
             """, unsafe_allow_html=True)
             if st.button("Go to AI Chat →", key="guide_chat", use_container_width=True):
-                st.session_state.current_page = "💬 AI Chat"
+                st.session_state.current_page = "AI Assistant"
                 st.rerun()
         
         with guide_tab2:
@@ -674,7 +690,7 @@ def render_home():
                 </div>
                 """, unsafe_allow_html=True)
                 if st.button(f"Ask →", key=f"example_{key}", use_container_width=True, type="secondary"):
-                    st.session_state.current_page = "💬 AI Chat"
+                    st.session_state.current_page = "AI Assistant"
                     st.session_state['question'] = question
                     st.rerun()
                 st.markdown("<br>", unsafe_allow_html=True)
@@ -690,7 +706,7 @@ def render_home():
                 </div>
                 """, unsafe_allow_html=True)
                 if st.button(f"Ask →", key=f"example_{key}_2", use_container_width=True, type="secondary"):
-                    st.session_state.current_page = "💬 AI Chat"
+                    st.session_state.current_page = "AI Assistant"
                     st.session_state['question'] = question
                     st.rerun()
                 st.markdown("<br>", unsafe_allow_html=True)
@@ -749,8 +765,26 @@ def render_home():
 
 def render_chat():
     """Render AI chat interface."""
-    st.markdown("## 💬 AI-Powered Chat Assistant")
-    st.caption("Ask questions in natural language about your sales data.")
+    st.markdown("## AI Assistant")
+    st.markdown("""
+    **Intelligent Data Analysis Through Natural Language**
+    
+    Interact with your sales data using conversational AI. Ask questions in plain English and get comprehensive 
+    analysis, insights, and recommendations powered by advanced language models.
+    
+    **Capabilities:**
+    - 📊 **Data Analysis**: Ask about trends, patterns, and performance metrics
+    - 🔍 **Anomaly Detection**: Identify unusual patterns in your sales data
+    - 📈 **Scenario Simulation**: Explore "what-if" scenarios for pricing and promotions
+    - 💡 **Strategic Recommendations**: Receive actionable business insights
+    - 📋 **Report Generation**: Get detailed analysis reports and summaries
+    
+    **Example Questions:**
+    - "What are the sales trends for the last quarter?"
+    - "Compare performance across different stores"
+    - "What would happen if we run a 15% discount promotion?"
+    - "Detect any anomalies in sales data"
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -954,8 +988,25 @@ def render_chat():
 
 def render_smart_insights():
     """Render Smart Insights page that auto-generates actionable business insights."""
-    st.markdown("## ✨ Smart Insights Generator")
-    st.caption("AI-powered automatic insight generation from your sales data")
+    st.markdown("## Business Insights")
+    st.markdown("""
+    **Automated Intelligence for Strategic Decision Making**
+    
+    Generate comprehensive business insights automatically from your sales data. This feature uses AI to analyze 
+    your data and provide key insights, opportunities, risks, and actionable recommendations.
+    
+    **What You Get:**
+    - 🎯 **Key Business Insights**: Top 3 critical insights from your data
+    - 📈 **Growth Opportunities**: Identified areas for revenue and performance improvement
+    - ⚠️ **Risk Assessment**: Potential concerns and areas requiring attention
+    - 💡 **Actionable Recommendations**: Specific steps to optimize your business
+    
+    **Use Cases:**
+    - Executive reporting and strategic planning
+    - Quick data assessment before meetings
+    - Identifying hidden patterns and opportunities
+    - Getting AI-powered recommendations for business decisions
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1037,7 +1088,7 @@ def render_smart_insights():
         
         with action_col3:
             if st.button("💬 Ask Follow-up", use_container_width=True, key="followup_insights"):
-                st.session_state.current_page = "💬 AI Chat"
+                st.session_state.current_page = "AI Assistant"
                 st.rerun()
     else:
         st.info("👆 Click 'Generate Smart Insights' to get started!")
@@ -1064,8 +1115,29 @@ def render_smart_insights():
 
 def render_data_export():
     """Render data export page with multiple format options."""
-    st.markdown("## 📊 Data Export Center")
-    st.caption("Export your data and analysis results in various formats")
+    st.markdown("## Data Export")
+    st.markdown("""
+    **Comprehensive Data Export and Sharing**
+    
+    Export your data and analysis results in multiple formats for reporting, sharing, or further analysis in other tools.
+    
+    **Export Options:**
+    - 📄 **Raw Data Export**: Export filtered or complete datasets in CSV, Excel, or JSON formats
+    - 📈 **Analysis Results**: Export analysis results and insights as JSON for programmatic access
+    - 📋 **Custom Aggregations**: Create and export aggregated data with custom grouping and functions
+    
+    **Features:**
+    - **Flexible Filtering**: Filter by date range, category, or specific columns before export
+    - **Multiple Formats**: CSV (universal), Excel (formatted), JSON (structured data)
+    - **Custom Aggregations**: Group and aggregate data by any dimension (date, category, store, region, SKU)
+    - **Analysis Export**: Save analysis results for documentation or integration with other systems
+    
+    **Use Cases:**
+    - Creating reports for stakeholders
+    - Sharing data with team members
+    - Importing into Excel, Power BI, or other analytics tools
+    - Archiving analysis results
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1213,8 +1285,30 @@ def render_data_export():
 
 def render_comparison_tool():
     """Render comparison tool for comparing different data segments."""
-    st.markdown("## 🔍 Comparison Tool")
-    st.caption("Compare performance across different time periods, categories, stores, or regions")
+    st.markdown("## Data Comparison")
+    st.markdown("""
+    **Side-by-Side Performance Analysis**
+    
+    Compare performance metrics across different dimensions to identify trends, patterns, and opportunities for optimization.
+    
+    **Comparison Types:**
+    - 📅 **Time Period Comparison**: Compare performance between different time periods (e.g., Q1 vs Q2, This Month vs Last Month)
+    - 📦 **Category Comparison**: Analyze performance across product categories
+    - 🏪 **Store Comparison**: Compare performance between different store locations
+    - 🗺️ **Regional Comparison**: Analyze geographic performance differences
+    
+    **Metrics Analyzed:**
+    - Revenue changes and growth percentages
+    - Units sold comparisons
+    - Average price analysis
+    - Visual charts and graphs for easy interpretation
+    
+    **Use Cases:**
+    - Period-over-period performance analysis
+    - Identifying best and worst performing categories/stores
+    - Regional performance optimization
+    - Understanding seasonal variations
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1333,8 +1427,30 @@ def render_comparison_tool():
 
 def render_forecasting():
     """Render forecasting page with predictive analytics."""
-    st.markdown("## 🔮 Forecasting & Predictive Analytics")
-    st.caption("Generate sales forecasts and predictions based on historical data")
+    st.markdown("## Forecasting")
+    st.markdown("""
+    **Predictive Analytics for Future Planning**
+    
+    Generate accurate sales forecasts and predictions based on your historical data to support inventory planning, 
+    budgeting, and strategic decision-making.
+    
+    **Forecasting Methods:**
+    - 📈 **Linear Trend**: Projects future values based on linear trend analysis
+    - 📊 **Moving Average**: Uses historical averages to predict future performance
+    - 📉 **Exponential Smoothing**: Applies weighted averages with more weight on recent data
+    
+    **Features:**
+    - **Customizable Forecast Periods**: Forecast from 1 day to 365 days ahead
+    - **Multiple Metrics**: Forecast revenue, units sold, or other key metrics
+    - **Visual Forecasts**: Interactive charts showing historical data and future predictions
+    - **Summary Statistics**: Average forecast, total forecast, and trend direction
+    
+    **Use Cases:**
+    - Inventory planning and procurement
+    - Budget forecasting and financial planning
+    - Demand planning and capacity management
+    - Setting sales targets and goals
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1472,8 +1588,32 @@ def render_forecasting():
 
 def render_custom_reports():
     """Render custom report builder page."""
-    st.markdown("## 📋 Custom Report Builder")
-    st.caption("Build and save custom reports with your preferred metrics and visualizations")
+    st.markdown("## Custom Reports")
+    st.markdown("""
+    **Build Tailored Business Reports**
+    
+    Create customized reports with your preferred metrics, visualizations, and sections. Design reports that match 
+    your specific business needs and reporting requirements.
+    
+    **Report Sections Available:**
+    - 📊 **Summary Statistics**: Key metrics including total revenue, units, average price, and record counts
+    - 💰 **Revenue Analysis**: Monthly revenue trends and patterns
+    - 📦 **Category Breakdown**: Performance analysis by product category
+    - 🏪 **Store Performance**: Individual store performance metrics
+    - 📈 **Time Series Trends**: Historical trend analysis over time
+    
+    **Features:**
+    - **Flexible Filtering**: Apply date range and category filters
+    - **Customizable Sections**: Select only the sections you need
+    - **Export Capability**: Download reports as text files for sharing
+    - **Professional Formatting**: Clean, organized report layout
+    
+    **Use Cases:**
+    - Executive dashboards and board presentations
+    - Monthly/quarterly business reviews
+    - Department-specific reporting
+    - Regulatory compliance reporting
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1571,8 +1711,32 @@ def render_custom_reports():
 
 def render_data_quality():
     """Render data quality checker page."""
-    st.markdown("## ✅ Data Quality Checker")
-    st.caption("Validate and assess the quality of your sales data")
+    st.markdown("## Data Quality")
+    st.markdown("""
+    **Data Validation and Quality Assessment**
+    
+    Ensure your data is clean, complete, and reliable before analysis. This tool performs comprehensive quality 
+    checks and provides a quality score to help you understand data reliability.
+    
+    **Quality Checks Performed:**
+    - ✅ **Missing Values**: Identifies columns with null or missing data
+    - 🔍 **Duplicate Detection**: Finds duplicate rows in your dataset
+    - ⚠️ **Data Type Validation**: Verifies correct data types (numeric, date, text)
+    - 📊 **Value Validation**: Checks for negative values in numeric columns
+    - 📅 **Date Consistency**: Validates date format and consistency
+    
+    **Quality Score:**
+    - **0-100 Score**: Overall data quality rating
+    - **Color-coded**: Green (80+), Yellow (60-79), Red (<60)
+    - **Issue Reporting**: Detailed list of all quality issues found
+    - **Completeness Report**: Column-by-column completeness percentage
+    
+    **Use Cases:**
+    - Pre-analysis data validation
+    - Data cleaning and preparation
+    - Quality assurance for data imports
+    - Identifying data entry errors
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1661,8 +1825,30 @@ def render_data_quality():
 
 def render_benchmarking():
     """Render performance benchmarking page."""
-    st.markdown("## 🎯 Performance Benchmarking")
-    st.caption("Compare your performance against targets and benchmarks")
+    st.markdown("## Performance Benchmarking")
+    st.markdown("""
+    **Target-Based Performance Evaluation**
+    
+    Set performance targets and compare your actual results against them. Track progress toward goals and identify 
+    areas that need attention.
+    
+    **Benchmark Metrics:**
+    - 💰 **Revenue Targets**: Set and track revenue goals
+    - 📦 **Units Targets**: Monitor units sold against targets
+    - 📈 **Growth Targets**: Track growth percentage goals
+    
+    **Features:**
+    - **Performance Percentage**: See how close you are to targets (e.g., 95% of target)
+    - **Visual Progress Bars**: Visual representation of target achievement
+    - **Comparison Charts**: Side-by-side comparison of actual vs target performance
+    - **Flexible Targets**: Set custom targets based on your business goals
+    
+    **Use Cases:**
+    - KPI tracking and performance monitoring
+    - Goal setting and achievement tracking
+    - Budget vs actual analysis
+    - Sales target monitoring
+    """)
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1736,6 +1922,815 @@ def render_benchmarking():
         st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------
+# Alert System Page
+# -----------------------
+
+def render_alert_system():
+    """Render alert system for monitoring thresholds and anomalies."""
+    st.markdown("## Alert Management")
+    st.markdown("""
+    **Automated Monitoring and Alerting**
+    
+    Set up automated alerts to monitor key metrics and get notified when thresholds are exceeded or anomalies are detected. 
+    Stay informed about critical changes in your business performance.
+    
+    **Alert Types:**
+    - 📊 **Threshold Alerts**: Monitor when metrics exceed or fall below specified thresholds
+    - 🔍 **Anomaly Alerts**: Automatic alerts when unusual patterns are detected in your data
+    - ⚠️ **Condition-Based**: Set custom conditions (>, <, >=, <=, ==) for any metric
+    
+    **Features:**
+    - **Multiple Metrics**: Monitor revenue, units sold, price, or any numeric column
+    - **Real-time Evaluation**: Alerts check current values against thresholds
+    - **Active Alert Dashboard**: View and manage all configured alerts
+    - **Alert Status**: See which alerts are triggered and which are within normal range
+    
+    **Use Cases:**
+    - Revenue drop detection
+    - Inventory threshold monitoring
+    - Price change alerts
+    - Anomaly detection notifications
+    - Performance monitoring automation
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    st.markdown("### ⚙️ Configure Alerts")
+    
+    alert_tab1, alert_tab2, alert_tab3 = st.tabs(["📊 Threshold Alerts", "🔍 Anomaly Alerts", "📋 Active Alerts"])
+    
+    with alert_tab1:
+        st.markdown("#### Set Threshold Alerts")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            alert_metric = st.selectbox("Metric", ["revenue", "units_sold", "price"], key="alert_metric")
+            alert_condition = st.selectbox("Condition", [">", "<", ">=", "<=", "=="], key="alert_condition")
+        with col2:
+            alert_threshold = st.number_input("Threshold Value", min_value=0.0, value=1000.0, key="alert_threshold")
+            alert_name = st.text_input("Alert Name", value=f"{alert_metric} Alert", key="alert_name")
+        
+        if st.button("➕ Add Alert", type="primary"):
+            if 'alerts' not in st.session_state:
+                st.session_state['alerts'] = []
+            
+            alert = {
+                'name': alert_name,
+                'metric': alert_metric,
+                'condition': alert_condition,
+                'threshold': alert_threshold,
+                'type': 'threshold',
+                'active': True
+            }
+            st.session_state['alerts'].append(alert)
+            st.success(f"✅ Alert '{alert_name}' added!")
+            st.rerun()
+    
+    with alert_tab2:
+        st.markdown("#### Anomaly Detection Alerts")
+        
+        # Check for anomalies button
+        if st.button("🔍 Check for Anomalies", type="primary", key="check_anomalies"):
+            try:
+                with st.spinner("Analyzing data for anomalies..."):
+                    from src.tools.anomaly_detection import get_anomaly_summary
+                    anomaly_summary = get_anomaly_summary(data, metric='revenue')
+                    
+                    total_anomalies = (
+                        anomaly_summary.get('statistical_anomalies', {}).get('count', 0) +
+                        anomaly_summary.get('time_series_anomalies', {}).get('count', 0) +
+                        anomaly_summary.get('multivariate_anomalies', {}).get('count', 0)
+                    )
+                    
+                    # Store results in session state
+                    st.session_state['anomaly_check_results'] = {
+                        'total_anomalies': total_anomalies,
+                        'anomaly_summary': anomaly_summary,
+                        'checked': True
+                    }
+                    st.rerun()
+                    
+            except Exception as e:
+                st.error(f"Error checking anomalies: {e}")
+                st.session_state['anomaly_check_results'] = None
+        
+        # Display results if check has been performed
+        if st.session_state.get('anomaly_check_results') is not None:
+            results = st.session_state['anomaly_check_results']
+            total_anomalies = results.get('total_anomalies', 0)
+            
+            if total_anomalies > 0:
+                st.warning(f"⚠️ **{total_anomalies} anomalies detected!**")
+                
+                # Show breakdown
+                anomaly_summary = results.get('anomaly_summary', {})
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    stat_count = anomaly_summary.get('statistical_anomalies', {}).get('count', 0)
+                    st.metric("Statistical", stat_count)
+                with col2:
+                    ts_count = anomaly_summary.get('time_series_anomalies', {}).get('count', 0)
+                    st.metric("Time Series", ts_count)
+                with col3:
+                    mv_count = anomaly_summary.get('multivariate_anomalies', {}).get('count', 0)
+                    st.metric("Multivariate", mv_count)
+                
+                # Alert name input
+                anomaly_alert_name = st.text_input(
+                    "Alert Name", 
+                    value=f"Anomaly Alert ({total_anomalies} anomalies)",
+                    key="anomaly_alert_name"
+                )
+                
+                # Create alert button
+                if st.button("➕ Create Anomaly Alert", type="primary", key="create_anomaly_alert"):
+                    if 'alerts' not in st.session_state:
+                        st.session_state['alerts'] = []
+                    
+                    # Check if alert with same name already exists
+                    existing_names = [a.get('name', '') for a in st.session_state['alerts']]
+                    if anomaly_alert_name in existing_names:
+                        st.warning(f"⚠️ An alert with the name '{anomaly_alert_name}' already exists. Please use a different name.")
+                    else:
+                        alert = {
+                            'name': anomaly_alert_name,
+                            'type': 'anomaly',
+                            'anomaly_count': total_anomalies,
+                            'statistical_count': stat_count,
+                            'time_series_count': ts_count,
+                            'multivariate_count': mv_count,
+                            'active': True,
+                            'timestamp': datetime.now().isoformat()
+                        }
+                        st.session_state['alerts'].append(alert)
+                        st.success(f"✅ **Anomaly alert '{anomaly_alert_name}' created successfully!**")
+                        st.balloons()  # Celebration effect
+                        st.rerun()
+            else:
+                st.success("✅ **No anomalies detected in your data.**")
+                st.info("Your data appears to be normal. No alert needed.")
+    
+    with alert_tab3:
+        st.markdown("#### Active Alerts")
+        
+        if 'alerts' in st.session_state and st.session_state['alerts']:
+            active_alerts = [a for a in st.session_state['alerts'] if a.get('active', True)]
+            
+            if active_alerts:
+                for idx, alert in enumerate(active_alerts):
+                    with st.expander(f"🚨 {alert.get('name', 'Alert')} - {'Active' if alert.get('active') else 'Inactive'}"):
+                        col1, col2 = st.columns([3, 1])
+                        with col1:
+                            if alert.get('type') == 'threshold':
+                                st.write(f"**Metric:** {alert.get('metric')}")
+                                st.write(f"**Condition:** {alert.get('condition')} {alert.get('threshold')}")
+                                
+                                # Check current value
+                                if alert.get('metric') in data.columns:
+                                    current_value = data[alert.get('metric')].sum() if alert.get('metric') in ['revenue', 'units_sold'] else data[alert.get('metric')].mean()
+                                    st.write(f"**Current Value:** {current_value:,.2f}")
+                                    
+                                    # Evaluate condition
+                                    condition_met = False
+                                    if alert.get('condition') == '>':
+                                        condition_met = current_value > alert.get('threshold')
+                                    elif alert.get('condition') == '<':
+                                        condition_met = current_value < alert.get('threshold')
+                                    elif alert.get('condition') == '>=':
+                                        condition_met = current_value >= alert.get('threshold')
+                                    elif alert.get('condition') == '<=':
+                                        condition_met = current_value <= alert.get('threshold')
+                                    
+                                    if condition_met:
+                                        st.error("⚠️ ALERT TRIGGERED!")
+                                    else:
+                                        st.success("✅ Within normal range")
+                            else:
+                                st.write(f"**Type:** {alert.get('type')}")
+                                st.write(f"**Anomaly Count:** {alert.get('anomaly_count', 0)}")
+                                st.write(f"**Created:** {alert.get('timestamp', 'N/A')}")
+                        
+                        with col2:
+                            if st.button("🗑️ Delete", key=f"delete_{idx}"):
+                                st.session_state['alerts'].pop(idx)
+                                st.rerun()
+            else:
+                st.info("No active alerts configured")
+        else:
+            st.info("No alerts configured yet. Add alerts in the tabs above.")
+
+# -----------------------
+# What-If Scenario Builder Page
+# -----------------------
+
+def render_whatif_builder():
+    """Render advanced what-if scenario builder."""
+    st.markdown("## Scenario Planning")
+    st.markdown("""
+    **Advanced Multi-Variable Scenario Analysis**
+    
+    Build complex business scenarios by adjusting multiple variables simultaneously and see the combined impact on 
+    your business metrics. Perfect for strategic planning and decision support.
+    
+    **Adjustable Variables:**
+    - 💰 **Price Changes**: Adjust prices by percentage (-50% to +50%)
+    - 🎁 **Promotion Settings**: Set discount percentage and coverage area
+    - 📦 **Inventory Adjustments**: Modify inventory levels (-50% to +50%)
+    - 📈 **Demand Shifts**: Simulate changes in market demand (-30% to +30%)
+    
+    **Analysis Provided:**
+    - **Revenue Impact**: How scenario affects total revenue
+    - **Units Impact**: Changes in units sold
+    - **Price Analysis**: Average price changes
+    - **Margin Impact**: Combined effect on profitability
+    - **Visual Comparison**: Baseline vs scenario charts
+    
+    **Use Cases:**
+    - Pricing strategy evaluation
+    - Promotion planning and ROI analysis
+    - Inventory optimization scenarios
+    - Market condition simulation
+    - Strategic planning and forecasting
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    st.markdown("### 🎯 Scenario Configuration")
+    
+    scenario_name = st.text_input("Scenario Name", value=f"Scenario_{datetime.now().strftime('%Y%m%d_%H%M%S')}", key="scenario_name")
+    
+    st.markdown("#### Variable Adjustments")
+    
+    var_col1, var_col2, var_col3 = st.columns(3)
+    
+    with var_col1:
+        price_change = st.slider("Price Change (%)", min_value=-50.0, max_value=50.0, value=0.0, step=1.0, key="whatif_price")
+        st.caption(f"New price: {data['price'].mean() * (1 + price_change/100):.2f}")
+    
+    with var_col2:
+        promo_discount = st.slider("Promotion Discount (%)", min_value=0.0, max_value=50.0, value=0.0, step=5.0, key="whatif_promo")
+        promo_coverage = st.slider("Promotion Coverage (%)", min_value=0.0, max_value=100.0, value=0.0, step=10.0, key="whatif_coverage")
+    
+    with var_col3:
+        inventory_adjust = st.slider("Inventory Adjustment (%)", min_value=-50.0, max_value=50.0, value=0.0, step=5.0, key="whatif_inventory")
+        demand_shift = st.slider("Demand Shift (%)", min_value=-30.0, max_value=30.0, value=0.0, step=1.0, key="whatif_demand")
+    
+    if st.button("🚀 Run Scenario", type="primary"):
+        with st.spinner("Simulating scenario..."):
+            try:
+                # Create scenario data
+                scenario_data = data.copy()
+                
+                # Apply price change
+                scenario_data['new_price'] = scenario_data['price'] * (1 + price_change / 100)
+                
+                # Apply promotion
+                if promo_coverage > 0:
+                    num_promo_rows = int(len(scenario_data) * promo_coverage / 100)
+                    promo_indices = np.random.choice(scenario_data.index, num_promo_rows, replace=False)
+                    scenario_data.loc[promo_indices, 'new_price'] = scenario_data.loc[promo_indices, 'new_price'] * (1 - promo_discount / 100)
+                
+                # Apply demand shift (price elasticity effect)
+                price_elasticity = -1.5
+                demand_change = -price_elasticity * price_change / 100 + demand_shift / 100
+                scenario_data['new_units'] = scenario_data['units_sold'] * (1 + demand_change)
+                scenario_data['new_units'] = scenario_data['new_units'].clip(lower=0)
+                
+                # Apply inventory adjustment
+                if 'inventory_level' in scenario_data.columns:
+                    scenario_data['new_inventory'] = scenario_data['inventory_level'] * (1 + inventory_adjust / 100)
+                
+                # Calculate new revenue
+                scenario_data['new_revenue'] = scenario_data['new_price'] * scenario_data['new_units']
+                
+                # Calculate metrics
+                baseline_revenue = data['revenue'].sum()
+                scenario_revenue = scenario_data['new_revenue'].sum()
+                revenue_change = ((scenario_revenue - baseline_revenue) / baseline_revenue * 100) if baseline_revenue > 0 else 0
+                
+                baseline_units = data['units_sold'].sum()
+                scenario_units = scenario_data['new_units'].sum()
+                units_change = ((scenario_units - baseline_units) / baseline_units * 100) if baseline_units > 0 else 0
+                
+                st.session_state['whatif_results'] = {
+                    'scenario_name': scenario_name,
+                    'baseline_revenue': baseline_revenue,
+                    'scenario_revenue': scenario_revenue,
+                    'revenue_change': revenue_change,
+                    'baseline_units': baseline_units,
+                    'scenario_units': scenario_units,
+                    'units_change': units_change,
+                    'scenario_data': scenario_data
+                }
+                st.success("✅ Scenario simulated successfully!")
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Error running scenario: {e}")
+    
+    if st.session_state.get('whatif_results'):
+        results = st.session_state['whatif_results']
+        
+        st.markdown("### 📊 Scenario Results")
+        
+        st.markdown(f"#### {results['scenario_name']}")
+        
+        result_col1, result_col2, result_col3, result_col4 = st.columns(4)
+        
+        with result_col1:
+            st.metric("Revenue Change", f"${results['scenario_revenue']:,.0f}", f"{results['revenue_change']:+.1f}%")
+        with result_col2:
+            st.metric("Units Change", f"{results['scenario_units']:,.0f}", f"{results['units_change']:+.1f}%")
+        with result_col3:
+            avg_price = results['scenario_revenue'] / results['scenario_units'] if results['scenario_units'] > 0 else 0
+            baseline_avg = results['baseline_revenue'] / results['baseline_units'] if results['baseline_units'] > 0 else 0
+            price_change_pct = ((avg_price - baseline_avg) / baseline_avg * 100) if baseline_avg > 0 else 0
+            st.metric("Avg Price", f"${avg_price:.2f}", f"{price_change_pct:+.1f}%")
+        with result_col4:
+            margin_change = results['revenue_change'] - results['units_change']
+            st.metric("Margin Impact", f"{margin_change:+.1f}%", "vs baseline")
+        
+        # Visualization
+        comparison_df = pd.DataFrame({
+            'Metric': ['Revenue', 'Units'],
+            'Baseline': [results['baseline_revenue']/1000, results['baseline_units']/1000],
+            'Scenario': [results['scenario_revenue']/1000, results['scenario_units']/1000]
+        })
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(name='Baseline', x=comparison_df['Metric'], y=comparison_df['Baseline'], marker_color='#667eea'))
+        fig.add_trace(go.Bar(name='Scenario', x=comparison_df['Metric'], y=comparison_df['Scenario'], marker_color='#48bb78'))
+        fig.update_layout(title='Baseline vs Scenario', barmode='group', template='plotly_white')
+        st.plotly_chart(fig, use_container_width=True)
+
+# -----------------------
+# Performance Dashboard Page
+# -----------------------
+
+def render_performance_dashboard():
+    """Render real-time performance dashboard with KPIs."""
+    st.markdown("## KPI Dashboard")
+    st.markdown("""
+    **Real-Time Key Performance Indicator Monitoring**
+    
+    Monitor your business performance in real-time with a comprehensive dashboard of key metrics, trends, and insights. 
+    Track KPIs and compare current performance with previous periods.
+    
+    **Key Metrics Tracked:**
+    - 💰 **Total Revenue**: Current period revenue with growth percentage
+    - 📦 **Total Units**: Units sold with period-over-period comparison
+    - 💵 **Average Price**: Average transaction value
+    - 🏪 **Active Stores**: Number of stores in operation
+    
+    **Dashboard Features:**
+    - **Time Period Selection**: Analyze any custom date range
+    - **Period Comparison**: Automatic comparison with previous period (YoY, MoM)
+    - **Revenue Trends**: Daily revenue trend visualization
+    - **Category Performance**: Top 5 categories by revenue
+    - **Additional Metrics**: Promotion revenue, top regions, inventory levels
+    
+    **Use Cases:**
+    - Daily/weekly/monthly performance monitoring
+    - Executive dashboards
+    - Quick performance health checks
+    - Trend identification and analysis
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    # Time period selection
+    if 'date' in data.columns:
+        data['date'] = pd.to_datetime(data['date'])
+        min_date = data['date'].min().date()
+        max_date = data['date'].max().date()
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            period_start = st.date_input("Start Date", value=min_date, key="dashboard_start")
+        with col2:
+            period_end = st.date_input("End Date", value=max_date, key="dashboard_end")
+        
+        data = data[(data['date'].dt.date >= period_start) & (data['date'].dt.date <= period_end)]
+    
+    st.markdown("### 📊 Key Performance Indicators")
+    
+    # Calculate KPIs
+    total_revenue = data['revenue'].sum() if 'revenue' in data.columns else 0
+    total_units = data['units_sold'].sum() if 'units_sold' in data.columns else 0
+    avg_price = total_revenue / total_units if total_units > 0 else 0
+    total_stores = data['store_id'].nunique() if 'store_id' in data.columns else 0
+    total_skus = data['sku_id'].nunique() if 'sku_id' in data.columns else 0
+    
+    # Previous period comparison
+    if 'date' in data.columns and len(data) > 0:
+        period_days = (pd.to_datetime(period_end) - pd.to_datetime(period_start)).days
+        prev_start = pd.to_datetime(period_start) - pd.Timedelta(days=period_days)
+        prev_end = pd.to_datetime(period_start)
+        
+        prev_data = st.session_state.data.copy()
+        prev_data['date'] = pd.to_datetime(prev_data['date'])
+        prev_data = prev_data[(prev_data['date'].dt.date >= prev_start.date()) & (prev_data['date'].dt.date < prev_end.date())]
+        
+        prev_revenue = prev_data['revenue'].sum() if 'revenue' in prev_data.columns else 0
+        prev_units = prev_data['units_sold'].sum() if 'units_sold' in prev_data.columns else 0
+        
+        revenue_growth = ((total_revenue - prev_revenue) / prev_revenue * 100) if prev_revenue > 0 else 0
+        units_growth = ((total_units - prev_units) / prev_units * 100) if prev_units > 0 else 0
+    else:
+        revenue_growth = 0
+        units_growth = 0
+    
+    # KPI Cards
+    kpi_col1, kpi_col2, kpi_col3, kpi_col4 = st.columns(4)
+    
+    with kpi_col1:
+        st.metric("Total Revenue", f"${total_revenue:,.0f}", f"{revenue_growth:+.1f}%")
+    with kpi_col2:
+        st.metric("Total Units", f"{total_units:,.0f}", f"{units_growth:+.1f}%")
+    with kpi_col3:
+        st.metric("Avg Price", f"${avg_price:.2f}")
+    with kpi_col4:
+        st.metric("Active Stores", f"{total_stores}")
+    
+    st.markdown("---")
+    
+    # Charts
+    chart_col1, chart_col2 = st.columns(2)
+    
+    with chart_col1:
+        st.markdown("#### 📈 Revenue Trend")
+        if 'date' in data.columns and 'revenue' in data.columns:
+            daily_revenue = data.groupby(data['date'].dt.date)['revenue'].sum().reset_index()
+            daily_revenue.columns = ['date', 'revenue']
+            fig = px.line(daily_revenue, x='date', y='revenue', title='Daily Revenue Trend')
+            st.plotly_chart(fig, use_container_width=True)
+    
+    with chart_col2:
+        st.markdown("#### 📦 Category Performance")
+        if 'category' in data.columns and 'revenue' in data.columns:
+            cat_revenue = data.groupby('category')['revenue'].sum().sort_values(ascending=False).head(5)
+            fig = px.bar(x=cat_revenue.index, y=cat_revenue.values, title='Top 5 Categories by Revenue')
+            st.plotly_chart(fig, use_container_width=True)
+    
+    # Additional metrics
+    st.markdown("---")
+    st.markdown("### 📊 Additional Metrics")
+    
+    metric_col1, metric_col2, metric_col3 = st.columns(3)
+    
+    with metric_col1:
+        if 'promo_flag' in data.columns:
+            promo_revenue = data[data['promo_flag'] == 1]['revenue'].sum() if len(data[data['promo_flag'] == 1]) > 0 else 0
+            promo_pct = (promo_revenue / total_revenue * 100) if total_revenue > 0 else 0
+            st.metric("Promotion Revenue", f"${promo_revenue:,.0f}", f"{promo_pct:.1f}% of total")
+    
+    with metric_col2:
+        if 'store_region' in data.columns:
+            top_region = data.groupby('store_region')['revenue'].sum().idxmax() if 'store_region' in data.columns else "N/A"
+            st.metric("Top Region", top_region)
+    
+    with metric_col3:
+        if 'inventory_level' in data.columns:
+            avg_inventory = data['inventory_level'].mean()
+            st.metric("Avg Inventory", f"{avg_inventory:,.0f}")
+
+# -----------------------
+# A/B Testing Analysis Page
+# -----------------------
+
+def render_ab_testing():
+    """Render A/B testing analysis page."""
+    st.markdown("## A/B Testing")
+    st.markdown("""
+    **Experimental Analysis for Strategy Optimization**
+    
+    Compare two different strategies, promotions, or scenarios side-by-side to determine which performs better. 
+    Make data-driven decisions about pricing, promotions, and business strategies.
+    
+    **Test Configuration:**
+    - **Control Group (Test A)**: Baseline strategy with current pricing and promotions
+    - **Variant Group (Test B)**: Alternative strategy with different pricing/promotions
+    - **Customizable Variables**: Price, promotion percentage, and coverage for each test
+    
+    **Analysis Provided:**
+    - **Revenue Comparison**: Side-by-side revenue analysis
+    - **Units Comparison**: Units sold comparison
+    - **Average Price**: Price point analysis
+    - **Winner Identification**: Automatic determination of best performing strategy
+    - **Improvement Percentage**: Quantified improvement of winning strategy
+    
+    **Use Cases:**
+    - Promotion effectiveness testing
+    - Pricing strategy evaluation
+    - Marketing campaign comparison
+    - Product launch strategy testing
+    - Optimization experiments
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    st.markdown("### 🎯 Test Configuration")
+    
+    test_tab1, test_tab2 = st.tabs(["📊 Configure Tests", "📈 Compare Results"])
+    
+    with test_tab1:
+        st.markdown("#### Test A (Control)")
+        
+        test_a_col1, test_a_col2 = st.columns(2)
+        with test_a_col1:
+            test_a_name = st.text_input("Test A Name", value="Control", key="test_a_name")
+            test_a_price = st.number_input("Price", min_value=0.01, value=float(data['price'].mean()) if 'price' in data.columns else 5.0, key="test_a_price")
+        with test_a_col2:
+            test_a_promo = st.slider("Promotion (%)", min_value=0.0, max_value=50.0, value=0.0, key="test_a_promo")
+            test_a_coverage = st.slider("Coverage (%)", min_value=0.0, max_value=100.0, value=0.0, key="test_a_coverage")
+        
+        st.markdown("#### Test B (Variant)")
+        
+        test_b_col1, test_b_col2 = st.columns(2)
+        with test_b_col1:
+            test_b_name = st.text_input("Test B Name", value="Variant", key="test_b_name")
+            test_b_price = st.number_input("Price", min_value=0.01, value=float(data['price'].mean() * 0.9) if 'price' in data.columns else 4.5, key="test_b_price")
+        with test_b_col2:
+            test_b_promo = st.slider("Promotion (%)", min_value=0.0, max_value=50.0, value=10.0, key="test_b_promo")
+            test_b_coverage = st.slider("Coverage (%)", min_value=0.0, max_value=100.0, value=50.0, key="test_b_coverage")
+        
+        if st.button("🚀 Run A/B Test", type="primary"):
+            with st.spinner("Running A/B test..."):
+                try:
+                    # Simulate Test A
+                    test_a_data = data.copy()
+                    test_a_data['test_price'] = test_a_price
+                    if test_a_coverage > 0:
+                        num_promo = int(len(test_a_data) * test_a_coverage / 100)
+                        promo_indices = np.random.choice(test_a_data.index, num_promo, replace=False)
+                        test_a_data.loc[promo_indices, 'test_price'] = test_a_data.loc[promo_indices, 'test_price'] * (1 - test_a_promo / 100)
+                    
+                    price_elasticity = -1.5
+                    price_change_a = ((test_a_data['test_price'].mean() - data['price'].mean()) / data['price'].mean() * 100)
+                    demand_change_a = -price_elasticity * price_change_a / 100
+                    test_a_data['test_units'] = data['units_sold'] * (1 + demand_change_a)
+                    test_a_data['test_revenue'] = test_a_data['test_price'] * test_a_data['test_units']
+                    
+                    # Simulate Test B
+                    test_b_data = data.copy()
+                    test_b_data['test_price'] = test_b_price
+                    if test_b_coverage > 0:
+                        num_promo = int(len(test_b_data) * test_b_coverage / 100)
+                        promo_indices = np.random.choice(test_b_data.index, num_promo, replace=False)
+                        test_b_data.loc[promo_indices, 'test_price'] = test_b_data.loc[promo_indices, 'test_price'] * (1 - test_b_promo / 100)
+                    
+                    price_change_b = ((test_b_data['test_price'].mean() - data['price'].mean()) / data['price'].mean() * 100)
+                    demand_change_b = -price_elasticity * price_change_b / 100
+                    test_b_data['test_units'] = data['units_sold'] * (1 + demand_change_b)
+                    test_b_data['test_revenue'] = test_b_data['test_price'] * test_b_data['test_units']
+                    
+                    # Calculate results
+                    baseline_revenue = data['revenue'].sum()
+                    test_a_revenue = test_a_data['test_revenue'].sum()
+                    test_b_revenue = test_b_data['test_revenue'].sum()
+                    
+                    test_a_change = ((test_a_revenue - baseline_revenue) / baseline_revenue * 100) if baseline_revenue > 0 else 0
+                    test_b_change = ((test_b_revenue - baseline_revenue) / baseline_revenue * 100) if baseline_revenue > 0 else 0
+                    
+                    st.session_state['ab_test_results'] = {
+                        'test_a': {
+                            'name': test_a_name,
+                            'revenue': test_a_revenue,
+                            'change': test_a_change,
+                            'units': test_a_data['test_units'].sum(),
+                            'avg_price': test_a_data['test_price'].mean()
+                        },
+                        'test_b': {
+                            'name': test_b_name,
+                            'revenue': test_b_revenue,
+                            'change': test_b_change,
+                            'units': test_b_data['test_units'].sum(),
+                            'avg_price': test_b_data['test_price'].mean()
+                        },
+                        'baseline': {
+                            'revenue': baseline_revenue,
+                            'units': data['units_sold'].sum()
+                        }
+                    }
+                    st.success("✅ A/B test completed!")
+                    st.rerun()
+                    
+                except Exception as e:
+                    st.error(f"Error running A/B test: {e}")
+    
+    with test_tab2:
+        if st.session_state.get('ab_test_results'):
+            results = st.session_state['ab_test_results']
+            
+            st.markdown("### 📊 A/B Test Results")
+            
+            # Comparison metrics
+            comp_col1, comp_col2, comp_col3 = st.columns(3)
+            
+            with comp_col1:
+                st.markdown(f"#### {results['test_a']['name']}")
+                st.metric("Revenue", f"${results['test_a']['revenue']:,.0f}", f"{results['test_a']['change']:+.1f}%")
+                st.metric("Units", f"{results['test_a']['units']:,.0f}")
+                st.metric("Avg Price", f"${results['test_a']['avg_price']:.2f}")
+            
+            with comp_col2:
+                st.markdown(f"#### {results['test_b']['name']}")
+                st.metric("Revenue", f"${results['test_b']['revenue']:,.0f}", f"{results['test_b']['change']:+.1f}%")
+                st.metric("Units", f"{results['test_b']['units']:,.0f}")
+                st.metric("Avg Price", f"${results['test_b']['avg_price']:.2f}")
+            
+            with comp_col3:
+                st.markdown("#### Winner")
+                winner = results['test_a']['name'] if results['test_a']['revenue'] > results['test_b']['revenue'] else results['test_b']['name']
+                improvement = abs(results['test_a']['revenue'] - results['test_b']['revenue']) / min(results['test_a']['revenue'], results['test_b']['revenue']) * 100
+                st.success(f"🏆 {winner}")
+                st.metric("Improvement", f"{improvement:.1f}%")
+            
+            # Visualization
+            comparison_df = pd.DataFrame({
+                'Test': [results['test_a']['name'], results['test_b']['name']],
+                'Revenue': [results['test_a']['revenue']/1000, results['test_b']['revenue']/1000],
+                'Units': [results['test_a']['units']/1000, results['test_b']['units']/1000]
+            })
+            
+            fig = go.Figure()
+            fig.add_trace(go.Bar(name='Revenue', x=comparison_df['Test'], y=comparison_df['Revenue'], marker_color='#667eea'))
+            fig.add_trace(go.Bar(name='Units', x=comparison_df['Test'], y=comparison_df['Units'], marker_color='#48bb78', yaxis='y2'))
+            fig.update_layout(
+                title='A/B Test Comparison',
+                barmode='group',
+                template='plotly_white',
+                yaxis=dict(title='Revenue (thousands)'),
+                yaxis2=dict(title='Units (thousands)', overlaying='y', side='right')
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Run an A/B test in the 'Configure Tests' tab to see results here")
+
+# -----------------------
+# Data Profiling Page
+# -----------------------
+
+def render_data_profiling():
+    """Render comprehensive data profiling page."""
+    st.markdown("## Data Profiling")
+    st.markdown("""
+    **Comprehensive Statistical Analysis and Data Exploration**
+    
+    Perform deep statistical analysis of your dataset to understand data distributions, relationships, and characteristics. 
+    Essential for data scientists and analysts who need detailed insights into their data structure.
+    
+    **Profiling Features:**
+    - 📊 **Dataset Overview**: Total rows, columns, and memory usage
+    - 📈 **Column Statistics**: For numeric columns - min, max, mean, median, std deviation, skewness, kurtosis
+    - 📋 **Categorical Analysis**: For text/category columns - unique counts, top values, frequency distributions
+    - 🔗 **Correlation Matrix**: Visual correlation analysis between all numeric columns
+    - 📉 **Distribution Plots**: Histograms showing data distribution patterns
+    
+    **Statistical Measures:**
+    - **Central Tendency**: Mean, median for numeric data
+    - **Dispersion**: Standard deviation, range
+    - **Shape**: Skewness (asymmetry), kurtosis (tail heaviness)
+    - **Completeness**: Null counts and percentages per column
+    
+    **Use Cases:**
+    - Data exploration and understanding
+    - Statistical analysis and reporting
+    - Data quality assessment
+    - Feature engineering preparation
+    - Identifying data relationships and patterns
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    if st.button("🔍 Generate Profile", type="primary"):
+        with st.spinner("Generating data profile..."):
+            profile = {}
+            
+            # Basic statistics
+            profile['shape'] = {'rows': len(data), 'columns': len(data.columns)}
+            profile['memory_usage'] = f"{data.memory_usage(deep=True).sum() / 1024**2:.2f} MB"
+            
+            # Column statistics
+            profile['columns'] = {}
+            for col in data.columns:
+                col_info = {
+                    'dtype': str(data[col].dtype),
+                    'non_null_count': data[col].notna().sum(),
+                    'null_count': data[col].isna().sum(),
+                    'null_percentage': (data[col].isna().sum() / len(data) * 100)
+                }
+                
+                if pd.api.types.is_numeric_dtype(data[col]):
+                    col_info['min'] = float(data[col].min())
+                    col_info['max'] = float(data[col].max())
+                    col_info['mean'] = float(data[col].mean())
+                    col_info['median'] = float(data[col].median())
+                    col_info['std'] = float(data[col].std())
+                    col_info['skewness'] = float(data[col].skew())
+                    col_info['kurtosis'] = float(data[col].kurtosis())
+                
+                if pd.api.types.is_object_dtype(data[col]) or pd.api.types.is_categorical_dtype(data[col]):
+                    col_info['unique_count'] = data[col].nunique()
+                    col_info['top_values'] = data[col].value_counts().head(5).to_dict()
+                
+                profile['columns'][col] = col_info
+            
+            st.session_state['data_profile'] = profile
+            st.success("✅ Profile generated!")
+            st.rerun()
+    
+    if st.session_state.get('data_profile'):
+        profile = st.session_state['data_profile']
+        
+        st.markdown("### 📋 Overview")
+        
+        overview_col1, overview_col2, overview_col3 = st.columns(3)
+        with overview_col1:
+            st.metric("Total Rows", f"{profile['shape']['rows']:,}")
+        with overview_col2:
+            st.metric("Total Columns", profile['shape']['columns'])
+        with overview_col3:
+            st.metric("Memory Usage", profile['memory_usage'])
+        
+        st.markdown("---")
+        st.markdown("### 📊 Column Statistics")
+        
+        # Select column to view details
+        selected_col = st.selectbox("Select Column", data.columns.tolist(), key="profile_column")
+        
+        if selected_col:
+            col_info = profile['columns'].get(selected_col, {})
+            
+            detail_col1, detail_col2 = st.columns(2)
+            
+            with detail_col1:
+                st.markdown("#### Basic Info")
+                st.json({
+                    'Data Type': col_info.get('dtype'),
+                    'Non-Null Count': col_info.get('non_null_count'),
+                    'Null Count': col_info.get('null_count'),
+                    'Null Percentage': f"{col_info.get('null_percentage', 0):.2f}%"
+                })
+            
+            with detail_col2:
+                if pd.api.types.is_numeric_dtype(data[selected_col]):
+                    st.markdown("#### Statistical Measures")
+                    stat_col1, stat_col2 = st.columns(2)
+                    with stat_col1:
+                        st.metric("Mean", f"{col_info.get('mean', 0):.2f}")
+                        st.metric("Median", f"{col_info.get('median', 0):.2f}")
+                        st.metric("Std Dev", f"{col_info.get('std', 0):.2f}")
+                    with stat_col2:
+                        st.metric("Min", f"{col_info.get('min', 0):.2f}")
+                        st.metric("Max", f"{col_info.get('max', 0):.2f}")
+                        st.metric("Skewness", f"{col_info.get('skewness', 0):.2f}")
+                else:
+                    st.markdown("#### Categorical Info")
+                    st.metric("Unique Values", col_info.get('unique_count', 0))
+                    if col_info.get('top_values'):
+                        st.markdown("**Top Values:**")
+                        for val, count in list(col_info.get('top_values', {}).items())[:5]:
+                            st.write(f"- {val}: {count}")
+            
+            # Distribution plot for numeric columns
+            if pd.api.types.is_numeric_dtype(data[selected_col]):
+                st.markdown("#### Distribution")
+                fig = px.histogram(data, x=selected_col, title=f'Distribution of {selected_col}')
+                st.plotly_chart(fig, use_container_width=True)
+        
+        # Correlation matrix for numeric columns
+        st.markdown("---")
+        st.markdown("### 🔗 Correlation Matrix")
+        numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+        if len(numeric_cols) > 1:
+            corr_matrix = data[numeric_cols].corr()
+            fig = px.imshow(corr_matrix, text_auto=True, aspect="auto", title='Correlation Matrix')
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Need at least 2 numeric columns for correlation analysis")
+
+# -----------------------
 # Main App
 # -----------------------
 
@@ -1745,26 +2740,36 @@ def main():
     render_sidebar()
     
     # Get current page from session state
-    page = st.session_state.get('current_page', "🏠 Home")
+    page = st.session_state.get('current_page', "Overview")
     
-    if page == "🏠 Home":
+    if page == "Overview":
         render_home()
-    elif page == "💬 AI Chat":
+    elif page == "AI Assistant":
         render_chat()
-    elif page == "✨ Smart Insights":
+    elif page == "Business Insights":
         render_smart_insights()
-    elif page == "📊 Data Export":
+    elif page == "Data Export":
         render_data_export()
-    elif page == "🔍 Comparison Tool":
+    elif page == "Data Comparison":
         render_comparison_tool()
-    elif page == "🔮 Forecasting":
+    elif page == "Forecasting":
         render_forecasting()
-    elif page == "📋 Custom Reports":
+    elif page == "Custom Reports":
         render_custom_reports()
-    elif page == "✅ Data Quality":
+    elif page == "Data Quality":
         render_data_quality()
-    elif page == "🎯 Benchmarking":
+    elif page == "Performance Benchmarking":
         render_benchmarking()
+    elif page == "Alert Management":
+        render_alert_system()
+    elif page == "Scenario Planning":
+        render_whatif_builder()
+    elif page == "KPI Dashboard":
+        render_performance_dashboard()
+    elif page == "A/B Testing":
+        render_ab_testing()
+    elif page == "Data Profiling":
+        render_data_profiling()
     # Removed routes: Analytics, Dashboard, Chat History, Settings (copied features)
 
 if __name__ == "__main__":
