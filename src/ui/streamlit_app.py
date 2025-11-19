@@ -12,6 +12,8 @@ from pathlib import Path
 import sys
 import os
 from datetime import datetime
+import json
+from io import BytesIO
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -131,14 +133,17 @@ def render_sidebar():
         if 'current_page' not in st.session_state:
             st.session_state.current_page = "🏠 Home"
         
-        # Navigation pages
+        # Navigation pages - Enhanced with modern analytics features
         pages = {
             "🏠 Home": "🏠 Home",
             "💬 AI Chat": "💬 AI Chat",
-            "📈 Analytics": "📈 Analytics",
-            "📊 Dashboard": "📊 Dashboard",
-            "🕘 Chat History": "🕘 Chat History",
-            "⚙️ Settings": "⚙️ Settings"
+            "✨ Smart Insights": "✨ Smart Insights",
+            "📊 Data Export": "📊 Data Export",
+            "🔍 Comparison Tool": "🔍 Comparison Tool",
+            "🔮 Forecasting": "🔮 Forecasting",
+            "📋 Custom Reports": "📋 Custom Reports",
+            "✅ Data Quality": "✅ Data Quality",
+            "🎯 Benchmarking": "🎯 Benchmarking"
         }
         
         # Create navigation buttons
@@ -924,13 +929,33 @@ def render_chat():
             st.rerun()
 
 # -----------------------
-# Analytics Page
+# Removed: Analytics Page (copied feature)
 # -----------------------
 
-def render_analytics():
-    """Render interactive analytics page with modern visualizations and real-time updates."""
-    st.markdown("## 📈 Interactive Analytics Dashboard")
-    st.caption("Advanced analytics with real-time filtering and interactive visualizations")
+# -----------------------
+# Removed: Dashboard Page (copied feature)
+# -----------------------
+
+# -----------------------
+# Removed: Chat History Page (copied feature)
+# -----------------------
+
+# -----------------------
+# Removed: Settings Page (copied feature)
+# -----------------------
+
+# All copied features (Analytics, Dashboard, Chat History, Settings) have been removed
+# Core features: Home, AI Chat
+# New innovative feature: Smart Insights (auto-generates actionable business insights)
+
+# -----------------------
+# Smart Insights Page (Innovative Feature)
+# -----------------------
+
+def render_smart_insights():
+    """Render Smart Insights page that auto-generates actionable business insights."""
+    st.markdown("## ✨ Smart Insights Generator")
+    st.caption("AI-powered automatic insight generation from your sales data")
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -938,670 +963,109 @@ def render_analytics():
     
     data = st.session_state.data.copy()
     
-    # Global Filters Section (applies to all tabs)
-    st.markdown("### 🎛️ Global Filters")
-    filter_col1, filter_col2, filter_col3 = st.columns(3)
+    # Initialize agent if needed
+    if not st.session_state.agent:
+        agent, _ = initialize_agent()
+        if agent:
+            st.session_state.agent = agent
     
-    with filter_col1:
-        if 'date' in data.columns:
-            # Ensure date column is datetime
-            if not pd.api.types.is_datetime64_any_dtype(data['date']):
-                data['date'] = pd.to_datetime(data['date'])
-            
-            min_date = data['date'].min().date()
-            max_date = data['date'].max().date()
-            
-            # Calculate default range - always use this as the default value
-            # The widget will manage its own session state via the key
-            # Don't read from or write to session state before the widget
-            default_range = (min_date, max_date)
-            
-            try:
-                # Create widget with default value
-                # The widget manages its own session state via the key parameter
-                # This avoids the warning about setting session state before widget creation
-                date_range = st.date_input(
-                    "📅 Date Range",
-                    value=default_range,
-                    min_value=min_date,
-                    max_value=max_date,
-                    key="analytics_date_range"
-                )
-                
-                # Use the widget's returned value (widget manages its own session state)
-                if isinstance(date_range, tuple) and len(date_range) == 2:
-                    start_date, end_date = date_range
-                    # Clamp to valid range
-                    if start_date < min_date:
-                        start_date = min_date
-                    if end_date > max_date:
-                        end_date = max_date
-                    if start_date > end_date:
-                        start_date = min_date
-                        end_date = max_date
+    if not st.session_state.agent:
+        st.error("❌ Agent not initialized. Please check settings.")
+        return
+    
+    st.markdown("### 🎯 Generate Insights")
+    st.markdown("Click the button below to automatically generate comprehensive business insights from your data.")
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("🚀 Generate Smart Insights", type="primary", use_container_width=True):
+            with st.spinner("🤖 Analyzing data and generating insights..."):
+                try:
+                    # Use agent to generate comprehensive insights
+                    insights_query = """
+                    Analyze the sales data and provide:
+                    1. Top 3 key business insights
+                    2. Critical opportunities for growth
+                    3. Potential risks or concerns
+                    4. Actionable recommendations
                     
-                    # Filter data
-                    data = data[(data['date'].dt.date >= start_date) & (data['date'].dt.date <= end_date)]
+                    Be specific with numbers and percentages.
+                    """
                     
-                    # Show info if dates were clamped
-                    if start_date != date_range[0] or end_date != date_range[1]:
-                        st.caption(f"ℹ️ Date range adjusted to available data: {start_date} to {end_date}")
-                elif isinstance(date_range, (tuple, list)) and len(date_range) == 1:
-                    # Single date selected - use as both start and end
-                    single_date = date_range[0] if isinstance(date_range, tuple) else date_range[0]
-                    if single_date < min_date:
-                        single_date = min_date
-                    elif single_date > max_date:
-                        single_date = max_date
-                    data = data[data['date'].dt.date == single_date]
-            except Exception as e:
-                st.caption(f"⚠️ Date range error: {str(e)}. Using available data: {min_date} to {max_date}")
-                data = data[(data['date'].dt.date >= min_date) & (data['date'].dt.date <= max_date)]
-    
-    with filter_col2:
-        if 'category' in data.columns:
-            categories = ['All'] + sorted(data['category'].unique().tolist())
-            selected_category = st.selectbox("📦 Category", categories, key="analytics_category")
-            if selected_category != 'All':
-                data = data[data['category'] == selected_category]
-    
-    with filter_col3:
-        if 'store_region' in data.columns:
-            regions = ['All'] + sorted(data['store_region'].unique().tolist())
-            selected_region = st.selectbox("🗺️ Region", regions, key="analytics_region")
-            if selected_region != 'All':
-                data = data[data['store_region'] == selected_region]
+                    result = st.session_state.agent.run(insights_query, generate_memo=False)
+                    insight_text = result.get('response', 'No insights generated.')
+                    
+                    st.session_state['smart_insights'] = insight_text
+                    st.session_state['insights_generated'] = True
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error generating insights: {e}")
     
     st.markdown("---")
     
-    # Tabs for different analytics
-    tab1, tab2, tab3 = st.tabs(["📈 Trend Analysis", "🔍 Anomaly Detection", "🎯 Scenario Simulation"])
-    
-    # Trend Analysis Tab
-    with tab1:
-        st.markdown("### 📈 Advanced Trend Analysis")
+    # Display generated insights
+    if st.session_state.get('insights_generated') and st.session_state.get('smart_insights'):
+        st.markdown("### 📊 Generated Insights")
         
-        # Configuration
-        config_col1, config_col2, config_col3, config_col4 = st.columns(4)
-        with config_col1:
-            metric = st.selectbox("📊 Metric", ["revenue", "units_sold", "price"], key="trend_metric")
-        with config_col2:
-            period = st.selectbox("📅 Period", ["daily", "weekly", "monthly"], key="trend_period", index=2)
-        with config_col3:
-            show_seasonality = st.checkbox("🌊 Show Seasonality", value=False, key="trend_seasonality")
-        with config_col4:
-            show_forecast = st.checkbox("🔮 Show Forecast", value=False, key="trend_forecast")
+        insights = st.session_state['smart_insights']
         
-        # Auto-analyze when filters change
-        try:
-            with st.spinner("Analyzing trends..."):
-                result = extract_trends(data, date_col='date', value_col=metric, period='daily')  # Use daily for trend
-                # Also calculate growth rate (matching reference - uses monthly)
-                growth_result = calculate_growth_rate(data, date_col='date', value_col=metric, period='monthly', method='compound')
-                result['growth_rate'] = growth_result.get('growth_rate', 0)
-                st.session_state.analysis_results['trend'] = result
-        except Exception as e:
-            st.error(f"Error: {e}")
-            result = None
+        # Display in a nice formatted way
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 2rem; border-radius: 15px; color: white; margin-bottom: 2rem;">
+            <h3 style="color: white; margin-bottom: 1rem;">💡 AI-Generated Business Insights</h3>
+        </div>
+        """, unsafe_allow_html=True)
         
-        if result and 'trend' in st.session_state.analysis_results:
-            result = st.session_state.analysis_results['trend']
-            
-            # Enhanced Metrics Display (matching reference format)
-            st.markdown("#### 📊 Trend Metrics")
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                trend = result.get('trend_direction', result.get('trend', 'unknown'))
-                icon = "📈" if trend == 'increasing' else "📉" if trend == 'decreasing' else "➡️"
-                st.markdown(f"**Trend Direction**\n\n{icon} {trend.title()}")
-            
-            with col2:
-                growth_rate = result.get('growth_rate', 0)
-                st.markdown(f"**Growth Rate**\n\n{growth_rate:.1f}%")
-            
-            with col3:
-                r2 = result.get('r_squared', 0)
-                if r2 is None or pd.isna(r2):
-                    r2 = 0
-                st.markdown(f"**R² Score**\n\n{r2:.3f}")
-            
-            with col4:
-                is_sig = result.get('is_significant', False)
-                sig_text = "Yes ✓" if is_sig else "No ✗"
-                st.markdown(f"**Significant**\n\n{sig_text}")
-            
-            st.markdown("---")
-            
-            # Advanced Interactive Visualization
-            if 'date' in data.columns:
-                data_copy = data.copy()
-                data_copy['date'] = pd.to_datetime(data_copy['date'])
-                
-                # Aggregate by period
-                if period == 'daily':
-                    agg = data_copy.groupby('date')[metric].sum().reset_index()
-                elif period == 'weekly':
-                    data_copy['period'] = data_copy['date'] - pd.to_timedelta(data_copy['date'].dt.dayofweek, unit='d')
-                    agg = data_copy.groupby('period')[metric].sum().reset_index().rename(columns={'period': 'date'})
-                else:
-                    data_copy['period'] = data_copy['date'].dt.to_period('M').dt.to_timestamp()
-                    agg = data_copy.groupby('period')[metric].sum().reset_index().rename(columns={'period': 'date'})
-                
-                # Create interactive figure
-                fig = go.Figure()
-                
-                # Actual data with enhanced styling
-                fig.add_trace(go.Scatter(
-                    x=agg['date'],
-                    y=agg[metric],
-                    mode='lines+markers',
-                    name='Actual',
-                    line=dict(color='#667eea', width=3),
-                    marker=dict(size=6, color='#667eea'),
-                    fill='tozeroy',
-                    fillcolor='rgba(102, 126, 234, 0.1)',
-                    hovertemplate='<b>%{x|%Y-%m-%d}</b><br>Value: %{y:,.0f}<extra></extra>'
-                ))
-                
-                # Trend line
-                slope_val = result.get('slope', 0)
-                intercept_val = result.get('intercept', 0)
-                xnum = np.arange(len(agg))
-                trend_line = intercept_val + slope_val * xnum
-                
-                fig.add_trace(go.Scatter(
-                    x=agg['date'],
-                    y=trend_line,
-                    mode='lines',
-                    name='Linear Trend',
-                    line=dict(color='#f5576c', width=3, dash='dash'),
-                    hovertemplate='<b>Trend</b><br>%{x|%Y-%m-%d}<br>Value: %{y:,.0f}<extra></extra>'
-                ))
-                
-                # Moving average
-                if len(agg) > 7:
-                    window = min(7, len(agg) // 4)
-                    agg['ma'] = agg[metric].rolling(window=window, center=True).mean()
-                    fig.add_trace(go.Scatter(
-                        x=agg['date'],
-                        y=agg['ma'],
-                        mode='lines',
-                        name=f'{window}-Period MA',
-                        line=dict(color='#48bb78', width=2, dash='dot'),
-                        hovertemplate='<b>Moving Avg</b><br>%{x|%Y-%m-%d}<br>Value: %{y:,.0f}<extra></extra>'
-                    ))
-                
-                # Forecast (if enabled)
-                if show_forecast and len(agg) > 5:
-                    future_periods = 3
-                    last_date = agg['date'].iloc[-1]
-                    if period == 'daily':
-                        future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=future_periods, freq='D')
-                    elif period == 'weekly':
-                        future_dates = pd.date_range(start=last_date + pd.Timedelta(weeks=1), periods=future_periods, freq='W')
-                    else:
-                        future_dates = pd.date_range(start=last_date + pd.DateOffset(months=1), periods=future_periods, freq='MS')
-                    
-                    future_xnum = np.arange(len(agg), len(agg) + future_periods)
-                    future_trend = intercept_val + slope_val * future_xnum
-                    
-                    fig.add_trace(go.Scatter(
-                        x=future_dates,
-                        y=future_trend,
-                        mode='lines+markers',
-                        name='Forecast',
-                        line=dict(color='#fbbf24', width=2, dash='dot'),
-                        marker=dict(size=8, symbol='diamond'),
-                        hovertemplate='<b>Forecast</b><br>%{x|%Y-%m-%d}<br>Value: %{y:,.0f}<extra></extra>'
-                    ))
-                
-                # Confidence interval
-                if len(agg) > 10:
-                    std_dev = agg[metric].std()
-                    upper_bound = trend_line + 1.96 * std_dev
-                    lower_bound = trend_line - 1.96 * std_dev
-                    
-                    fig.add_trace(go.Scatter(
-                        x=agg['date'],
-                        y=upper_bound,
-                        mode='lines',
-                        name='Upper Bound',
-                        line=dict(width=0),
-                        showlegend=False,
-                        hoverinfo='skip'
-                    ))
-                    fig.add_trace(go.Scatter(
-                        x=agg['date'],
-                        y=lower_bound,
-                        mode='lines',
-                        name='95% CI',
-                        fill='tonexty',
-                        fillcolor='rgba(245, 87, 108, 0.1)',
-                        line=dict(width=0),
-                        hovertemplate='<b>95% CI</b><extra></extra>'
-                    ))
-                
-                fig.update_layout(
-                    title=f"{metric.replace('_',' ').title()} Trend Analysis ({period.title()})",
-                    xaxis_title="Date",
-                    yaxis_title=metric.replace('_',' ').title(),
-                    height=st.session_state.chart_height,
-                    hovermode='x unified',
-                    template='plotly_white',
-                    legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
-                )
-                
-                config = {'displayModeBar': True, 'displaylogo': False}
-                st.plotly_chart(fig, use_container_width=True, config=config)
-                
-                # Seasonality visualization
-                if show_seasonality and len(agg) > 30:
-                    st.markdown("---")
-                    st.markdown("#### 🌊 Seasonal Pattern Analysis")
-                    agg['month'] = pd.to_datetime(agg['date']).dt.month
-                    seasonal_pattern = agg.groupby('month')[metric].mean()
-                    
-                    seasonal_fig = go.Figure()
-                    seasonal_fig.add_trace(go.Bar(
-                        x=seasonal_pattern.index,
-                        y=seasonal_pattern.values,
-                        marker=dict(
-                            color=seasonal_pattern.values,
-                            colorscale='Viridis',
-                            showscale=True
-                        ),
-                        name='Avg by Month',
-                        hovertemplate='<b>Month %{x}</b><br>Avg: %{y:,.0f}<extra></extra>'
-                    ))
-                    seasonal_fig.update_layout(
-                        title='Seasonal Pattern (Average by Month)',
-                        xaxis_title='Month',
-                        yaxis_title=f'Average {metric.replace("_", " ").title()}',
-                        height=350,
-                        template='plotly_white',
-                        showlegend=False
-                    )
-                    st.plotly_chart(seasonal_fig, use_container_width=True)
-                
-                # Insights section
-                st.markdown("---")
-                st.markdown("#### 💡 Insights & Recommendations")
-                insight_col1, insight_col2 = st.columns(2)
-                
-                with insight_col1:
-                    st.markdown("**Trend Analysis:**")
-                    # Extract variables from result
-                    trend = result.get('trend_direction', result.get('trend', 'unknown'))
-                    slope_val = result.get('slope', 0)
-                    strength = result.get('trend_strength', 'unknown')
-                    
-                    if trend == 'increasing':
-                        st.success(f"✅ **{metric.replace('_', ' ').title()}** is showing an **increasing trend** with **{strength}** strength.")
-                        if slope_val > 0:
-                            st.info(f"📊 The trend is growing at a rate of **{slope_val:.4f}** per period.")
-                    elif trend == 'decreasing':
-                        st.warning(f"⚠️ **{metric.replace('_', ' ').title()}** is showing a **decreasing trend** with **{strength}** strength.")
-                        st.info(f"📊 The trend is declining at a rate of **{abs(slope_val):.4f}** per period.")
-                    else:
-                        st.info(f"ℹ️ **{metric.replace('_', ' ').title()}** is showing a **stable trend**.")
-                
-                with insight_col2:
-                    st.markdown("**Model Quality:**")
-                    r2_value = result.get('r_squared', 0)
-                    # Handle None, NaN, or invalid values
-                    try:
-                        if r2_value is None or (isinstance(r2_value, float) and pd.isna(r2_value)):
-                            r2_value = 0.0
-                        r2_value = float(r2_value)
-                        r2_str = f"{r2_value:.3f}"
-                    except (ValueError, TypeError):
-                        r2_value = 0.0
-                        r2_str = "0.000"
-                    
-                    if r2_value > 0.7:
-                        st.success(f"✅ **Strong correlation** (R² = {r2_str}) - Trend model is highly reliable.")
-                    elif r2_value > 0.3:
-                        st.info(f"ℹ️ **Moderate correlation** (R² = {r2_str}) - Trend model has moderate reliability.")
-                    else:
-                        st.warning(f"⚠️ **Weak correlation** (R² = {r2_str}) - Trend may not be statistically significant.")
-    
-    # Anomaly Detection Tab
-    with tab2:
-        st.markdown("### 🔍 Advanced Anomaly Detection")
+        st.markdown(insights)
         
-        # Configuration
-        config_col1, config_col2 = st.columns(2)
-        with config_col1:
-            metric = st.selectbox("📊 Metric", ["revenue", "units_sold", "price"], key="anomaly_metric")
-        with config_col2:
-            include_multivariate = st.checkbox("🔬 Include Multivariate Detection", value=True, key="anomaly_multivariate")
-        
-        # Auto-detect when filters change (using get_anomaly_summary matching reference)
-        try:
-            with st.spinner("Detecting anomalies..."):
-                result = get_anomaly_summary(data, metric=metric, include_multivariate=include_multivariate)
-                st.session_state.analysis_results['anomaly'] = result
-        except Exception as e:
-            st.error(f"Error: {e}")
-            result = None
-        
-        if result and 'anomaly' in st.session_state.analysis_results:
-            result = st.session_state.analysis_results['anomaly']
-            
-            # Check if it's the new format (from get_anomaly_summary)
-            if 'overall_assessment' in result:
-                # New comprehensive format matching reference
-                assess = result['overall_assessment']
-                
-                # Data quality indicator
-                if assess['data_quality'] == 'good':
-                    st.success(f"✓ Data Quality: {assess['data_quality'].upper()} | Anomaly Rate: {assess['anomaly_rate']:.2f}%")
-                else:
-                    st.warning(f"⚠️ Data Quality: {assess['data_quality'].upper()} | Anomaly Rate: {assess['anomaly_rate']:.2f}%")
-                
-                # Total Anomalies Metrics (matching reference layout)
-                st.markdown("#### 📊 Anomaly Statistics")
-                col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    st.metric("Total Anomalies", assess['total_anomalies'])
-                with col2:
-                    st.metric("Statistical Outliers", result.get('statistical_outliers', {}).get('count', 0))
-                with col3:
-                    st.metric("Time Series Anomalies", result.get('time_series_anomalies', {}).get('count', 0))
-                with col4:
-                    st.metric("Multivariate Anomalies", result.get('multivariate_anomalies', {}).get('count', 0))
-                
-                # Anomaly Breakdown (matching reference)
-                st.markdown("### 📊 Anomaly Breakdown")
-                c1, c2 = st.columns(2)
-                with c1:
-                    st.markdown("**Statistical Outliers:**")
-                    stat_outliers = result.get('statistical_outliers', {})
-                    st.write(f"- High outliers: {stat_outliers.get('high_outliers', 0)}")
-                    st.write(f"- Low outliers: {stat_outliers.get('low_outliers', 0)}")
-                with c2:
-                    st.markdown("**Time Series Anomalies:**")
-                    ts_anomalies = result.get('time_series_anomalies', {})
-                    st.write(f"- Spikes: {ts_anomalies.get('spikes', 0)}")
-                    st.write(f"- Drops: {ts_anomalies.get('drops', 0)}")
-                
-                # Use statistical outliers for visualization (most relevant)
-                anomalies_list = result['statistical_outliers'].get('examples', [])
-            else:
-                # Old format (backward compatibility)
-                anomalies_list = result.get('anomalies', [])
-                if not isinstance(anomalies_list, list):
-                    anomalies_list = []
-                
-                # Enhanced Metrics
-                st.markdown("#### 📊 Anomaly Statistics")
-                col1, col2, col3, col4, col5 = st.columns(5)
-                
-                with col1:
-                    anomaly_count = result.get('count', len(anomalies_list))
-                    total_points = len(data)
-                    anomaly_rate = (anomaly_count / total_points * 100) if total_points > 0 else 0
-                    st.metric("Total Anomalies", f"{anomaly_count:,}", f"{anomaly_rate:.1f}%")
-                
-                with col2:
-                    if anomalies_list and 'date' in data.columns:
-                        mean_val = data[metric].mean()
-                        high_anomalies = sum(1 for a in anomalies_list if a.get('value', 0) > mean_val)
-                        st.metric("High Anomalies", high_anomalies, "Above mean")
-                    else:
-                        st.metric("High Anomalies", 0)
-                
-                with col3:
-                    if anomalies_list and 'date' in data.columns:
-                        mean_val = data[metric].mean()
-                        low_anomalies = sum(1 for a in anomalies_list if a.get('value', 0) < mean_val)
-                        st.metric("Low Anomalies", low_anomalies, "Below mean")
-                    else:
-                        st.metric("Low Anomalies", 0)
-                
-                with col4:
-                    method_used = result.get('method', 'unknown')
-                    st.metric("Method", method_used.upper())
-                
-                with col5:
-                    if anomalies_list:
-                        avg_anomaly_value = np.mean([a.get('value', 0) for a in anomalies_list])
-                        st.metric("Avg Anomaly", f"{avg_anomaly_value:,.0f}")
-                    else:
-                        st.metric("Avg Anomaly", "N/A")
-            
-            st.markdown("---")
-            
-            # Visualization
-            if 'date' in data.columns and 'anomalies' in result:
-                anomalies_list = result.get('anomalies', [])
-                # Ensure anomalies_list is actually a list
-                if not isinstance(anomalies_list, list):
-                    anomalies_list = []
-                
-                if anomalies_list and len(anomalies_list) > 0:
-                    try:
-                        # Convert anomalies list to DataFrame for easier handling
-                        anomalies_df = pd.DataFrame(anomalies_list)
-                        
-                        # Verify DataFrame was created successfully
-                        if isinstance(anomalies_df, pd.DataFrame) and len(anomalies_df) > 0:
-                            fig = go.Figure()
-                            # Plot all data points
-                            fig.add_trace(go.Scatter(
-                                x=data['date'],
-                                y=data[metric],
-                                mode='markers',
-                                name='Normal',
-                                marker=dict(color='steelblue', size=4, opacity=0.6)
-                            ))
-                            # Plot anomaly points
-                            if 'date' in anomalies_df.columns and 'value' in anomalies_df.columns:
-                                fig.add_trace(go.Scatter(
-                                    x=anomalies_df['date'],
-                                    y=anomalies_df['value'],
-                                    mode='markers',
-                                    name='Anomaly',
-                                    marker=dict(color='red', size=10, symbol='x', line=dict(width=2))
-                                ))
-                            fig.update_layout(
-                                title=f"Anomaly Detection: {metric.replace('_',' ').title()}",
-                                xaxis_title="Date",
-                                yaxis_title=metric.replace('_',' ').title(),
-                                height=st.session_state.chart_height,
-                                hovermode='closest'
-                            )
-                            st.plotly_chart(fig, use_container_width=True)
-                        else:
-                            st.warning("Could not create visualization from anomaly data.")
-                    except Exception as e:
-                        st.error(f"Error creating visualization: {e}")
-                        st.json(anomalies_list[:5])  # Show first 5 anomalies for debugging
-                else:
-                    st.info("No anomalies detected with the current settings.")
-    
-    # Scenario Simulation Tab
-    with tab3:
-        st.markdown("### 🎯 Scenario Simulation")
-        
-        scenario_type = st.radio(
-            "Select Scenario Type",
-            ["Promotion", "Price Change"],
-            horizontal=True,
-            key="scenario_type"
-        )
-        
+        # Quick action buttons
         st.markdown("---")
+        st.markdown("### 🎯 Quick Actions")
+        action_col1, action_col2, action_col3 = st.columns(3)
         
-        if scenario_type == "Promotion":
-            st.markdown("#### 🎁 Promotion Simulation")
-            
-            sim_col1, sim_col2, sim_col3 = st.columns(3)
-            with sim_col1:
-                discount = st.slider("💸 Discount (%)", 5, 50, 20, 1, key="promo_discount")
-            with sim_col2:
-                duration = st.slider("⏱️ Duration (days)", 1, 30, 7, 1, key="promo_duration")
-            with sim_col3:
-                expected_lift = st.slider("📈 Expected Lift (%)", 10, 200, 50, 5, key="promo_lift")
-            
-            # Auto-simulate
-            try:
-                with st.spinner("Running simulation..."):
-                    result = simulate_promotion(data, discount_pct=discount / 100.0, duration_days=duration)
-                    st.session_state.analysis_results['scenario'] = result
-            except Exception as e:
-                st.error(f"Error: {e}")
-                result = None
+        with action_col1:
+            if st.button("📋 Copy Insights", use_container_width=True, key="copy_insights"):
+                st.code(insights, language=None)
+                st.success("Insights copied! (Use Ctrl+C)")
         
-        else:  # Price Change
-            st.markdown("#### 💰 Price Change Simulation")
-            
-            sim_col1, sim_col2 = st.columns(2)
-            with sim_col1:
-                price_change = st.slider("💵 Price Change (%)", -30, 30, 10, 1, key="price_change")
-            with sim_col2:
-                use_custom_elasticity = st.checkbox("Use custom elasticity", value=False, key="use_custom_elasticity")
-                if use_custom_elasticity:
-                    elasticity = st.slider("📊 Price Elasticity", -3.0, 3.0, -1.5, 0.1, key="price_elasticity")
-                else:
-                    elasticity = None  # Use default -1.5 matching reference
-            
-            # Auto-simulate
-            try:
-                with st.spinner("Running simulation..."):
-                    # Pass price_change as percentage (matching reference implementation)
-                    # If elasticity is None, function will use default -1.5
-                    result = simulate_price_change(
-                        data, 
-                        price_change_pct=price_change,  # Pass as percentage (10.0 for 10%)
-                        price_elasticity=elasticity if use_custom_elasticity else None
-                    )
-                    st.session_state.analysis_results['scenario'] = result
-            except Exception as e:
-                st.error(f"Error: {e}")
-                result = None
+        with action_col2:
+            if st.button("🔄 Regenerate", use_container_width=True, key="regen_insights"):
+                st.session_state['insights_generated'] = False
+                st.session_state['smart_insights'] = None
+                st.rerun()
         
-        if result and 'scenario' in st.session_state.analysis_results:
-            result = st.session_state.analysis_results['scenario']
+        with action_col3:
+            if st.button("💬 Ask Follow-up", use_container_width=True, key="followup_insights"):
+                st.session_state.current_page = "💬 AI Chat"
+                st.rerun()
+    else:
+        st.info("👆 Click 'Generate Smart Insights' to get started!")
+        
+        # Show preview of what will be analyzed
+        if st.session_state.data_loaded and st.session_state.metadata:
+            st.markdown("### 📈 Data Overview")
+            md = st.session_state.metadata
+            preview_col1, preview_col2, preview_col3, preview_col4 = st.columns(4)
             
-            st.markdown("---")
-            st.markdown("#### 📊 Simulation Results")
-            
-            # Enhanced Metrics Display
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                st.markdown("""
-                <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #667eea;">
-                    <strong style="color: #667eea; font-size: 1.1rem;">📈 Baseline</strong>
-                </div>
-                """, unsafe_allow_html=True)
-                baseline = result.get('baseline', {})
-                baseline_rev = baseline.get('revenue', 0)
-                baseline_units = baseline.get('units_sold', baseline.get('units', 0))
-                st.metric("Revenue", f"${baseline_rev:,.0f}")
-                st.metric("Units", f"{baseline_units:,.0f}")
-            
-            with col2:
-                st.markdown("""
-                <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #48bb78;">
-                    <strong style="color: #48bb78; font-size: 1.1rem;">🚀 Projected</strong>
-                </div>
-                """, unsafe_allow_html=True)
-                simulated = result.get('simulated', result.get('projected', {}))
-                projected_rev = simulated.get('revenue', 0)
-                projected_units = simulated.get('units_sold', simulated.get('units', 0))
-                st.metric("Revenue", f"${projected_rev:,.0f}")
-                st.metric("Units", f"{projected_units:,.0f}")
-            
-            with col3:
-                st.markdown("""
-                <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #fbbf24;">
-                    <strong style="color: #fbbf24; font-size: 1.1rem;">📊 Impact</strong>
-                </div>
-                """, unsafe_allow_html=True)
-                impact = result.get('impact', {})
-                revenue_change_pct = impact.get('revenue_lift_pct', 0) if 'revenue_lift_pct' in impact else impact.get('revenue_change_pct', 0)
-                units_change_pct = impact.get('units_change_pct', 0) if 'units_change_pct' in impact else 0
-                revenue_delta = f"{revenue_change_pct:+.1f}%"
-                units_delta = f"{units_change_pct:+.1f}%"
-                st.metric("Revenue Change", revenue_delta, delta=revenue_delta)
-                st.metric("Units Change", units_delta, delta=units_delta)
-            
-            with col4:
-                st.markdown("""
-                <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; border-left: 4px solid #f5576c;">
-                    <strong style="color: #f5576c; font-size: 1.1rem;">💵 Difference</strong>
-                </div>
-                """, unsafe_allow_html=True)
-                rev_diff = projected_rev - baseline_rev
-                units_diff = projected_units - baseline_units
-                st.metric("Revenue Δ", f"${rev_diff:+,.0f}")
-                st.metric("Units Δ", f"{units_diff:+,.0f}")
-            
-            # Visualization
-            st.markdown("---")
-            st.markdown("#### 📈 Comparison Visualization")
-            
-            comparison_fig = go.Figure()
-            
-            # Baseline bar
-            comparison_fig.add_trace(go.Bar(
-                name='Baseline',
-                x=['Revenue', 'Units'],
-                y=[baseline_rev / 1000, baseline_units / 1000],  # Scale for visibility
-                marker_color='#667eea',
-                text=[f"${baseline_rev:,.0f}", f"{baseline_units:,.0f}"],
-                textposition='outside',
-                hovertemplate='<b>Baseline</b><br>%{x}: %{text}<extra></extra>'
-            ))
-            
-            # Projected bar
-            comparison_fig.add_trace(go.Bar(
-                name='Projected',
-                x=['Revenue', 'Units'],
-                y=[projected_rev / 1000, projected_units / 1000],
-                marker_color='#48bb78',
-                text=[f"${projected_rev:,.0f}", f"{projected_units:,.0f}"],
-                textposition='outside',
-                hovertemplate='<b>Projected</b><br>%{x}: %{text}<extra></extra>'
-            ))
-            
-            comparison_fig.update_layout(
-                title='Baseline vs Projected Comparison',
-                yaxis_title='Value (scaled)',
-                height=400,
-                template='plotly_white',
-                barmode='group',
-                showlegend=True
-            )
-            
-            config = {'displayModeBar': True, 'displaylogo': False}
-            st.plotly_chart(comparison_fig, use_container_width=True, config=config)
-            
-            # Recommendation
-            st.markdown("---")
-            if 'recommendation' in result:
-                st.markdown("#### 💡 Recommendation")
-                st.info(f"**{result['recommendation']}**")
-            
-            # Additional insights
-            if revenue_change_pct > 0:
-                st.success(f"✅ This scenario shows a **positive impact** with {revenue_change_pct:+.1f}% revenue change.")
-            elif revenue_change_pct < 0:
-                st.warning(f"⚠️ This scenario shows a **negative impact** with {revenue_change_pct:+.1f}% revenue change.")
-            else:
-                st.info(f"ℹ️ This scenario shows **neutral impact** on revenue.")
+            with preview_col1:
+                st.metric("Total Records", f"{md.get('rows', 0):,}")
+            with preview_col2:
+                st.metric("Stores", md.get('stores', 'N/A'))
+            with preview_col3:
+                st.metric("SKUs", md.get('skus', 'N/A'))
+            with preview_col4:
+                if md.get('total_revenue'):
+                    st.metric("Total Revenue", f"${md['total_revenue']:,.0f}")
 
 # -----------------------
-# Dashboard Page
+# Data Export Page
 # -----------------------
 
-def render_dashboard():
-    """Render comprehensive interactive dashboard with modern visualizations."""
-    st.markdown("## 📊 Interactive Executive Dashboard")
-    st.caption("Explore your sales data with interactive filters and advanced visualizations")
+def render_data_export():
+    """Render data export page with multiple format options."""
+    st.markdown("## 📊 Data Export Center")
+    st.caption("Export your data and analysis results in various formats")
     
     if not st.session_state.data_loaded:
         st.warning("⚠️ Please load data from the Home page first.")
@@ -1609,710 +1073,667 @@ def render_dashboard():
     
     data = st.session_state.data.copy()
     
-    # Interactive Filters Section
-    st.markdown("### 🎛️ Filters")
-    filter_col1, filter_col2, filter_col3, filter_col4 = st.columns(4)
+    st.markdown("### 📥 Export Options")
     
-    with filter_col1:
-        # Date range filter
-        if 'date' in data.columns:
-            min_date = data['date'].min().date()
-            max_date = data['date'].max().date()
-            date_range = st.date_input(
-                "📅 Date Range",
-                value=(min_date, max_date),
-                min_value=min_date,
-                max_value=max_date,
-                key="dashboard_date_range"
-            )
-            if isinstance(date_range, tuple) and len(date_range) == 2:
-                data = data[(data['date'].dt.date >= date_range[0]) & (data['date'].dt.date <= date_range[1])]
+    export_tab1, export_tab2, export_tab3 = st.tabs(["📄 Raw Data", "📈 Analysis Results", "📋 Custom Export"])
     
-    with filter_col2:
-        # Category filter
-        if 'category' in data.columns:
-            categories = ['All'] + sorted(data['category'].unique().tolist())
-            selected_category = st.selectbox("📦 Category", categories, key="dashboard_category")
-            if selected_category != 'All':
-                data = data[data['category'] == selected_category]
-    
-    with filter_col3:
-        # Region filter
-        if 'store_region' in data.columns:
-            regions = ['All'] + sorted(data['store_region'].unique().tolist())
-            selected_region = st.selectbox("🗺️ Region", regions, key="dashboard_region")
-            if selected_region != 'All':
-                data = data[data['store_region'] == selected_region]
-    
-    with filter_col4:
-        # Aggregation period
-        agg_period = st.selectbox("📊 Period", ["Daily", "Weekly", "Monthly"], key="dashboard_period", index=2)
-    
-    st.markdown("---")
-    
-    # Key Performance Indicators (KPIs) with trends
-    st.markdown("### 📈 Key Performance Indicators")
-    
-    kpi_col1, kpi_col2, kpi_col3, kpi_col4, kpi_col5 = st.columns(5)
-    
-    with kpi_col1:
-        if 'revenue' in data.columns:
-            total_revenue = data['revenue'].sum()
-            # Calculate trend (compare first half vs second half)
-            if len(data) > 1 and 'date' in data.columns:
-                mid_point = len(data) // 2
-                first_half = data.iloc[:mid_point]['revenue'].sum()
-                second_half = data.iloc[mid_point:]['revenue'].sum()
-                trend = ((second_half - first_half) / first_half * 100) if first_half > 0 else 0
-                delta = f"{trend:+.1f}%"
-            else:
-                delta = None
-            st.metric("Total Revenue", f"${total_revenue:,.0f}", delta=delta)
-    
-    with kpi_col2:
-        if 'units_sold' in data.columns:
-            total_units = data['units_sold'].sum()
-            if len(data) > 1 and 'date' in data.columns:
-                mid_point = len(data) // 2
-                first_half = data.iloc[:mid_point]['units_sold'].sum()
-                second_half = data.iloc[mid_point:]['units_sold'].sum()
-                trend = ((second_half - first_half) / first_half * 100) if first_half > 0 else 0
-                delta = f"{trend:+.1f}%"
-            else:
-                delta = None
-            st.metric("Total Units", f"{total_units:,.0f}", delta=delta)
-    
-    with kpi_col3:
-        if 'price' in data.columns and 'revenue' in data.columns and 'units_sold' in data.columns:
-            # Calculate average price per unit correctly: total revenue / total units
-            # This matches the scenario simulation calculation for consistency
-            total_revenue = data['revenue'].sum()
-            total_units = data['units_sold'].sum()
-            avg_price = total_revenue / total_units if total_units > 0 else data['price'].mean()
-            
-            if len(data) > 1 and 'date' in data.columns:
-                mid_point = len(data) // 2
-                first_half_rev = data.iloc[:mid_point]['revenue'].sum()
-                first_half_units = data.iloc[:mid_point]['units_sold'].sum()
-                second_half_rev = data.iloc[mid_point:]['revenue'].sum()
-                second_half_units = data.iloc[mid_point:]['units_sold'].sum()
-                first_half_price = first_half_rev / first_half_units if first_half_units > 0 else 0
-                second_half_price = second_half_rev / second_half_units if second_half_units > 0 else 0
-                trend = ((second_half_price - first_half_price) / first_half_price * 100) if first_half_price > 0 else 0
-                delta = f"{trend:+.1f}%"
-            else:
-                delta = None
-            st.metric("Avg Price", f"${avg_price:.2f}", delta=delta)
-        elif 'price' in data.columns:
-            # Fallback if units_sold not available
-            avg_price = data['price'].mean()
-            if len(data) > 1 and 'date' in data.columns:
-                mid_point = len(data) // 2
-                first_half = data.iloc[:mid_point]['price'].mean()
-                second_half = data.iloc[mid_point:]['price'].mean()
-                trend = ((second_half - first_half) / first_half * 100) if first_half > 0 else 0
-                delta = f"{trend:+.1f}%"
-            else:
-                delta = None
-            st.metric("Avg Price", f"${avg_price:.2f}", delta=delta)
-    
-    with kpi_col4:
-        if 'promo_flag' in data.columns:
-            promo_rate = data['promo_flag'].mean() * 100
-            promo_count = data['promo_flag'].sum()
-            st.metric("Promo Rate", f"{promo_rate:.1f}%", f"{promo_count:,} transactions")
-    
-    with kpi_col5:
-        if 'date' in data.columns:
-            unique_days = data['date'].nunique()
-            total_transactions = len(data)
-            st.metric("Transactions", f"{total_transactions:,}", f"{unique_days} days")
-    
-    st.markdown("---")
-    
-    # Main Visualizations
-    # Revenue over time with multiple metrics
-    st.markdown("### 📊 Revenue & Sales Trends")
-    
-    if 'date' in data.columns and 'revenue' in data.columns:
-        # Aggregate by selected period
-        data['date'] = pd.to_datetime(data['date'])
-        if agg_period == "Daily":
-            time_agg = data.groupby('date').agg({
-                'revenue': 'sum',
-                'units_sold': 'sum' if 'units_sold' in data.columns else 'count'
-            }).reset_index()
-        elif agg_period == "Weekly":
-            data['week'] = data['date'] - pd.to_timedelta(data['date'].dt.dayofweek, unit='d')
-            time_agg = data.groupby('week').agg({
-                'revenue': 'sum',
-                'units_sold': 'sum' if 'units_sold' in data.columns else 'count'
-            }).reset_index()
-            time_agg.rename(columns={'week': 'date'}, inplace=True)
-        else:  # Monthly
-            data['month'] = data['date'].dt.to_period('M').dt.to_timestamp()
-            time_agg = data.groupby('month').agg({
-                'revenue': 'sum',
-                'units_sold': 'sum' if 'units_sold' in data.columns else 'count'
-            }).reset_index()
-            time_agg.rename(columns={'month': 'date'}, inplace=True)
+    with export_tab1:
+        st.markdown("#### Export Raw Data")
         
-        # Create dual-axis chart
-        fig = go.Figure()
+        # Filters for export
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if 'date' in data.columns:
+                data['date'] = pd.to_datetime(data['date'])
+                min_date = data['date'].min().date()
+                max_date = data['date'].max().date()
+                date_range = st.date_input("Date Range", value=(min_date, max_date), key="export_date")
+                if isinstance(date_range, tuple) and len(date_range) == 2:
+                    data = data[(data['date'].dt.date >= date_range[0]) & (data['date'].dt.date <= date_range[1])]
         
-        # Revenue line
-        fig.add_trace(go.Scatter(
-            x=time_agg['date'],
-            y=time_agg['revenue'],
-            name='Revenue',
-            mode='lines+markers',
-            line=dict(color='#667eea', width=3),
-            marker=dict(size=6),
-            yaxis='y',
-            hovertemplate='<b>%{x|%Y-%m-%d}</b><br>Revenue: $%{y:,.0f}<extra></extra>'
-        ))
-        
-        # Units sold (secondary axis)
-        if 'units_sold' in time_agg.columns:
-            fig.add_trace(go.Bar(
-                x=time_agg['date'],
-                y=time_agg['units_sold'],
-                name='Units Sold',
-                marker_color='rgba(118, 75, 162, 0.6)',
-                yaxis='y2',
-                hovertemplate='<b>%{x|%Y-%m-%d}</b><br>Units: %{y:,.0f}<extra></extra>'
-            ))
-        
-        # Add moving average
-        if len(time_agg) > 7:
-            window = min(7, len(time_agg) // 4)
-            time_agg['revenue_ma'] = time_agg['revenue'].rolling(window=window, center=True).mean()
-            fig.add_trace(go.Scatter(
-                x=time_agg['date'],
-                y=time_agg['revenue_ma'],
-                name=f'{window}-Period Moving Avg',
-                mode='lines',
-                line=dict(color='#f5576c', width=2, dash='dash'),
-                hovertemplate='<b>%{x|%Y-%m-%d}</b><br>MA: $%{y:,.0f}<extra></extra>'
-            ))
-        
-        fig.update_layout(
-            title=f'Revenue & Sales Trend ({agg_period})',
-            xaxis_title='Date',
-            yaxis=dict(title='Revenue ($)', side='left'),
-            yaxis2=dict(title='Units Sold', side='right', overlaying='y'),
-            height=st.session_state.chart_height,
-            hovermode='x unified',
-            template='plotly_white',
-            legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
-        )
-        
-        # Use config parameter for Plotly configuration
-        config = {
-            'displayModeBar': True,
-            'displaylogo': False,
-            'modeBarButtonsToRemove': ['lasso2d', 'select2d']
-        }
-        st.plotly_chart(fig, use_container_width=True, config=config)
-    
-    # Category and Region Analysis
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("### 🏆 Category Performance")
-        if 'category' in data.columns and 'revenue' in data.columns:
-            cat_analysis = data.groupby('category').agg({
-                'revenue': 'sum',
-                'units_sold': 'sum' if 'units_sold' in data.columns else 'count'
-            }).reset_index()
-            # Calculate average price per unit correctly: revenue / units
-            if 'units_sold' in cat_analysis.columns and cat_analysis['units_sold'].sum() > 0:
-                cat_analysis['price'] = cat_analysis['revenue'] / cat_analysis['units_sold']
-            elif 'price' in data.columns:
-                # Fallback to mean if units not available
-                cat_analysis['price'] = data.groupby('category')['price'].mean().values
-            else:
-                cat_analysis['price'] = 0
-            cat_analysis = cat_analysis.sort_values('revenue', ascending=False).head(10)
-            
-            # Interactive bar chart with hover info
-            fig = go.Figure()
-            fig.add_trace(go.Bar(
-                x=cat_analysis['revenue'],
-                y=cat_analysis['category'],
-                orientation='h',
-                marker=dict(
-                    color=cat_analysis['revenue'],
-                    colorscale='Viridis',
-                    showscale=True,
-                    colorbar=dict(title="Revenue")
-                ),
-                text=[f"${x:,.0f}" for x in cat_analysis['revenue']],
-                textposition='outside',
-                hovertemplate='<b>%{y}</b><br>Revenue: $%{x:,.0f}<br>Units: %{customdata:,.0f}<extra></extra>',
-                customdata=cat_analysis['units_sold'] if 'units_sold' in cat_analysis.columns else [0]*len(cat_analysis)
-            ))
-            
-            fig.update_layout(
-                title='Top 10 Categories by Revenue',
-                xaxis_title='Revenue ($)',
-                yaxis_title='Category',
-                height=st.session_state.chart_height,
-                template='plotly_white',
-                showlegend=False
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with col2:
-        st.markdown("### 🗺️ Regional Analysis")
-        if 'store_region' in data.columns and 'revenue' in data.columns:
-            region_analysis = data.groupby('store_region').agg({
-                'revenue': 'sum',
-                'units_sold': 'sum' if 'units_sold' in data.columns else 'count'
-            }).reset_index()
-            
-            # Interactive pie chart with donut style
-            fig = go.Figure(data=[go.Pie(
-                labels=region_analysis['store_region'],
-                values=region_analysis['revenue'],
-                hole=0.4,
-                textinfo='label+percent',
-                textposition='outside',
-                marker=dict(colors=px.colors.qualitative.Set3),
-                hovertemplate='<b>%{label}</b><br>Revenue: $%{value:,.0f}<br>Share: %{percent}<extra></extra>'
-            )])
-            
-            fig.update_layout(
-                title='Revenue Distribution by Region',
-                height=st.session_state.chart_height,
-                template='plotly_white',
-                annotations=[dict(text='Revenue', x=0.5, y=0.5, font_size=16, showarrow=False)]
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-    # Advanced Visualizations
-    st.markdown("---")
-    st.markdown("### 🔍 Advanced Analytics")
-    
-    adv_col1, adv_col2 = st.columns(2)
-    
-    with adv_col1:
-        st.markdown("#### 📊 Revenue Heatmap (by Category & Region)")
-        if 'category' in data.columns and 'store_region' in data.columns and 'revenue' in data.columns:
-            heatmap_data = data.pivot_table(
-                values='revenue',
-                index='category',
-                columns='store_region',
-                aggfunc='sum',
-                fill_value=0
-            )
-            
-            fig = go.Figure(data=go.Heatmap(
-                z=heatmap_data.values,
-                x=heatmap_data.columns,
-                y=heatmap_data.index,
-                colorscale='YlOrRd',
-                text=[[f"${val:,.0f}" for val in row] for row in heatmap_data.values],
-                texttemplate='%{text}',
-                textfont={"size": 10},
-                hovertemplate='<b>%{y} - %{x}</b><br>Revenue: $%{z:,.0f}<extra></extra>'
-            ))
-            
-            fig.update_layout(
-                title='Revenue Heatmap: Category vs Region',
-                height=400,
-                template='plotly_white',
-                xaxis_title='Region',
-                yaxis_title='Category'
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with adv_col2:
-        st.markdown("#### 💰 Price vs Revenue Scatter")
-        if 'price' in data.columns and 'revenue' in data.columns:
-            # Aggregate by category for cleaner visualization
+        with col2:
             if 'category' in data.columns:
-                scatter_data = data.groupby('category').agg({
-                    'revenue': 'sum',
-                    'units_sold': 'sum' if 'units_sold' in data.columns else 'count'
-                }).reset_index()
-                # Calculate average price per unit correctly: revenue / units
-                if 'units_sold' in scatter_data.columns and scatter_data['units_sold'].sum() > 0:
-                    scatter_data['price'] = scatter_data['revenue'] / scatter_data['units_sold']
-                elif 'price' in data.columns:
-                    # Fallback to mean if units not available
-                    scatter_data['price'] = data.groupby('category')['price'].mean().values
-                else:
-                    scatter_data['price'] = 0
-                
-                fig = px.scatter(
-                    scatter_data,
-                    x='price',
-                    y='revenue',
-                    size='units_sold' if 'units_sold' in scatter_data.columns else None,
-                    color='category',
-                    hover_name='category',
-                    hover_data={'price': ':.2f', 'revenue': ':,.0f'},
-                    title='Price vs Revenue by Category',
-                    labels={'price': 'Average Price ($)', 'revenue': 'Total Revenue ($)'}
-                )
-                
-                fig.update_layout(
-                    height=400,
-                    template='plotly_white',
-                    showlegend=True
-                )
-                st.plotly_chart(fig, use_container_width=True)
-    
-    # Performance Comparison
-    st.markdown("---")
-    st.markdown("### 📈 Performance Comparison")
-    
-    comp_col1, comp_col2 = st.columns(2)
-    
-    with comp_col1:
-        st.markdown("#### 🏪 Store Performance")
-        if 'store_id' in data.columns and 'revenue' in data.columns:
-            store_perf = data.groupby('store_id').agg({
-                'revenue': 'sum',
-                'units_sold': 'sum' if 'units_sold' in data.columns else 'count'
-            }).reset_index()
-            store_perf = store_perf.sort_values('revenue', ascending=False).head(15)
-            
-            fig = go.Figure()
-            fig.add_trace(go.Bar(
-                x=store_perf['store_id'].astype(str),
-                y=store_perf['revenue'],
-                name='Revenue',
-                marker_color='#667eea',
-                hovertemplate='<b>Store %{x}</b><br>Revenue: $%{y:,.0f}<extra></extra>'
-            ))
-            
-            fig.update_layout(
-                title='Top 15 Stores by Revenue',
-                xaxis_title='Store ID',
-                yaxis_title='Revenue ($)',
-                height=400,
-                template='plotly_white',
-                showlegend=False
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with comp_col2:
-        st.markdown("#### 📅 Day of Week Analysis")
-        if 'date' in data.columns and 'revenue' in data.columns:
-            data['day_of_week'] = data['date'].dt.day_name()
-            day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            day_perf = data.groupby('day_of_week')['revenue'].sum().reindex(day_order, fill_value=0).reset_index()
-            
-            fig = go.Figure()
-            fig.add_trace(go.Bar(
-                x=day_perf['day_of_week'],
-                y=day_perf['revenue'],
-                marker=dict(
-                    color=day_perf['revenue'],
-                    colorscale='Blues',
-                    showscale=True
-                ),
-                hovertemplate='<b>%{x}</b><br>Revenue: $%{y:,.0f}<extra></extra>'
-            ))
-            
-            fig.update_layout(
-                title='Revenue by Day of Week',
-                xaxis_title='Day',
-                yaxis_title='Revenue ($)',
-                height=400,
-                template='plotly_white',
-                showlegend=False
-            )
-            st.plotly_chart(fig, use_container_width=True)
-    
-    # Summary Statistics Table
-    st.markdown("---")
-    st.markdown("### 📋 Summary Statistics")
-    
-    if len(data) > 0:
-        summary_stats = []
+                categories = ['All'] + sorted(data['category'].unique().tolist())
+                selected_cat = st.selectbox("Category", categories, key="export_category")
+                if selected_cat != 'All':
+                    data = data[data['category'] == selected_cat]
         
-        numeric_cols = ['revenue', 'units_sold', 'price']
-        for col in numeric_cols:
-            if col in data.columns:
-                # For price, calculate average price per unit (revenue/units) for consistency
-                # This matches the scenario simulation and KPI calculations
-                if col == 'price' and 'revenue' in data.columns and 'units_sold' in data.columns:
-                    total_rev = data['revenue'].sum()
-                    total_units = data['units_sold'].sum()
-                    avg_price_per_unit = total_rev / total_units if total_units > 0 else data[col].mean()
-                    mean_val = avg_price_per_unit
-                    # For median, std, min, max, use transaction price (for distribution info)
-                    median_val = data[col].median()
-                    std_val = data[col].std()
-                    min_val = data[col].min()
-                    max_val = data[col].max()
-                else:
-                    mean_val = data[col].mean()
-                    median_val = data[col].median()
-                    std_val = data[col].std()
-                    min_val = data[col].min()
-                    max_val = data[col].max()
-                
-                summary_stats.append({
-                    'Metric': col.replace('_', ' ').title(),
-                    'Total': f"${data[col].sum():,.2f}" if col == 'revenue' else f"{data[col].sum():,.0f}",
-                    'Mean': f"${mean_val:,.2f}" if col in ['revenue', 'price'] else f"{mean_val:,.2f}",
-                    'Median': f"${median_val:,.2f}" if col in ['revenue', 'price'] else f"{median_val:,.2f}",
-                    'Std Dev': f"${std_val:,.2f}" if col in ['revenue', 'price'] else f"{std_val:,.2f}",
-                    'Min': f"${min_val:,.2f}" if col in ['revenue', 'price'] else f"{min_val:,.2f}",
-                    'Max': f"${max_val:,.2f}" if col in ['revenue', 'price'] else f"{max_val:,.2f}"
-                })
+        with col3:
+            columns_to_export = st.multiselect(
+                "Select Columns",
+                options=data.columns.tolist(),
+                default=data.columns.tolist(),
+                key="export_columns"
+            )
+            if columns_to_export:
+                data = data[columns_to_export]
         
-        if summary_stats:
-            summary_df = pd.DataFrame(summary_stats)
-            # Wrap in styled container for better visibility
-            st.markdown("""
-            <div class="summary-card">
-                <h4 style="color: #667eea; margin-bottom: 1rem;">Statistical Overview</h4>
-            </div>
-            """, unsafe_allow_html=True)
-            st.dataframe(summary_df, use_container_width=True, hide_index=True)
-
-# -----------------------
-# Chat History Page
-# -----------------------
-
-def render_chat_history():
-    """Render chat history browser with advanced features."""
-    st.markdown("## 🕘 Chat History Browser")
-    st.caption("View, search, export, and manage your conversation history")
-    
-    # Get all messages
-    ui_messages = st.session_state.get('chat_history', [])
-    agent_messages = []
-    
-    if st.session_state.agent and hasattr(st.session_state.agent, 'memory'):
-        agent_messages = st.session_state.agent.memory.conversation_history
-    
-    # Combine messages
-    all_messages = []
-    for msg in ui_messages:
-        all_messages.append({
-            'role': msg.get('role', 'unknown'),
-            'content': msg.get('content', ''),
-            'timestamp': msg.get('timestamp', datetime.now().isoformat()),
-            'source': 'UI Chat'
-        })
-    
-    for msg in agent_messages:
-        all_messages.append({
-            'role': msg.get('role', 'unknown'),
-            'content': str(msg.get('content', '')),
-            'timestamp': msg.get('timestamp', datetime.now().isoformat()),
-            'source': 'Agent Memory'
-        })
-    
-    all_messages.sort(key=lambda x: x.get('timestamp', ''))
-    
-    # Statistics with styled cards
-    st.markdown("### 📊 Statistics")
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total Messages", len(all_messages))
-    with col2:
-        user_count = sum(1 for m in all_messages if m.get('role') == 'user')
-        st.metric("User Messages", user_count)
-    with col3:
-        assistant_count = sum(1 for m in all_messages if m.get('role') == 'assistant')
-        st.metric("AI Responses", assistant_count)
-    with col4:
-        tool_count = len(st.session_state.agent.memory.tool_calls) if st.session_state.agent and hasattr(st.session_state.agent, 'memory') else 0
-        st.metric("Tool Calls", tool_count)
-    
-    st.markdown("---")
-    
-    # Filters
-    col1, col2, col3 = st.columns([2, 2, 1])
-    with col1:
-        role_filter = st.selectbox("Filter by Role", ["All", "User", "Assistant"], key="history_role_filter")
-    with col2:
-        search_text = st.text_input("Search Messages", key="history_search", placeholder="Search...")
-    with col3:
-        limit = st.number_input("Show Last N", min_value=0, max_value=1000, value=min(50, len(all_messages)), key="history_limit")
-    
-    # Apply filters
-    filtered = all_messages
-    if role_filter != "All":
-        filtered = [m for m in filtered if m.get('role', '').lower() == role_filter.lower()]
-    if search_text:
-        filtered = [m for m in filtered if search_text.lower() in m.get('content', '').lower()]
-    if limit > 0:
-        filtered = filtered[-limit:]
-    
-    st.markdown(f"**Showing {len(filtered)} of {len(all_messages)} messages**")
-    
-    # Export buttons
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        if filtered:
-            df = pd.DataFrame(filtered)
-            csv = df.to_csv(index=False)
+        st.markdown(f"**Rows to export:** {len(data):,}")
+        st.dataframe(data.head(100), use_container_width=True)
+        
+        # Export buttons
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            csv = data.to_csv(index=False)
             st.download_button(
-                "📥 Export CSV",
+                "📥 Download CSV",
                 csv,
-                f"chat_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                f"cpg_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                 "text/csv",
                 use_container_width=True
             )
-    with col2:
-        if filtered:
-            import json
-            json_data = json.dumps(filtered, indent=2, default=str)
+        with col2:
+            # Excel export (requires openpyxl)
+            try:
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    data.to_excel(writer, index=False, sheet_name='Data')
+                excel_data = output.getvalue()
+                st.download_button(
+                    "📊 Download Excel",
+                    excel_data,
+                    f"cpg_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True
+                )
+            except ImportError:
+                st.info("💡 Install openpyxl for Excel export: `pip install openpyxl`")
+        with col3:
+            # JSON export
+            json_data = data.to_json(orient='records', date_format='iso')
             st.download_button(
-                "📥 Export JSON",
+                "📋 Download JSON",
                 json_data,
-                f"chat_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                f"cpg_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
                 "application/json",
                 use_container_width=True
             )
-    with col3:
-        if st.button("🗑️ Clear History", use_container_width=True):
-            st.session_state.chat_history = []
-            if st.session_state.agent and hasattr(st.session_state.agent, 'memory'):
-                st.session_state.agent.memory.clear()
-            st.success("Cleared!")
-            st.rerun()
-    with col4:
-        if st.button("🔄 Refresh", use_container_width=True):
-            st.rerun()
     
-    st.markdown("---")
-    
-    # Display messages
-    if filtered:
-        for msg in filtered:
-            role = msg.get('role', 'unknown')
-            content = msg.get('content', '')
-            timestamp = msg.get('timestamp', '')
+    with export_tab2:
+        st.markdown("#### Export Analysis Results")
+        
+        if st.session_state.get('analysis_results'):
+            st.success("✅ Analysis results available for export")
             
-            try:
-                if isinstance(timestamp, str):
-                    dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-                    time_str = dt.strftime('%Y-%m-%d %H:%M:%S')
-                else:
-                    time_str = str(timestamp)
-            except:
-                time_str = str(timestamp)
+            # Export all analysis results
+            results_json = json.dumps(st.session_state.analysis_results, indent=2, default=str)
+            st.download_button(
+                "📥 Download Analysis Results (JSON)",
+                results_json,
+                f"analysis_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                "application/json",
+                use_container_width=True
+            )
             
-            if role == 'user':
-                with st.chat_message("user"):
-                    st.write(content)
-                    st.caption(f"📅 {time_str}")
-            elif role == 'assistant':
-                with st.chat_message("assistant", avatar="🤖"):
-                    st.write(content)
-                    st.caption(f"📅 {time_str}")
-    else:
-        st.info("No messages found. Start chatting to see history!")
-
-# -----------------------
-# Settings Page
-# -----------------------
-
-def render_settings():
-    """Render settings page."""
-    st.markdown("## ⚙️ Settings")
-    st.caption("Configure AI models, data sources, and display preferences")
-    
-    # AI Model Configuration with styled container
-    st.markdown("### 🤖 AI Model Configuration")
-    st.markdown("""
-    <div class="summary-card">
-        <h4 style="color: #667eea; margin-bottom: 1rem;">Choose your AI provider</h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    has_openai_key = bool(os.getenv('OPENAI_API_KEY') or os.getenv('AZURE_OPENAI_API_KEY'))
-    default_to_hf = not has_openai_key
-    
-    use_hf = st.checkbox(
-        "Use Hugging Face (FREE!)",
-        value=st.session_state.get('use_huggingface', default_to_hf)
-    )
-    st.session_state['use_huggingface'] = use_hf
-    
-    if use_hf:
-        st.markdown("#### Hugging Face Models")
-        hf_model = st.selectbox(
-            "Select Model",
-            [
-                "mistralai/Mistral-7B-Instruct-v0.2",
-                "microsoft/phi-2",
-                "google/flan-t5-large",
-                "meta-llama/Llama-2-7b-chat-hf",
-                "HuggingFaceH4/zephyr-7b-beta"
-            ],
-            index=0
-        )
-        st.session_state['hf_model'] = hf_model
-        st.info("💡 Free API. Get token for higher limits: https://huggingface.co/settings/tokens")
-    else:
-        st.markdown("#### OpenAI Models")
-        model = st.selectbox(
-            "Select Model",
-            ["gpt-4", "gpt-3.5-turbo"],
-            index=0
-        )
-        st.session_state['model'] = model
-        if not has_openai_key:
-            st.warning("⚠️ OpenAI API key not found. Set OPENAI_API_KEY environment variable.")
-    
-    st.markdown("---")
-    
-    # Data Configuration with styled container
-    st.markdown("### 📁 Data Configuration")
-    st.markdown("""
-    <div class="summary-card">
-        <h4 style="color: #667eea; margin-bottom: 1rem;">Manage your data source</h4>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    data_path = st.text_input(
-        "Data File Path",
-        value=st.session_state.get('data_path', 'data/cpg_sales_data.parquet')
-    )
-    st.session_state['data_path'] = data_path
-    
-    if st.button("🔄 Reload Data", type="primary", use_container_width=True):
-        if os.path.exists(data_path):
-            try:
-                data = load_cpg_data(data_path)
-                metadata = get_data_summary(data)
-                st.session_state.data = data
-                st.session_state.metadata = metadata
-                st.session_state.data_loaded = True
-                
-                if st.session_state.agent:
-                    st.session_state.agent.load_data(data_path)
-                
-                st.success("✅ Data reloaded successfully!")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Error loading data: {e}")
+            # Show summary
+            with st.expander("View Analysis Results Summary"):
+                st.json(st.session_state.analysis_results)
         else:
-            st.error(f"❌ File not found: {data_path}")
+            st.info("💡 Run analyses in AI Chat or Smart Insights to generate exportable results")
     
-    st.markdown("---")
+    with export_tab3:
+        st.markdown("#### Custom Export Builder")
+        
+        st.markdown("Create a custom export with aggregated data")
+        
+        agg_col1, agg_col2 = st.columns(2)
+        with agg_col1:
+            group_by = st.multiselect(
+                "Group By",
+                options=['date', 'category', 'store_id', 'store_region', 'sku_id'],
+                key="export_groupby"
+            )
+        with agg_col2:
+            agg_func = st.selectbox(
+                "Aggregation",
+                ["sum", "mean", "count", "min", "max"],
+                key="export_agg"
+            )
+        
+        if group_by and st.button("Generate Custom Export"):
+            try:
+                numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+                if 'revenue' in numeric_cols:
+                    custom_data = data.groupby(group_by).agg({col: agg_func for col in numeric_cols}).reset_index()
+                    st.dataframe(custom_data, use_container_width=True)
+                    
+                    csv_custom = custom_data.to_csv(index=False)
+                    st.download_button(
+                        "📥 Download Custom Export",
+                        csv_custom,
+                        f"custom_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        "text/csv"
+                    )
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+# -----------------------
+# Comparison Tool Page
+# -----------------------
+
+def render_comparison_tool():
+    """Render comparison tool for comparing different data segments."""
+    st.markdown("## 🔍 Comparison Tool")
+    st.caption("Compare performance across different time periods, categories, stores, or regions")
     
-    # Display Settings with styled container
-    st.markdown("### 🎨 Display Settings")
-    st.markdown("""
-    <div class="summary-card">
-        <h4 style="color: #667eea; margin-bottom: 1rem;">Customize your view</h4>
-    </div>
-    """, unsafe_allow_html=True)
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
     
-    chart_height = st.slider("Chart Height (pixels)", 300, 800, st.session_state.chart_height, 50)
-    st.session_state.chart_height = chart_height
-    st.caption(f"Current chart height: {chart_height}px")
+    data = st.session_state.data.copy()
+    
+    comparison_type = st.radio(
+        "Comparison Type",
+        ["Time Period", "Category", "Store", "Region"],
+        horizontal=True,
+        key="comp_type"
+    )
+    
+    if comparison_type == "Time Period":
+        st.markdown("### 📅 Compare Time Periods")
+        
+        if 'date' in data.columns:
+            data['date'] = pd.to_datetime(data['date'])
+            min_date = data['date'].min().date()
+            max_date = data['date'].max().date()
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                period1_start = st.date_input("Period 1 Start", value=min_date, key="p1_start")
+                period1_end = st.date_input("Period 1 End", value=min_date + pd.Timedelta(days=30), key="p1_end")
+            with col2:
+                period2_start = st.date_input("Period 2 Start", value=max_date - pd.Timedelta(days=30), key="p2_start")
+                period2_end = st.date_input("Period 2 End", value=max_date, key="p2_end")
+            
+            p1_data = data[(data['date'].dt.date >= period1_start) & (data['date'].dt.date <= period1_end)]
+            p2_data = data[(data['date'].dt.date >= period2_start) & (data['date'].dt.date <= period2_end)]
+            
+            # Comparison metrics
+            st.markdown("### 📊 Comparison Metrics")
+            comp_col1, comp_col2, comp_col3 = st.columns(3)
+            
+            with comp_col1:
+                p1_rev = p1_data['revenue'].sum() if 'revenue' in p1_data.columns else 0
+                p2_rev = p2_data['revenue'].sum() if 'revenue' in p2_data.columns else 0
+                change = ((p2_rev - p1_rev) / p1_rev * 100) if p1_rev > 0 else 0
+                st.metric("Revenue", f"${p2_rev:,.0f}", f"{change:+.1f}%")
+            
+            with comp_col2:
+                p1_units = p1_data['units_sold'].sum() if 'units_sold' in p1_data.columns else 0
+                p2_units = p2_data['units_sold'].sum() if 'units_sold' in p2_data.columns else 0
+                change = ((p2_units - p1_units) / p1_units * 100) if p1_units > 0 else 0
+                st.metric("Units Sold", f"{p2_units:,.0f}", f"{change:+.1f}%")
+            
+            with comp_col3:
+                p1_avg = p1_rev / p1_units if p1_units > 0 else 0
+                p2_avg = p2_rev / p2_units if p2_units > 0 else 0
+                change = ((p2_avg - p1_avg) / p1_avg * 100) if p1_avg > 0 else 0
+                st.metric("Avg Price", f"${p2_avg:.2f}", f"{change:+.1f}%")
+            
+            # Visualization
+            fig = go.Figure()
+            fig.add_trace(go.Bar(name='Period 1', x=['Revenue', 'Units'], y=[p1_rev/1000, p1_units/1000], marker_color='#667eea'))
+            fig.add_trace(go.Bar(name='Period 2', x=['Revenue', 'Units'], y=[p2_rev/1000, p2_units/1000], marker_color='#48bb78'))
+            fig.update_layout(title='Period Comparison', barmode='group', template='plotly_white')
+            st.plotly_chart(fig, use_container_width=True)
+    
+    elif comparison_type == "Category":
+        st.markdown("### 📦 Compare Categories")
+        
+        if 'category' in data.columns:
+            categories = sorted(data['category'].unique().tolist())
+            selected_cats = st.multiselect("Select Categories", categories, default=categories[:3] if len(categories) >= 3 else categories)
+            
+            if selected_cats:
+                cat_comparison = data[data['category'].isin(selected_cats)].groupby('category').agg({
+                    'revenue': 'sum',
+                    'units_sold': 'sum'
+                }).reset_index()
+                
+                st.dataframe(cat_comparison, use_container_width=True)
+                
+                fig = px.bar(cat_comparison, x='category', y='revenue', title='Revenue by Category')
+                st.plotly_chart(fig, use_container_width=True)
+    
+    elif comparison_type == "Store":
+        st.markdown("### 🏪 Compare Stores")
+        
+        if 'store_id' in data.columns:
+            stores = sorted(data['store_id'].unique().tolist())
+            selected_stores = st.multiselect("Select Stores", stores, default=stores[:5] if len(stores) >= 5 else stores)
+            
+            if selected_stores:
+                store_comparison = data[data['store_id'].isin(selected_stores)].groupby('store_id').agg({
+                    'revenue': 'sum',
+                    'units_sold': 'sum'
+                }).reset_index()
+                
+                st.dataframe(store_comparison, use_container_width=True)
+                
+                fig = px.bar(store_comparison, x='store_id', y='revenue', title='Revenue by Store')
+                st.plotly_chart(fig, use_container_width=True)
+    
+    elif comparison_type == "Region":
+        st.markdown("### 🗺️ Compare Regions")
+        
+        if 'store_region' in data.columns:
+            region_comparison = data.groupby('store_region').agg({
+                'revenue': 'sum',
+                'units_sold': 'sum'
+            }).reset_index()
+            
+            st.dataframe(region_comparison, use_container_width=True)
+            
+            fig = px.pie(region_comparison, values='revenue', names='store_region', title='Revenue Distribution by Region')
+            st.plotly_chart(fig, use_container_width=True)
+
+# -----------------------
+# Forecasting Page
+# -----------------------
+
+def render_forecasting():
+    """Render forecasting page with predictive analytics."""
+    st.markdown("## 🔮 Forecasting & Predictive Analytics")
+    st.caption("Generate sales forecasts and predictions based on historical data")
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    if 'date' not in data.columns:
+        st.error("Date column required for forecasting")
+        return
+    
+    data['date'] = pd.to_datetime(data['date'])
+    data = data.sort_values('date')
+    
+    st.markdown("### 📈 Forecast Configuration")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        forecast_metric = st.selectbox("Metric to Forecast", ["revenue", "units_sold"], key="forecast_metric")
+    with col2:
+        forecast_periods = st.number_input("Forecast Periods", min_value=1, max_value=365, value=30, key="forecast_periods")
+    with col3:
+        forecast_method = st.selectbox("Method", ["Linear Trend", "Moving Average", "Exponential Smoothing"], key="forecast_method")
+    
+    if st.button("🚀 Generate Forecast", type="primary"):
+        with st.spinner("Generating forecast..."):
+            try:
+                # Aggregate data by date
+                daily_data = data.groupby('date')[forecast_metric].sum().reset_index()
+                daily_data = daily_data.set_index('date')
+                
+                # Simple forecasting methods
+                if forecast_method == "Linear Trend":
+                    from sklearn.linear_model import LinearRegression
+                    
+                    # Create time features
+                    daily_data['days'] = (daily_data.index - daily_data.index.min()).days
+                    X = daily_data[['days']].values
+                    y = daily_data[forecast_metric].values
+                    
+                    model = LinearRegression()
+                    model.fit(X, y)
+                    
+                    # Generate future dates
+                    last_date = daily_data.index.max()
+                    future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=forecast_periods, freq='D')
+                    future_days = [(d - daily_data.index.min()).days for d in future_dates]
+                    future_X = np.array(future_days).reshape(-1, 1)
+                    forecast_values = model.predict(future_X)
+                    
+                elif forecast_method == "Moving Average":
+                    window = min(7, len(daily_data) // 4)
+                    ma = daily_data[forecast_metric].rolling(window=window).mean().iloc[-1]
+                    forecast_values = [ma] * forecast_periods
+                    last_date = daily_data.index.max()
+                    future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=forecast_periods, freq='D')
+                
+                else:  # Exponential Smoothing
+                    alpha = 0.3
+                    forecast_values = []
+                    last_value = daily_data[forecast_metric].iloc[-1]
+                    last_date = daily_data.index.max()
+                    future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=forecast_periods, freq='D')
+                    
+                    for _ in range(forecast_periods):
+                        forecast_values.append(last_value)
+                        last_value = alpha * last_value + (1 - alpha) * last_value
+                
+                # Create forecast dataframe
+                forecast_df = pd.DataFrame({
+                    'date': future_dates,
+                    'forecast': forecast_values
+                })
+                
+                st.session_state['forecast_data'] = forecast_df
+                st.session_state['forecast_generated'] = True
+                st.success("✅ Forecast generated successfully!")
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Error generating forecast: {e}")
+    
+    if st.session_state.get('forecast_generated') and st.session_state.get('forecast_data') is not None:
+        forecast_df = st.session_state['forecast_data']
+        daily_data = data.groupby('date')[forecast_metric].sum().reset_index()
+        
+        st.markdown("### 📊 Forecast Visualization")
+        
+        fig = go.Figure()
+        
+        # Historical data
+        fig.add_trace(go.Scatter(
+            x=daily_data['date'],
+            y=daily_data[forecast_metric],
+            mode='lines+markers',
+            name='Historical',
+            line=dict(color='#667eea', width=2)
+        ))
+        
+        # Forecast
+        fig.add_trace(go.Scatter(
+            x=forecast_df['date'],
+            y=forecast_df['forecast'],
+            mode='lines+markers',
+            name='Forecast',
+            line=dict(color='#f5576c', width=2, dash='dash')
+        ))
+        
+        fig.update_layout(
+            title=f'{forecast_metric.replace("_", " ").title()} Forecast',
+            xaxis_title='Date',
+            yaxis_title=forecast_metric.replace('_', ' ').title(),
+            template='plotly_white'
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # Forecast summary
+        st.markdown("### 📋 Forecast Summary")
+        summary_col1, summary_col2, summary_col3 = st.columns(3)
+        
+        with summary_col1:
+            avg_forecast = forecast_df['forecast'].mean()
+            st.metric("Average Forecast", f"${avg_forecast:,.0f}" if forecast_metric == 'revenue' else f"{avg_forecast:,.0f}")
+        with summary_col2:
+            total_forecast = forecast_df['forecast'].sum()
+            st.metric("Total Forecast", f"${total_forecast:,.0f}" if forecast_metric == 'revenue' else f"{total_forecast:,.0f}")
+        with summary_col3:
+            trend = "📈 Increasing" if forecast_df['forecast'].iloc[-1] > forecast_df['forecast'].iloc[0] else "📉 Decreasing"
+            st.metric("Trend", trend)
+
+# -----------------------
+# Custom Reports Page
+# -----------------------
+
+def render_custom_reports():
+    """Render custom report builder page."""
+    st.markdown("## 📋 Custom Report Builder")
+    st.caption("Build and save custom reports with your preferred metrics and visualizations")
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    st.markdown("### 🎨 Report Configuration")
+    
+    report_name = st.text_input("Report Name", value=f"Report_{datetime.now().strftime('%Y%m%d')}", key="report_name")
+    
+    # Report sections
+    sections = st.multiselect(
+        "Select Report Sections",
+        ["Summary Statistics", "Revenue Analysis", "Category Breakdown", "Store Performance", "Time Series Trends"],
+        default=["Summary Statistics", "Revenue Analysis"],
+        key="report_sections"
+    )
+    
+    # Filters
+    with st.expander("🔍 Apply Filters"):
+        filter_col1, filter_col2 = st.columns(2)
+        with filter_col1:
+            if 'date' in data.columns:
+                data['date'] = pd.to_datetime(data['date'])
+                min_date = data['date'].min().date()
+                max_date = data['date'].max().date()
+                date_range = st.date_input("Date Range", value=(min_date, max_date), key="report_date")
+                if isinstance(date_range, tuple) and len(date_range) == 2:
+                    data = data[(data['date'].dt.date >= date_range[0]) & (data['date'].dt.date <= date_range[1])]
+        
+        with filter_col2:
+            if 'category' in data.columns:
+                categories = ['All'] + sorted(data['category'].unique().tolist())
+                selected_cat = st.selectbox("Category", categories, key="report_category")
+                if selected_cat != 'All':
+                    data = data[data['category'] == selected_cat]
+    
+    if st.button("📊 Generate Report", type="primary"):
+        st.session_state['custom_report_data'] = data
+        st.session_state['custom_report_sections'] = sections
+        st.session_state['custom_report_name'] = report_name
+        st.success("✅ Report generated!")
+        st.rerun()
+    
+    if st.session_state.get('custom_report_data') is not None:
+        report_data = st.session_state['custom_report_data']
+        report_sections = st.session_state.get('custom_report_sections', [])
+        report_name = st.session_state.get('custom_report_name', 'Report')
+        
+        st.markdown(f"### 📄 {report_name}")
+        st.markdown("---")
+        
+        if "Summary Statistics" in report_sections:
+            st.markdown("#### 📊 Summary Statistics")
+            summary_stats = {
+                'Total Revenue': f"${report_data['revenue'].sum():,.2f}" if 'revenue' in report_data.columns else "N/A",
+                'Total Units': f"{report_data['units_sold'].sum():,.0f}" if 'units_sold' in report_data.columns else "N/A",
+                'Average Price': f"${report_data['price'].mean():.2f}" if 'price' in report_data.columns else "N/A",
+                'Total Records': len(report_data)
+            }
+            st.json(summary_stats)
+        
+        if "Revenue Analysis" in report_sections:
+            st.markdown("#### 💰 Revenue Analysis")
+            if 'date' in report_data.columns and 'revenue' in report_data.columns:
+                revenue_trend = report_data.groupby(report_data['date'].dt.to_period('M'))['revenue'].sum()
+                fig = px.line(x=revenue_trend.index.astype(str), y=revenue_trend.values, title='Monthly Revenue Trend')
+                st.plotly_chart(fig, use_container_width=True)
+        
+        if "Category Breakdown" in report_sections:
+            st.markdown("#### 📦 Category Breakdown")
+            if 'category' in report_data.columns and 'revenue' in report_data.columns:
+                cat_revenue = report_data.groupby('category')['revenue'].sum().sort_values(ascending=False)
+                fig = px.bar(x=cat_revenue.index, y=cat_revenue.values, title='Revenue by Category')
+                st.plotly_chart(fig, use_container_width=True)
+        
+        # Export report
+        st.markdown("---")
+        if st.button("📥 Export Report"):
+            report_text = f"# {report_name}\n\n"
+            report_text += f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+            report_text += f"## Summary Statistics\n{summary_stats}\n\n"
+            
+            st.download_button(
+                "📄 Download Report (TXT)",
+                report_text,
+                f"{report_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+                "text/plain"
+            )
+
+# -----------------------
+# Data Quality Page
+# -----------------------
+
+def render_data_quality():
+    """Render data quality checker page."""
+    st.markdown("## ✅ Data Quality Checker")
+    st.caption("Validate and assess the quality of your sales data")
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    if st.button("🔍 Run Quality Check", type="primary"):
+        quality_issues = []
+        quality_score = 100
+        
+        # Check for missing values
+        missing = data.isnull().sum()
+        if missing.sum() > 0:
+            missing_cols = missing[missing > 0]
+            quality_issues.append(f"⚠️ Missing values found in: {', '.join(missing_cols.index.tolist())}")
+            quality_score -= (missing.sum() / len(data) * 100)
+        
+        # Check for duplicates
+        duplicates = data.duplicated().sum()
+        if duplicates > 0:
+            quality_issues.append(f"⚠️ {duplicates} duplicate rows found")
+            quality_score -= (duplicates / len(data) * 10)
+        
+        # Check for negative values in numeric columns
+        numeric_cols = data.select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
+            if (data[col] < 0).any():
+                quality_issues.append(f"⚠️ Negative values found in {col}")
+                quality_score -= 5
+        
+        # Check date consistency
+        if 'date' in data.columns:
+            try:
+                pd.to_datetime(data['date'])
+            except:
+                quality_issues.append("⚠️ Date column has invalid dates")
+                quality_score -= 10
+        
+        # Check data types
+        if 'revenue' in data.columns and not pd.api.types.is_numeric_dtype(data['revenue']):
+            quality_issues.append("⚠️ Revenue column is not numeric")
+            quality_score -= 15
+        
+        quality_score = max(0, quality_score)
+        
+        st.session_state['quality_issues'] = quality_issues
+        st.session_state['quality_score'] = quality_score
+        st.rerun()
+    
+    if st.session_state.get('quality_score') is not None:
+        score = st.session_state['quality_score']
+        issues = st.session_state.get('quality_issues', [])
+        
+        st.markdown("### 📊 Quality Score")
+        
+        # Score visualization
+        score_color = "#48bb78" if score >= 80 else "#fbbf24" if score >= 60 else "#f5576c"
+        st.markdown(f"""
+        <div style="text-align: center; padding: 2rem;">
+            <h1 style="color: {score_color}; font-size: 4rem;">{score:.1f}/100</h1>
+            <p style="font-size: 1.2rem;">Data Quality Score</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if issues:
+            st.markdown("### ⚠️ Issues Found")
+            for issue in issues:
+                st.warning(issue)
+        else:
+            st.success("✅ No quality issues detected!")
+        
+        # Data completeness
+        st.markdown("### 📋 Data Completeness")
+        completeness_df = pd.DataFrame({
+            'Column': data.columns,
+            'Non-Null Count': [data[col].notna().sum() for col in data.columns],
+            'Null Count': [data[col].isna().sum() for col in data.columns],
+            'Completeness %': [f"{(data[col].notna().sum() / len(data) * 100):.1f}%" for col in data.columns]
+        })
+        st.dataframe(completeness_df, use_container_width=True)
+
+# -----------------------
+# Benchmarking Page
+# -----------------------
+
+def render_benchmarking():
+    """Render performance benchmarking page."""
+    st.markdown("## 🎯 Performance Benchmarking")
+    st.caption("Compare your performance against targets and benchmarks")
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    st.markdown("### 🎯 Set Benchmarks")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        revenue_target = st.number_input("Revenue Target ($)", min_value=0.0, value=float(data['revenue'].sum()) if 'revenue' in data.columns else 0.0, key="bench_revenue")
+    with col2:
+        units_target = st.number_input("Units Target", min_value=0.0, value=float(data['units_sold'].sum()) if 'units_sold' in data.columns else 0.0, key="bench_units")
+    with col3:
+        growth_target = st.number_input("Growth Target (%)", min_value=0.0, value=10.0, key="bench_growth")
+    
+    if st.button("📊 Calculate Performance", type="primary"):
+        actual_revenue = data['revenue'].sum() if 'revenue' in data.columns else 0
+        actual_units = data['units_sold'].sum() if 'units_sold' in data.columns else 0
+        
+        revenue_performance = (actual_revenue / revenue_target * 100) if revenue_target > 0 else 0
+        units_performance = (actual_units / units_target * 100) if units_target > 0 else 0
+        
+        st.session_state['benchmark_results'] = {
+            'revenue_performance': revenue_performance,
+            'units_performance': units_performance,
+            'actual_revenue': actual_revenue,
+            'actual_units': actual_units,
+            'revenue_target': revenue_target,
+            'units_target': units_target
+        }
+        st.rerun()
+    
+    if st.session_state.get('benchmark_results'):
+        results = st.session_state['benchmark_results']
+        
+        st.markdown("### 📊 Performance vs Targets")
+        
+        perf_col1, perf_col2 = st.columns(2)
+        
+        with perf_col1:
+            rev_perf = results['revenue_performance']
+            st.metric(
+                "Revenue Performance",
+                f"${results['actual_revenue']:,.0f}",
+                f"{rev_perf:.1f}% of target"
+            )
+            st.progress(min(rev_perf / 100, 1.0))
+        
+        with perf_col2:
+            units_perf = results['units_performance']
+            st.metric(
+                "Units Performance",
+                f"{results['actual_units']:,.0f}",
+                f"{units_perf:.1f}% of target"
+            )
+            st.progress(min(units_perf / 100, 1.0))
+        
+        # Visualization
+        comparison_df = pd.DataFrame({
+            'Metric': ['Revenue', 'Units'],
+            'Actual': [results['actual_revenue']/1000, results['actual_units']/1000],
+            'Target': [results['revenue_target']/1000, results['units_target']/1000]
+        })
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(name='Actual', x=comparison_df['Metric'], y=comparison_df['Actual'], marker_color='#667eea'))
+        fig.add_trace(go.Bar(name='Target', x=comparison_df['Metric'], y=comparison_df['Target'], marker_color='#48bb78'))
+        fig.update_layout(title='Performance vs Targets', barmode='group', template='plotly_white')
+        st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------
 # Main App
@@ -2330,14 +1751,21 @@ def main():
         render_home()
     elif page == "💬 AI Chat":
         render_chat()
-    elif page == "📈 Analytics":
-        render_analytics()
-    elif page == "📊 Dashboard":
-        render_dashboard()
-    elif page == "🕘 Chat History":
-        render_chat_history()
-    elif page == "⚙️ Settings":
-        render_settings()
+    elif page == "✨ Smart Insights":
+        render_smart_insights()
+    elif page == "📊 Data Export":
+        render_data_export()
+    elif page == "🔍 Comparison Tool":
+        render_comparison_tool()
+    elif page == "🔮 Forecasting":
+        render_forecasting()
+    elif page == "📋 Custom Reports":
+        render_custom_reports()
+    elif page == "✅ Data Quality":
+        render_data_quality()
+    elif page == "🎯 Benchmarking":
+        render_benchmarking()
+    # Removed routes: Analytics, Dashboard, Chat History, Settings (copied features)
 
 if __name__ == "__main__":
     main()
