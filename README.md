@@ -1,603 +1,293 @@
-# Smart CPG Decision Support Agent - Project Flow
+# Smart CPG Decision Agent - Simple Explanation (For 17-Year-Olds)
 
-## 📋 Executive Summary
-
-**Smart CPG Decision Support Agent** is an AI-powered analytics platform that helps Consumer Packaged Goods (CPG) businesses analyze sales data and make data-driven decisions through natural language interactions and specialized analytics modules.
-
----
-
-## 🏗️ Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    USER INTERFACE LAYER                      │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │
-│  │ Streamlit UI │  │   CLI Tool    │  │  PowerPoint   │    │
-│  │  (Web App)   │  │  (Terminal)   │  │  Generator    │    │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘    │
-└─────────┼──────────────────┼──────────────────┼─────────────┘
-          │                  │                  │
-          └──────────────────┴──────────────────┘
-                            │
-          ┌─────────────────┴─────────────────┐
-          │      AGENT CORE (Orchestrator)      │
-          │  ┌──────────────────────────────┐  │
-          │  │   CPGDecisionAgent Class      │  │
-          │  │  - Query Understanding        │  │
-          │  │  - Tool Selection             │  │
-          │  │  - Response Generation        │  │
-          │  └──────────────────────────────┘  │
-          └─────────────┬───────────────────────┘
-                        │
-        ┌───────────────┼───────────────┐
-        │               │               │
-┌───────▼──────┐ ┌──────▼──────┐ ┌─────▼──────┐
-│  LLM Layer   │ │  Memory      │ │  Tools     │
-│              │ │  System      │ │  Layer     │
-│ - OpenAI     │ │ - Context    │ │ - Trend    │
-│ - Azure      │ │ - History    │ │ - Anomaly  │
-│ - HuggingFace│ │ - Facts      │ │ - Scenario │
-└──────────────┘ └──────────────┘ └────────────┘
-                        │
-          ┌─────────────┴─────────────┐
-          │      DATA LAYER            │
-          │  - Pandas/PySpark         │
-          │  - Data Loader            │
-          │  - Parquet/CSV Files      │
-          └───────────────────────────┘
-```
+## What is this project?
+An app that helps businesses understand their sales data. Instead of complex spreadsheets, you ask questions in plain English and get answers.
 
 ---
 
-## 🔄 Complete Project Flow
+## Main Files and How They Work
 
-### **Phase 1: Application Startup**
+### 1. Starting the App
+**File:** `src/ui/streamlit_app.py`
+- **Function:** `main()` - This starts everything
+- **Function:** `init_session_state()` - Sets up memory
+- **Function:** `render_sidebar()` - Shows navigation buttons
 
-1. **User launches the application**
-   - **Web Interface**: `streamlit run src/ui/streamlit_app.py`
-   - **CLI Interface**: `python -m src.ui.cli --data <path>`
-
-2. **Initialization Sequence**:
-   ```
-   Streamlit App Starts
-   ↓
-   Initialize Session State (data, agent, chat_history, etc.)
-   ↓
-   Render Sidebar Navigation
-   ↓
-   Load Default Page (Overview/Home)
-   ```
-
-3. **Component Initialization**:
-   - **LLM Interface**: Connects to AI model (OpenAI/Azure/HuggingFace)
-   - **Agent Core**: Creates `CPGDecisionAgent` instance
-   - **Memory System**: Initializes `SessionMemory` for context
-   - **Data Loader**: Ready to load sales data
+When you run `streamlit run src/ui/streamlit_app.py`, it calls `main()` and opens the web interface.
 
 ---
 
-### **Phase 2: Data Loading (Overview Page)**
+### 2. Loading Your Data
+**File:** `src/data_loader.py`
+- **Function:** `load_cpg_data()` - Reads your CSV/Parquet file
+- **Function:** `get_data_summary()` - Calculates basic stats
 
-1. **User Action**: Clicks "Load Data" button on Overview page
-
-2. **Data Loading Process**:
-   ```
-   User Clicks "Load Data"
-   ↓
-   data_loader.load_cpg_data() called
-   ↓
-   Reads Parquet/CSV file (data/cpg_sales_data.parquet)
-   ↓
-   Converts to Pandas DataFrame (or PySpark if available)
-   ↓
-   Stores in session_state.data
-   ↓
-   Generates metadata (summary statistics)
-   ↓
-   Agent.load_data() called
-   ↓
-   Agent profiles dataset:
-     - Schema information
-     - Categorical values (categories, regions, stores)
-     - Numeric ranges (revenue, units, price)
-     - Date ranges
-     - Total revenue, store count, SKU count
-   ↓
-   Stores profile in Memory System
-   ↓
-   Success message displayed
-   ```
-
-3. **Data Profile Stored in Memory**:
-   - Schema: Column names and data types
-   - Distinct values: All unique categories, regions, stores
-   - Numeric ranges: Min/max/mean for revenue, units, price
-   - Summary stats: Total revenue, number of stores/SKUs, date range
+**File:** `src/ui/streamlit_app.py`
+- **Function:** `render_home()` - Shows the Overview page
+- When you click "Load Data", it calls `load_cpg_data()` and stores data in `st.session_state.data`
 
 ---
 
-### **Phase 3: User Interaction Flow**
+### 3. The AI Brain (Agent)
+**File:** `src/agent/agent_core.py`
+- **Class:** `CPGDecisionAgent` - This is the main brain
+- **Function:** `chat()` - Handles your questions
+- **Function:** `_plan_actions()` - Decides what to do
+- **Function:** `_execute_plan()` - Runs the tools
+- **Function:** `_generate_response()` - Creates the answer
 
-#### **Option A: AI Assistant (Natural Language)**
-
-1. **User navigates to "AI Assistant" page**
-
-2. **User asks a question** (e.g., "What are the sales trends?")
-
-3. **Agent Processing Pipeline**:
-   ```
-   User Query: "What are the sales trends?"
-   ↓
-   Agent.chat(query) called
-   ↓
-   Memory.add_message('user', query)
-   ↓
-   ┌─────────────────────────────────────┐
-   │  STEP 1: PLAN ACTIONS                │
-   │  _plan_actions(query)                │
-   │  - Classify query type               │
-   │  - Extract parameters                │
-   │  - Select appropriate tools           │
-   └─────────────────────────────────────┘
-   ↓
-   Query Classification:
-   - Data Q&A? → data_qa tool
-   - Scenario? → scenario_simulation tool
-   - Anomaly? → anomaly_detection tool
-   - Trend? → trend_analysis tool
-   - Summary? → get_summary tool
-   ↓
-   ┌─────────────────────────────────────┐
-   │  STEP 2: EXECUTE PLAN               │
-   │  _execute_plan(plan)                │
-   │  - Call selected tools               │
-   │  - Collect results                    │
-   └─────────────────────────────────────┘
-   ↓
-   Tool Execution:
-   trend_analysis tool called
-   ↓
-   extract_trends(data, metric='revenue')
-   ↓
-   Returns: {
-     'direction': 'increasing',
-     'slope': 150.5,
-     'r_squared': 0.85,
-     'growth_rate': 12.5%,
-     ...
-   }
-   ↓
-   ┌─────────────────────────────────────┐
-   │  STEP 3: GENERATE RESPONSE          │
-   │  _generate_response(query, plan,     │
-   │                     results)          │
-   │  - Format tool results                │
-   │  - Call LLM with context              │
-   │  - Generate natural language response  │
-   └─────────────────────────────────────┘
-   ↓
-   LLM receives:
-   - System prompt (agent instructions)
-   - User query
-   - Tool results (formatted)
-   - Memory context (previous conversations)
-   ↓
-   LLM generates response:
-   "Based on the analysis, sales show a strong 
-   upward trend with 12.5% growth rate..."
-   ↓
-   Memory.add_message('assistant', response)
-   ↓
-   Response displayed to user
-   ```
-
-4. **Query Classification Logic**:
-   - **Data Q&A**: "What is total revenue?", "How many stores?"
-   - **Trend Analysis**: "Show trends", "Is sales growing?"
-   - **Anomaly Detection**: "Find anomalies", "Detect outliers"
-   - **Scenario Simulation**: "What if price increases 20%?"
-   - **Summary**: "Give me a summary", "Overall performance"
+**How it works:**
+1. You ask: "What are sales trends?"
+2. `chat()` receives your question
+3. `_plan_actions()` classifies it as "trend analysis"
+4. `_execute_plan()` calls the trend tool
+5. `_generate_response()` uses AI to write the answer
 
 ---
 
-#### **Option B: Specialized Analytics Modules**
+### 4. The Tools (Analyzers)
 
-Users can also use dedicated pages for specific analyses:
+**File:** `src/tools/trend_analysis.py`
+- **Function:** `extract_trends()` - Finds if sales are going up/down
+- **Function:** `calculate_growth_rate()` - Calculates growth percentage
 
-1. **Anomaly Detection Page**:
-   ```
-   User selects metric (revenue/units/price)
-   User selects method (IQR/Z-score/Multivariate)
-   ↓
-   get_anomaly_summary() called
-   ↓
-   Runs 3 detection methods:
-     - Statistical outliers (IQR)
-     - Time series anomalies (rolling window)
-     - Multivariate anomalies (Isolation Forest)
-   ↓
-   Results displayed:
-     - Total anomalies count
-     - Breakdown by type
-     - Visualization with highlighted anomalies
-   ```
+**File:** `src/tools/anomaly_detection.py`
+- **Function:** `get_anomaly_summary()` - Finds weird numbers
+- Uses 3 methods: IQR, Z-score, Isolation Forest
 
-2. **Business Insights Page**:
-   ```
-   User clicks "Generate Insights"
-   ↓
-   Agent analyzes data using multiple tools
-   ↓
-   Generates:
-     - Key insights (top 3)
-     - Growth opportunities
-     - Risk assessment
-     - Actionable recommendations
-   ↓
-   Formatted as professional business report
-   ```
-
-3. **Forecasting Page**:
-   ```
-   User selects metric and forecast period
-   ↓
-   Forecasting tool called
-   ↓
-   Multiple methods:
-     - Linear trend
-     - Moving average
-     - Exponential smoothing
-   ↓
-   Future predictions displayed with charts
-   ```
-
-4. **Data Comparison Page**:
-   ```
-   User selects comparison type (period/category/store)
-   ↓
-   Comparison tool aggregates data
-   ↓
-   Side-by-side metrics displayed
-   ↓
-   Visualizations show differences
-   ```
-
-5. **Dashboard Page**:
-   ```
-   Real-time KPI monitoring
-   ↓
-   Displays:
-     - Total revenue
-     - Units sold
-     - Average price
-     - Active stores
-   ↓
-   Time period selection
-   ↓
-   Previous period comparison
-   ↓
-   Interactive charts
-   ```
-
-6. **Alert Management Page**:
-   ```
-   User sets up alert conditions
-   ↓
-   System monitors data
-   ↓
-   When threshold exceeded:
-     - Alert triggered
-     - Notification displayed
-     - Details shown
-   ```
-
-7. **Custom Reports Page**:
-   ```
-   User selects report type and parameters
-   ↓
-   Report generator aggregates data
-   ↓
-   Creates formatted report with:
-     - Summary statistics
-     - Visualizations
-     - Insights
-   ↓
-   Exportable to CSV/PDF
-   ```
+**File:** `src/tools/scenario_simulation.py`
+- **Function:** `simulate_price_change()` - "What if we change price?"
+- **Function:** `simulate_promotion()` - "What if we run a sale?"
 
 ---
 
-### **Phase 4: Tool Execution Details**
+### 5. The AI Connection
+**File:** `src/genai/llm_interface.py`
+- **Class:** `LLMInterface` - Talks to AI models
+- Connects to OpenAI, Azure, or HuggingFace
+- The agent uses this to generate answers
 
-#### **Tool 1: Trend Analysis** (`trend_analysis.py`)
+---
 
+### 6. Memory System
+**File:** `src/agent/memory.py`
+- **Class:** `SessionMemory` - Remembers things
+- **Function:** `add_message()` - Saves conversations
+- **Function:** `update_context()` - Stores data info
+
+This lets the app remember what you asked before!
+
+---
+
+## Complete Flow with File Names
+
+### When You Start the App:
 ```
-Input: DataFrame, metric ('revenue'), period ('daily')
-↓
-Aggregate data by period
-↓
-Apply linear regression (sklearn.LinearRegression)
-↓
-Calculate:
-  - Slope (trend direction)
-  - R² score (trend strength)
-  - Growth rate (CAGR)
-  - Percentage change
-  - P-value (statistical significance)
-↓
-Return structured dictionary
-```
-
-#### **Tool 2: Anomaly Detection** (`anomaly_detection.py`)
-
-```
-Input: DataFrame, metric, include_multivariate=True
-↓
-Method 1: Statistical Outliers (IQR)
-  - Calculate Q1, Q3, IQR
-  - Identify high/low outliers
-↓
-Method 2: Time Series Anomalies
-  - Rolling window (7 days)
-  - Mean and std deviation
-  - Z-score > 2.0 = anomaly
-↓
-Method 3: Multivariate Anomalies
-  - Use all numeric features
-  - Standardize data
-  - Isolation Forest (contamination=0.05)
-↓
-Combine results
-↓
-Return comprehensive summary
+1. You run: streamlit run src/ui/streamlit_app.py
+2. streamlit_app.py → main() function starts
+3. main() → calls init_session_state()
+4. main() → calls render_sidebar()
+5. main() → shows render_home() (Overview page)
 ```
 
-#### **Tool 3: Scenario Simulation** (`scenario_simulation.py`)
-
+### When You Load Data:
 ```
-Input: Scenario type, parameters
-↓
-Price Change Simulation:
-  - Calculate baseline average price
-  - Apply price change percentage
-  - Estimate demand change (price elasticity)
-  - Calculate new revenue
-↓
-Promotion Simulation:
-  - Apply promotion discount
-  - Estimate lift factor
-  - Calculate impact
-↓
-Return scenario results
+1. User clicks "Load Data" button
+2. render_home() → calls load_cpg_data() from data_loader.py
+3. load_cpg_data() → reads your file → returns DataFrame
+4. render_home() → stores in st.session_state.data
+5. render_home() → calls initialize_agent()
+6. initialize_agent() → creates CPGDecisionAgent
+7. Agent → calls load_data() → profiles the data
+8. Agent → stores profile in SessionMemory
+```
+
+### When You Ask a Question (AI Assistant):
+```
+1. User types question in render_chat()
+2. render_chat() → calls agent.chat(question)
+3. agent_core.py → chat() function:
+   ├─→ add_message('user', question) to memory
+   ├─→ _plan_actions(question) → decides what tool to use
+   ├─→ _execute_plan(plan) → calls the tool:
+   │   ├─→ If trend: calls extract_trends() from trend_analysis.py
+   │   ├─→ If anomaly: calls get_anomaly_summary() from anomaly_detection.py
+   │   └─→ If scenario: calls simulate_price_change() from scenario_simulation.py
+   ├─→ _generate_response() → uses LLMInterface to create answer
+   └─→ add_message('assistant', response) to memory
+4. render_chat() → displays the answer
+```
+
+### When You Use a Module (Like Anomaly Detection):
+```
+1. User clicks "Anomaly Detection" in sidebar
+2. main() → calls render_anomaly_detection()
+3. render_anomaly_detection() → user selects metric and method
+4. User clicks "Detect" button
+5. render_anomaly_detection() → calls get_anomaly_summary() from anomaly_detection.py
+6. get_anomaly_summary() → runs 3 detection methods
+7. Results displayed with charts (using Plotly)
 ```
 
 ---
 
-### **Phase 5: Memory System**
+## All the Pages and Their Functions
 
-The memory system maintains context across conversations:
+**File:** `src/ui/streamlit_app.py`
 
-```
-SessionMemory stores:
-├── Context (persistent facts)
-│   ├── Schema information
-│   ├── Data ranges
-│   ├── Distinct values
-│   └── Summary statistics
-├── Message History (last 10 conversations)
-│   ├── User messages
-│   ├── Assistant responses
-│   └── Metadata (tool calls, results)
-└── Tool Call History
-    ├── Tool name
-    ├── Parameters
-    └── Results
-```
+1. **Overview Page**
+   - Function: `render_home()`
+   - What it does: Shows data loading, quick stats
 
-**Benefits**:
-- Follow-up questions work without context
-- Example: "What about Q4?" (remembers previous Q4 query)
-- Prevents redundant tool calls
-- Maintains conversation flow
+2. **AI Assistant Page**
+   - Function: `render_chat()`
+   - What it does: Chat interface, calls `agent.chat()`
+
+3. **Business Insights Page**
+   - Function: `render_smart_insights()`
+   - What it does: Auto-generates insights using agent
+
+4. **Anomaly Detection Page**
+   - Function: `render_anomaly_detection()`
+   - What it does: Calls `get_anomaly_summary()` from `anomaly_detection.py`
+
+5. **Data Comparison Page**
+   - Function: `render_comparison_tool()`
+   - What it does: Compares data segments
+
+6. **Forecasting Page**
+   - Function: `render_forecasting()`
+   - What it does: Predicts future sales
+
+7. **Custom Reports Page**
+   - Function: `render_custom_reports()`
+   - What it does: Creates custom reports
+
+8. **Alert Management Page**
+   - Function: `render_alert_system()`
+   - What it does: Sets up alerts
+
+9. **Dashboard Page**
+   - Function: `render_performance_dashboard()`
+   - What it does: Shows real-time KPIs
 
 ---
 
-### **Phase 6: Response Generation**
+## File Structure Summary
 
-1. **Tool Results Formatting**:
-   - Convert numeric results to readable format
-   - Extract key metrics
-   - Structure for LLM consumption
+```
+smart-cpg-decision-agent/
+├── src/
+│   ├── ui/
+│   │   └── streamlit_app.py          ← Main web interface (all pages)
+│   ├── agent/
+│   │   ├── agent_core.py            ← The AI brain (CPGDecisionAgent)
+│   │   └── memory.py                ← Remembers conversations
+│   ├── tools/
+│   │   ├── trend_analysis.py        ← Analyzes trends
+│   │   ├── anomaly_detection.py     ← Finds anomalies
+│   │   └── scenario_simulation.py    ← "What-if" scenarios
+│   ├── genai/
+│   │   └── llm_interface.py         ← Talks to AI models
+│   └── data_loader.py               ← Loads your data
+└── data/
+    └── cpg_sales_data.parquet        ← Your sales data file
+```
 
-2. **LLM Prompt Construction**:
+---
+
+## Real Example with File Names
+
+**You ask:** "What are the sales trends?"
+
+**What happens:**
+1. `streamlit_app.py` → `render_chat()` receives your question
+2. `render_chat()` → calls `agent.chat("What are the sales trends?")`
+3. `agent_core.py` → `chat()` function:
+   - Calls `_plan_actions()` → decides it's a "trend" question
+   - Calls `_execute_plan()` → runs `trend_analysis` tool
+4. `trend_analysis.py` → `extract_trends()` analyzes the data
+5. Returns: `{'direction': 'increasing', 'growth_rate': 12.5%}`
+6. `agent_core.py` → `_generate_response()` uses `LLMInterface`
+7. `llm_interface.py` → sends to AI model → gets answer
+8. `render_chat()` → displays the answer to you
+
+---
+
+## Key Functions to Remember
+
+**In `agent_core.py`:**
+- `chat()` - Main function that handles questions
+- `_plan_actions()` - Decides what to do
+- `_execute_plan()` - Runs the tools
+- `_generate_response()` - Creates the answer
+
+**In `streamlit_app.py`:**
+- `main()` - Starts the app
+- `render_home()` - Overview page
+- `render_chat()` - AI Assistant page
+- `render_anomaly_detection()` - Anomaly Detection page
+- (and 6 more render functions for other pages)
+
+**In tools:**
+- `extract_trends()` - Finds trends
+- `get_anomaly_summary()` - Finds anomalies
+- `simulate_price_change()` - Simulates scenarios
+
+---
+
+## Bottom Line
+
+- `streamlit_app.py` = The interface (buttons, pages)
+- `agent_core.py` = The brain (understands questions, coordinates tools)
+- `tools/` = The analyzers (do the math)
+- `llm_interface.py` = Talks to AI (generates answers)
+- `memory.py` = Remembers things (conversation history)
+
+When you ask a question, `agent_core.py` coordinates everything, calls the right tool, and uses `llm_interface.py` to give you an answer.
+
+---
+
+## Simple Analogy
+
+Think of it like a restaurant:
+- **`streamlit_app.py`** = The menu and waiter (what you see and interact with)
+- **`agent_core.py`** = The head chef (coordinates everything)
+- **`tools/`** = The kitchen staff (do the actual work)
+- **`llm_interface.py`** = The recipe book (knows how to make things)
+- **`memory.py`** = The order pad (remembers what you asked for)
+
+You order food (ask a question) → Waiter takes order → Head chef decides what to cook → Kitchen staff prepares it → You get your meal (answer)!
+
+---
+
+## How to Run It
+
+1. **Start the app:**
+   ```bash
+   streamlit run src/ui/streamlit_app.py
    ```
-   System Prompt (agent instructions)
-   +
-   User Query
-   +
-   Tool Results (formatted)
-   +
-   Memory Context (if relevant)
-   +
-   Previous Conversation (last 3-5 messages)
-   ```
 
-3. **LLM Processing**:
-   - OpenAI GPT-4 / GPT-3.5
-   - Azure OpenAI
-   - Hugging Face models
+2. **Load data:**
+   - Click "Load Data" button on Overview page
+   - Uses `load_cpg_data()` from `data_loader.py`
 
-4. **Response Validation**:
-   - Check against actual data
-   - Ensure numbers are accurate
-   - Prevent hallucinations
+3. **Ask questions:**
+   - Go to AI Assistant page
+   - Type your question
+   - `render_chat()` → `agent.chat()` → Tools → Answer!
 
 ---
 
-## 🎯 Key Features Flow
+## What Makes It Special
 
-### **Feature 1: AI Assistant**
-```
-Natural Language → Query Classification → Tool Selection → 
-Execution → LLM Synthesis → Response
-```
-
-### **Feature 2: Business Insights**
-```
-Data Analysis → Multi-tool Execution → Insight Generation → 
-Report Formatting → Display
-```
-
-### **Feature 3: Anomaly Detection**
-```
-Data Input → Multi-method Detection → Result Aggregation → 
-Visualization → Alert Generation
-```
-
-### **Feature 4: Forecasting**
-```
-Historical Data → Model Selection → Prediction → 
-Confidence Intervals → Visualization
-```
-
-### **Feature 5: Data Comparison**
-```
-Data Selection → Aggregation → Comparison Metrics → 
-Visualization → Insights
-```
-
-### **Feature 6: Dashboard**
-```
-Real-time Data → KPI Calculation → Period Comparison → 
-Charts → Monitoring
-```
-
-### **Feature 7: Alert Management**
-```
-Alert Configuration → Continuous Monitoring → 
-Threshold Check → Notification → Action
-```
-
-### **Feature 8: Custom Reports**
-```
-Report Configuration → Data Aggregation → 
-Formatting → Export
-```
+✅ **Smart**: Automatically picks the right tool for your question  
+✅ **Remembers**: Knows what you asked before  
+✅ **Fast**: Answers in seconds  
+✅ **Easy**: Just ask in plain English  
+✅ **Accurate**: Checks everything against real data  
 
 ---
 
-## 🔧 Technical Stack
-
-### **Frontend**
-- **Streamlit**: Web interface framework
-- **Plotly**: Interactive visualizations
-- **Pandas**: Data manipulation
-
-### **Backend**
-- **Python 3.8+**: Core language
-- **LangChain**: AI framework
-- **OpenAI/Azure/HuggingFace**: LLM providers
-
-### **Data Processing**
-- **Pandas**: Primary data processing
-- **PySpark**: Large-scale data (optional)
-- **NumPy**: Numerical operations
-- **Scikit-learn**: ML models (Isolation Forest, etc.)
-
-### **Analytics Tools**
-- **Trend Analysis**: Linear regression, growth rate calculation
-- **Anomaly Detection**: IQR, Z-score, Isolation Forest
-- **Forecasting**: Moving averages, exponential smoothing
-
----
-
-## 📊 Data Flow Diagram
-
-```
-CSV/Parquet File
-    ↓
-Data Loader (pandas/PySpark)
-    ↓
-Pandas DataFrame
-    ↓
-┌─────────────────────────┐
-│   Session State Storage  │
-│  - data                  │
-│  - metadata              │
-│  - agent                 │
-│  - chat_history          │
-└─────────────────────────┘
-    ↓
-Agent Core
-    ↓
-Tool Selection
-    ↓
-┌──────────┬──────────┬──────────┐
-│  Trend   │ Anomaly  │ Scenario │
-│ Analysis │Detection │Simulation│
-└──────────┴──────────┴──────────┘
-    ↓
-Tool Results
-    ↓
-LLM Interface
-    ↓
-Natural Language Response
-    ↓
-UI Display (Streamlit)
-```
-
----
-
-## 🚀 User Journey Example
-
-**Scenario**: User wants to understand sales performance
-
-1. **Start Application**: `streamlit run src/ui/streamlit_app.py`
-2. **Load Data**: Click "Load Data" on Overview page
-3. **Navigate**: Click "AI Assistant" in sidebar
-4. **Ask Question**: "What are the sales trends for the last quarter?"
-5. **Agent Processing**:
-   - Classifies as "trend analysis"
-   - Calls `trend_analysis` tool
-   - Gets results: 12.5% growth, strong upward trend
-   - LLM generates response
-6. **Response Displayed**: 
-   "Based on the analysis, sales show a strong upward trend with 12.5% growth rate over the last quarter..."
-7. **Follow-up**: "Which stores are underperforming?"
-   - Agent remembers "last quarter" context
-   - Analyzes store performance
-   - Provides store-specific insights
-
----
-
-## 💡 Key Design Principles
-
-1. **Modular Architecture**: Each tool is independent and reusable
-2. **Agentic AI**: Intelligent tool selection and orchestration
-3. **Memory System**: Context-aware conversations
-4. **Data Grounding**: All insights validated against actual data
-5. **Multi-Interface**: Web UI, CLI, and presentation generator
-6. **Scalable**: Supports both pandas (small) and PySpark (large) datasets
-
----
-
-## 📈 Performance Characteristics
-
-- **Response Time**: <5 seconds for new queries, <2 seconds for cached
-- **Data Capacity**: Handles 1M+ rows
-- **Accuracy**: 95%+ with data validation
-- **Concurrent Users**: Unlimited (stateless design)
-
----
-
-## 🔐 Security & Privacy
-
-- Data stays in user's environment
-- No data shared with third parties
-- Encrypted connections
-- Audit logging support
-
----
-
-This flow ensures that the platform provides intelligent, accurate, and actionable insights for CPG businesses while maintaining a user-friendly interface and robust architecture.
+**Created for easy understanding - Share this with anyone who wants to know how the project works!**
 
