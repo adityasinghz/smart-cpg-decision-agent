@@ -136,12 +136,17 @@ def render_sidebar():
             "Overview": "Overview",
             "AI Assistant": "AI Assistant",
             "Business Insights": "Business Insights",
-            "🔍 Anomaly Detection": "Anomaly Detection",
+            "Data Export": "Data Export",
             "Data Comparison": "Data Comparison",
             "Forecasting": "Forecasting",
             "Custom Reports": "Custom Reports",
+            "Data Quality": "Data Quality",
+            "Performance Benchmarking": "Performance Benchmarking",
             "Alert Management": "Alert Management",
-            "Dashboard": "Dashboard"
+            "Scenario Planning": "Scenario Planning",
+            "KPI Dashboard": "KPI Dashboard",
+            "A/B Testing": "A/B Testing",
+            "Data Profiling": "Data Profiling"
         }
         
         # Create navigation buttons
@@ -1105,165 +1110,33 @@ def render_smart_insights():
                     st.metric("Total Revenue", f"${md['total_revenue']:,.0f}")
 
 # -----------------------
-# Anomaly Detection Page
+# Data Export Page
 # -----------------------
 
-def render_anomaly_detection():
-    """Render anomaly detection page."""
-    st.markdown("## 🔍 Anomaly Detection")
+def render_data_export():
+    """Render data export page with multiple format options."""
+    st.markdown("## Data Export")
     st.markdown("""
-    **Comprehensive Anomaly and Outlier Detection**
+    **Comprehensive Data Export and Sharing**
     
-    Identify unusual patterns, outliers, and anomalies in your sales data using multiple detection methods. 
-    Get insights into data quality and unusual events that may require attention.
+    Export your data and analysis results in multiple formats for reporting, sharing, or further analysis in other tools.
     
-    **Detection Methods:**
-    - 📊 **IQR (Interquartile Range)**: Statistical method to identify outliers beyond 1.5× IQR
-    - 📈 **Z-Score**: Detects values that deviate significantly from the mean
-    - 🔍 **Multivariate**: Uses Isolation Forest to detect anomalies across multiple features simultaneously
+    **Export Options:**
+    - 📄 **Raw Data Export**: Export filtered or complete datasets in CSV, Excel, or JSON formats
+    - 📈 **Analysis Results**: Export analysis results and insights as JSON for programmatic access
+    - 📋 **Custom Aggregations**: Create and export aggregated data with custom grouping and functions
     
-    **Anomaly Types Detected:**
-    - **Statistical Outliers**: High and low outliers based on distribution
-    - **Time Series Anomalies**: Spikes and drops in temporal patterns
-    - **Multivariate Anomalies**: Complex patterns across multiple dimensions
+    **Features:**
+    - **Flexible Filtering**: Filter by date range, category, or specific columns before export
+    - **Multiple Formats**: CSV (universal), Excel (formatted), JSON (structured data)
+    - **Custom Aggregations**: Group and aggregate data by any dimension (date, category, store, region, SKU)
+    - **Analysis Export**: Save analysis results for documentation or integration with other systems
     
     **Use Cases:**
-    - Data quality assessment
-    - Identifying unusual sales events
-    - Detecting data entry errors
-    - Finding opportunities or issues
-    - Monitoring data integrity
-    """)
-    
-    if not st.session_state.data_loaded:
-        st.warning("⚠️ Please load data from the Home page first.")
-        return
-    
-    col1, col2, col3 = st.columns([2, 2, 1])
-    with col1:
-        metric = st.selectbox("Select Metric", ["revenue", "units_sold", "price"], key="anomaly_metric")
-    with col2:
-        st.selectbox("Detection Method", ["iqr", "zscore", "multivariate"], key="anomaly_method")
-    with col3:
-        # Add spacing to align button with selectboxes (selectboxes have labels above them)
-        st.markdown('<div style="height: 1.5rem;"></div>', unsafe_allow_html=True)
-        if st.button("🔎 Detect", type="primary", use_container_width=True):
-            with st.spinner("Detecting anomalies..."):
-                from src.tools.anomaly_detection import get_anomaly_summary
-                results = get_anomaly_summary(st.session_state.data, metric=metric, include_multivariate=True)
-                st.session_state.analysis_results['anomaly'] = results
-    
-    if 'anomaly' in st.session_state.analysis_results:
-        results = st.session_state.analysis_results['anomaly']
-        assess = results.get('overall_assessment', {})
-        
-        if assess.get('data_quality') == 'good':
-            st.success(f"✓ Data Quality: {assess.get('data_quality', 'unknown').upper()} | Anomaly Rate: {assess.get('anomaly_rate', 0):.2f}%")
-        else:
-            st.warning(f"⚠️ Data Quality: {assess.get('data_quality', 'unknown').upper()} | Anomaly Rate: {assess.get('anomaly_rate', 0):.2f}%")
-        
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            st.metric("Total Anomalies", assess.get('total_anomalies', 0))
-        with c2:
-            stat_count = results.get('statistical_outliers', {}).get('count', 0)
-            st.metric("Statistical Outliers", stat_count)
-        with c3:
-            ts_count = results.get('time_series_anomalies', {}).get('count', 0)
-            st.metric("Time Series Anomalies", ts_count)
-        with c4:
-            mv_count = results.get('multivariate_anomalies', {}).get('count', 0)
-            st.metric("Multivariate Anomalies", mv_count)
-        
-        st.markdown("### 📊 Anomaly Breakdown")
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("**Statistical Outliers:**")
-            stat_outliers = results.get('statistical_outliers', {})
-            st.write(f"- High outliers: {stat_outliers.get('high_outliers', 0)}")
-            st.write(f"- Low outliers: {stat_outliers.get('low_outliers', 0)}")
-        with c2:
-            st.markdown("**Time Series Anomalies:**")
-            ts_anomalies = results.get('time_series_anomalies', {})
-            st.write(f"- Spikes: {ts_anomalies.get('spikes', 0)}")
-            st.write(f"- Drops: {ts_anomalies.get('drops', 0)}")
-        
-        # Visualization
-        if 'date' in st.session_state.data.columns and metric in st.session_state.data.columns:
-            st.markdown("### 📈 Anomaly Visualization")
-            data = st.session_state.data.copy()
-            data['date'] = pd.to_datetime(data['date'])
-            
-            # Create scatter plot with anomalies highlighted
-            fig = go.Figure()
-            
-            # Normal points
-            normal_data = data[~data.index.isin([
-                a.get('index', -1) for a in stat_outliers.get('examples', [])
-            ])]
-            fig.add_trace(go.Scatter(
-                x=normal_data['date'],
-                y=normal_data[metric],
-                mode='markers',
-                name='Normal',
-                marker=dict(color='#667eea', size=4, opacity=0.6)
-            ))
-            
-            # Anomaly points
-            anomaly_indices = set()
-            for a in stat_outliers.get('examples', []):
-                idx = a.get('index', -1)
-                if idx >= 0 and idx < len(data):
-                    anomaly_indices.add(idx)
-            
-            if anomaly_indices:
-                anomaly_data = data[data.index.isin(anomaly_indices)]
-                fig.add_trace(go.Scatter(
-                    x=anomaly_data['date'],
-                    y=anomaly_data[metric],
-                    mode='markers',
-                    name='Anomalies',
-                    marker=dict(color='#f5576c', size=8, symbol='x')
-                ))
-            
-            fig.update_layout(
-                title=f'{metric.replace("_", " ").title()} with Anomalies Highlighted',
-                xaxis_title='Date',
-                yaxis_title=metric.replace('_', ' ').title(),
-                template='plotly_white',
-                height=400
-            )
-            st.plotly_chart(fig, use_container_width=True)
-
-# -----------------------
-# Comparison Tool Page
-# -----------------------
-
-def render_comparison_tool():
-    """Render comparison tool for comparing different data segments."""
-    st.markdown("## Data Comparison")
-    st.markdown("""
-    **Side-by-Side Performance Analysis**
-    
-    Compare performance metrics across different dimensions to identify trends, patterns, and opportunities for optimization.
-    
-    **Comparison Types:**
-    - 📅 **Time Period Comparison**: Compare performance between different time periods (e.g., Q1 vs Q2, This Month vs Last Month)
-    - 📦 **Category Comparison**: Analyze performance across product categories
-    - 🏪 **Store Comparison**: Compare performance between different store locations
-    - 🗺️ **Regional Comparison**: Analyze geographic performance differences
-    
-    **Metrics Analyzed:**
-    - Revenue changes and growth percentages
-    - Units sold comparisons
-    - Average price analysis
-    - Visual charts and graphs for easy interpretation
-    
-    **Use Cases:**
-    - Period-over-period performance analysis
-    - Identifying best and worst performing categories/stores
-    - Regional performance optimization
-    - Understanding seasonal variations
+    - Creating reports for stakeholders
+    - Sharing data with team members
+    - Importing into Excel, Power BI, or other analytics tools
+    - Archiving analysis results
     """)
     
     if not st.session_state.data_loaded:
@@ -1272,110 +1145,139 @@ def render_comparison_tool():
     
     data = st.session_state.data.copy()
     
-    comparison_type = st.radio(
-        "Comparison Type",
-        ["Time Period", "Category", "Store", "Region"],
-        horizontal=True,
-        key="comp_type"
-    )
+    st.markdown("### 📥 Export Options")
     
-    if comparison_type == "Time Period":
-        st.markdown("### 📅 Compare Time Periods")
-        
-        if 'date' in data.columns:
-            data['date'] = pd.to_datetime(data['date'])
-            min_date = data['date'].min().date()
-            max_date = data['date'].max().date()
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                period1_start = st.date_input("Period 1 Start", value=min_date, key="p1_start")
-                period1_end = st.date_input("Period 1 End", value=min_date + pd.Timedelta(days=30), key="p1_end")
-            with col2:
-                period2_start = st.date_input("Period 2 Start", value=max_date - pd.Timedelta(days=30), key="p2_start")
-                period2_end = st.date_input("Period 2 End", value=max_date, key="p2_end")
-            
-            p1_data = data[(data['date'].dt.date >= period1_start) & (data['date'].dt.date <= period1_end)]
-            p2_data = data[(data['date'].dt.date >= period2_start) & (data['date'].dt.date <= period2_end)]
-            
-            # Comparison metrics
-            st.markdown("### 📊 Comparison Metrics")
-            comp_col1, comp_col2, comp_col3 = st.columns(3)
-            
-            with comp_col1:
-                p1_rev = p1_data['revenue'].sum() if 'revenue' in p1_data.columns else 0
-                p2_rev = p2_data['revenue'].sum() if 'revenue' in p2_data.columns else 0
-                change = ((p2_rev - p1_rev) / p1_rev * 100) if p1_rev > 0 else 0
-                st.metric("Revenue", f"${p2_rev:,.0f}", f"{change:+.1f}%")
-            
-            with comp_col2:
-                p1_units = p1_data['units_sold'].sum() if 'units_sold' in p1_data.columns else 0
-                p2_units = p2_data['units_sold'].sum() if 'units_sold' in p2_data.columns else 0
-                change = ((p2_units - p1_units) / p1_units * 100) if p1_units > 0 else 0
-                st.metric("Units Sold", f"{p2_units:,.0f}", f"{change:+.1f}%")
-            
-            with comp_col3:
-                p1_avg = p1_rev / p1_units if p1_units > 0 else 0
-                p2_avg = p2_rev / p2_units if p2_units > 0 else 0
-                change = ((p2_avg - p1_avg) / p1_avg * 100) if p1_avg > 0 else 0
-                st.metric("Avg Price", f"${p2_avg:.2f}", f"{change:+.1f}%")
-            
-            # Visualization
-            fig = go.Figure()
-            fig.add_trace(go.Bar(name='Period 1', x=['Revenue', 'Units'], y=[p1_rev/1000, p1_units/1000], marker_color='#667eea'))
-            fig.add_trace(go.Bar(name='Period 2', x=['Revenue', 'Units'], y=[p2_rev/1000, p2_units/1000], marker_color='#48bb78'))
-            fig.update_layout(title='Period Comparison', barmode='group', template='plotly_white')
-            st.plotly_chart(fig, use_container_width=True)
+    export_tab1, export_tab2, export_tab3 = st.tabs(["📄 Raw Data", "📈 Analysis Results", "📋 Custom Export"])
     
-    elif comparison_type == "Category":
-        st.markdown("### 📦 Compare Categories")
+    with export_tab1:
+        st.markdown("#### Export Raw Data")
         
-        if 'category' in data.columns:
-            categories = sorted(data['category'].unique().tolist())
-            selected_cats = st.multiselect("Select Categories", categories, default=categories[:3] if len(categories) >= 3 else categories)
-            
-            if selected_cats:
-                cat_comparison = data[data['category'].isin(selected_cats)].groupby('category').agg({
-                    'revenue': 'sum',
-                    'units_sold': 'sum'
-                }).reset_index()
-                
-                st.dataframe(cat_comparison, use_container_width=True)
-                
-                fig = px.bar(cat_comparison, x='category', y='revenue', title='Revenue by Category')
-                st.plotly_chart(fig, use_container_width=True)
+        # Filters for export
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if 'date' in data.columns:
+                data['date'] = pd.to_datetime(data['date'])
+                min_date = data['date'].min().date()
+                max_date = data['date'].max().date()
+                date_range = st.date_input("Date Range", value=(min_date, max_date), key="export_date")
+                if isinstance(date_range, tuple) and len(date_range) == 2:
+                    data = data[(data['date'].dt.date >= date_range[0]) & (data['date'].dt.date <= date_range[1])]
+        
+        with col2:
+            if 'category' in data.columns:
+                categories = ['All'] + sorted(data['category'].unique().tolist())
+                selected_cat = st.selectbox("Category", categories, key="export_category")
+                if selected_cat != 'All':
+                    data = data[data['category'] == selected_cat]
+        
+        with col3:
+            columns_to_export = st.multiselect(
+                "Select Columns",
+                options=data.columns.tolist(),
+                default=data.columns.tolist(),
+                key="export_columns"
+            )
+            if columns_to_export:
+                data = data[columns_to_export]
+        
+        st.markdown(f"**Rows to export:** {len(data):,}")
+        st.dataframe(data.head(100), use_container_width=True)
+        
+        # Export buttons
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            csv = data.to_csv(index=False)
+            st.download_button(
+                "📥 Download CSV",
+                csv,
+                f"cpg_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                "text/csv",
+                use_container_width=True
+            )
+        with col2:
+            # Excel export (requires openpyxl)
+            try:
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    data.to_excel(writer, index=False, sheet_name='Data')
+                excel_data = output.getvalue()
+                st.download_button(
+                    "📊 Download Excel",
+                    excel_data,
+                    f"cpg_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True
+                )
+            except ImportError:
+                st.info("💡 Install openpyxl for Excel export: `pip install openpyxl`")
+        with col3:
+            # JSON export
+            json_data = data.to_json(orient='records', date_format='iso')
+            st.download_button(
+                "📋 Download JSON",
+                json_data,
+                f"cpg_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                "application/json",
+                use_container_width=True
+            )
     
-    elif comparison_type == "Store":
-        st.markdown("### 🏪 Compare Stores")
+    with export_tab2:
+        st.markdown("#### Export Analysis Results")
         
-        if 'store_id' in data.columns:
-            stores = sorted(data['store_id'].unique().tolist())
-            selected_stores = st.multiselect("Select Stores", stores, default=stores[:5] if len(stores) >= 5 else stores)
+        if st.session_state.get('analysis_results'):
+            st.success("✅ Analysis results available for export")
             
-            if selected_stores:
-                store_comparison = data[data['store_id'].isin(selected_stores)].groupby('store_id').agg({
-                    'revenue': 'sum',
-                    'units_sold': 'sum'
-                }).reset_index()
-                
-                st.dataframe(store_comparison, use_container_width=True)
-                
-                fig = px.bar(store_comparison, x='store_id', y='revenue', title='Revenue by Store')
-                st.plotly_chart(fig, use_container_width=True)
+            # Export all analysis results
+            results_json = json.dumps(st.session_state.analysis_results, indent=2, default=str)
+            st.download_button(
+                "📥 Download Analysis Results (JSON)",
+                results_json,
+                f"analysis_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                "application/json",
+                use_container_width=True
+            )
+            
+            # Show summary
+            with st.expander("View Analysis Results Summary"):
+                st.json(st.session_state.analysis_results)
+        else:
+            st.info("💡 Run analyses in AI Chat or Smart Insights to generate exportable results")
     
-    elif comparison_type == "Region":
-        st.markdown("### 🗺️ Compare Regions")
+    with export_tab3:
+        st.markdown("#### Custom Export Builder")
         
-        if 'store_region' in data.columns:
-            region_comparison = data.groupby('store_region').agg({
-                'revenue': 'sum',
-                'units_sold': 'sum'
-            }).reset_index()
-            
-            st.dataframe(region_comparison, use_container_width=True)
-            
-            fig = px.pie(region_comparison, values='revenue', names='store_region', title='Revenue Distribution by Region')
-            st.plotly_chart(fig, use_container_width=True)
+        st.markdown("Create a custom export with aggregated data")
+        
+        agg_col1, agg_col2 = st.columns(2)
+        with agg_col1:
+            group_by = st.multiselect(
+                "Group By",
+                options=['date', 'category', 'store_id', 'store_region', 'sku_id'],
+                key="export_groupby"
+            )
+        with agg_col2:
+            agg_func = st.selectbox(
+                "Aggregation",
+                ["sum", "mean", "count", "min", "max"],
+                key="export_agg"
+            )
+        
+        if group_by and st.button("Generate Custom Export"):
+            try:
+                numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+                if 'revenue' in numeric_cols:
+                    custom_data = data.groupby(group_by).agg({col: agg_func for col in numeric_cols}).reset_index()
+                    st.dataframe(custom_data, use_container_width=True)
+                    
+                    csv_custom = custom_data.to_csv(index=False)
+                    st.download_button(
+                        "📥 Download Custom Export",
+                        csv_custom,
+                        f"custom_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        "text/csv"
+                    )
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 # -----------------------
 # Comparison Tool Page
@@ -1804,10 +1706,124 @@ def render_custom_reports():
             )
 
 # -----------------------
-# Alert System Page
+# Data Quality Page
 # -----------------------
 
-def render_alert_system():
+def render_data_quality():
+    """Render data quality checker page."""
+    st.markdown("## Data Quality")
+    st.markdown("""
+    **Data Validation and Quality Assessment**
+    
+    Ensure your data is clean, complete, and reliable before analysis. This tool performs comprehensive quality 
+    checks and provides a quality score to help you understand data reliability.
+    
+    **Quality Checks Performed:**
+    - ✅ **Missing Values**: Identifies columns with null or missing data
+    - 🔍 **Duplicate Detection**: Finds duplicate rows in your dataset
+    - ⚠️ **Data Type Validation**: Verifies correct data types (numeric, date, text)
+    - 📊 **Value Validation**: Checks for negative values in numeric columns
+    - 📅 **Date Consistency**: Validates date format and consistency
+    
+    **Quality Score:**
+    - **0-100 Score**: Overall data quality rating
+    - **Color-coded**: Green (80+), Yellow (60-79), Red (<60)
+    - **Issue Reporting**: Detailed list of all quality issues found
+    - **Completeness Report**: Column-by-column completeness percentage
+    
+    **Use Cases:**
+    - Pre-analysis data validation
+    - Data cleaning and preparation
+    - Quality assurance for data imports
+    - Identifying data entry errors
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    if st.button("🔍 Run Quality Check", type="primary"):
+        quality_issues = []
+        quality_score = 100
+        
+        # Check for missing values
+        missing = data.isnull().sum()
+        if missing.sum() > 0:
+            missing_cols = missing[missing > 0]
+            quality_issues.append(f"⚠️ Missing values found in: {', '.join(missing_cols.index.tolist())}")
+            quality_score -= (missing.sum() / len(data) * 100)
+        
+        # Check for duplicates
+        duplicates = data.duplicated().sum()
+        if duplicates > 0:
+            quality_issues.append(f"⚠️ {duplicates} duplicate rows found")
+            quality_score -= (duplicates / len(data) * 10)
+        
+        # Check for negative values in numeric columns
+        numeric_cols = data.select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
+            if (data[col] < 0).any():
+                quality_issues.append(f"⚠️ Negative values found in {col}")
+                quality_score -= 5
+        
+        # Check date consistency
+        if 'date' in data.columns:
+            try:
+                pd.to_datetime(data['date'])
+            except:
+                quality_issues.append("⚠️ Date column has invalid dates")
+                quality_score -= 10
+        
+        # Check data types
+        if 'revenue' in data.columns and not pd.api.types.is_numeric_dtype(data['revenue']):
+            quality_issues.append("⚠️ Revenue column is not numeric")
+            quality_score -= 15
+        
+        quality_score = max(0, quality_score)
+        
+        st.session_state['quality_issues'] = quality_issues
+        st.session_state['quality_score'] = quality_score
+        st.rerun()
+    
+    if st.session_state.get('quality_score') is not None:
+        score = st.session_state['quality_score']
+        issues = st.session_state.get('quality_issues', [])
+        
+        st.markdown("### 📊 Quality Score")
+        
+        # Score visualization
+        score_color = "#48bb78" if score >= 80 else "#fbbf24" if score >= 60 else "#f5576c"
+        st.markdown(f"""
+        <div style="text-align: center; padding: 2rem;">
+            <h1 style="color: {score_color}; font-size: 4rem;">{score:.1f}/100</h1>
+            <p style="font-size: 1.2rem;">Data Quality Score</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if issues:
+            st.markdown("### ⚠️ Issues Found")
+            for issue in issues:
+                st.warning(issue)
+        else:
+            st.success("✅ No quality issues detected!")
+        
+        # Data completeness
+        st.markdown("### 📋 Data Completeness")
+        completeness_df = pd.DataFrame({
+            'Column': data.columns,
+            'Non-Null Count': [data[col].notna().sum() for col in data.columns],
+            'Null Count': [data[col].isna().sum() for col in data.columns],
+            'Completeness %': [f"{(data[col].notna().sum() / len(data) * 100):.1f}%" for col in data.columns]
+        })
+        st.dataframe(completeness_df, use_container_width=True)
+
+# -----------------------
+# Benchmarking Page
+# -----------------------
+
+def render_benchmarking():
     """Render performance benchmarking page."""
     st.markdown("## Performance Benchmarking")
     st.markdown("""
@@ -2108,12 +2124,160 @@ def render_alert_system():
             st.info("No alerts configured yet. Add alerts in the tabs above.")
 
 # -----------------------
+# What-If Scenario Builder Page
+# -----------------------
+
+def render_whatif_builder():
+    """Render advanced what-if scenario builder."""
+    st.markdown("## Scenario Planning")
+    st.markdown("""
+    **Advanced Multi-Variable Scenario Analysis**
+    
+    Build complex business scenarios by adjusting multiple variables simultaneously and see the combined impact on 
+    your business metrics. Perfect for strategic planning and decision support.
+    
+    **Adjustable Variables:**
+    - 💰 **Price Changes**: Adjust prices by percentage (-50% to +50%)
+    - 🎁 **Promotion Settings**: Set discount percentage and coverage area
+    - 📦 **Inventory Adjustments**: Modify inventory levels (-50% to +50%)
+    - 📈 **Demand Shifts**: Simulate changes in market demand (-30% to +30%)
+    
+    **Analysis Provided:**
+    - **Revenue Impact**: How scenario affects total revenue
+    - **Units Impact**: Changes in units sold
+    - **Price Analysis**: Average price changes
+    - **Margin Impact**: Combined effect on profitability
+    - **Visual Comparison**: Baseline vs scenario charts
+    
+    **Use Cases:**
+    - Pricing strategy evaluation
+    - Promotion planning and ROI analysis
+    - Inventory optimization scenarios
+    - Market condition simulation
+    - Strategic planning and forecasting
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    st.markdown("### 🎯 Scenario Configuration")
+    
+    scenario_name = st.text_input("Scenario Name", value=f"Scenario_{datetime.now().strftime('%Y%m%d_%H%M%S')}", key="scenario_name")
+    
+    st.markdown("#### Variable Adjustments")
+    
+    var_col1, var_col2, var_col3 = st.columns(3)
+    
+    with var_col1:
+        price_change = st.slider("Price Change (%)", min_value=-50.0, max_value=50.0, value=0.0, step=1.0, key="whatif_price")
+        st.caption(f"New price: {data['price'].mean() * (1 + price_change/100):.2f}")
+    
+    with var_col2:
+        promo_discount = st.slider("Promotion Discount (%)", min_value=0.0, max_value=50.0, value=0.0, step=5.0, key="whatif_promo")
+        promo_coverage = st.slider("Promotion Coverage (%)", min_value=0.0, max_value=100.0, value=0.0, step=10.0, key="whatif_coverage")
+    
+    with var_col3:
+        inventory_adjust = st.slider("Inventory Adjustment (%)", min_value=-50.0, max_value=50.0, value=0.0, step=5.0, key="whatif_inventory")
+        demand_shift = st.slider("Demand Shift (%)", min_value=-30.0, max_value=30.0, value=0.0, step=1.0, key="whatif_demand")
+    
+    if st.button("🚀 Run Scenario", type="primary"):
+        with st.spinner("Simulating scenario..."):
+            try:
+                # Create scenario data
+                scenario_data = data.copy()
+                
+                # Apply price change
+                scenario_data['new_price'] = scenario_data['price'] * (1 + price_change / 100)
+                
+                # Apply promotion
+                if promo_coverage > 0:
+                    num_promo_rows = int(len(scenario_data) * promo_coverage / 100)
+                    promo_indices = np.random.choice(scenario_data.index, num_promo_rows, replace=False)
+                    scenario_data.loc[promo_indices, 'new_price'] = scenario_data.loc[promo_indices, 'new_price'] * (1 - promo_discount / 100)
+                
+                # Apply demand shift (price elasticity effect)
+                price_elasticity = -1.5
+                demand_change = -price_elasticity * price_change / 100 + demand_shift / 100
+                scenario_data['new_units'] = scenario_data['units_sold'] * (1 + demand_change)
+                scenario_data['new_units'] = scenario_data['new_units'].clip(lower=0)
+                
+                # Apply inventory adjustment
+                if 'inventory_level' in scenario_data.columns:
+                    scenario_data['new_inventory'] = scenario_data['inventory_level'] * (1 + inventory_adjust / 100)
+                
+                # Calculate new revenue
+                scenario_data['new_revenue'] = scenario_data['new_price'] * scenario_data['new_units']
+                
+                # Calculate metrics
+                baseline_revenue = data['revenue'].sum()
+                scenario_revenue = scenario_data['new_revenue'].sum()
+                revenue_change = ((scenario_revenue - baseline_revenue) / baseline_revenue * 100) if baseline_revenue > 0 else 0
+                
+                baseline_units = data['units_sold'].sum()
+                scenario_units = scenario_data['new_units'].sum()
+                units_change = ((scenario_units - baseline_units) / baseline_units * 100) if baseline_units > 0 else 0
+                
+                st.session_state['whatif_results'] = {
+                    'scenario_name': scenario_name,
+                    'baseline_revenue': baseline_revenue,
+                    'scenario_revenue': scenario_revenue,
+                    'revenue_change': revenue_change,
+                    'baseline_units': baseline_units,
+                    'scenario_units': scenario_units,
+                    'units_change': units_change,
+                    'scenario_data': scenario_data
+                }
+                st.success("✅ Scenario simulated successfully!")
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"Error running scenario: {e}")
+    
+    if st.session_state.get('whatif_results'):
+        results = st.session_state['whatif_results']
+        
+        st.markdown("### 📊 Scenario Results")
+        
+        st.markdown(f"#### {results['scenario_name']}")
+        
+        result_col1, result_col2, result_col3, result_col4 = st.columns(4)
+        
+        with result_col1:
+            st.metric("Revenue Change", f"${results['scenario_revenue']:,.0f}", f"{results['revenue_change']:+.1f}%")
+        with result_col2:
+            st.metric("Units Change", f"{results['scenario_units']:,.0f}", f"{results['units_change']:+.1f}%")
+        with result_col3:
+            avg_price = results['scenario_revenue'] / results['scenario_units'] if results['scenario_units'] > 0 else 0
+            baseline_avg = results['baseline_revenue'] / results['baseline_units'] if results['baseline_units'] > 0 else 0
+            price_change_pct = ((avg_price - baseline_avg) / baseline_avg * 100) if baseline_avg > 0 else 0
+            st.metric("Avg Price", f"${avg_price:.2f}", f"{price_change_pct:+.1f}%")
+        with result_col4:
+            margin_change = results['revenue_change'] - results['units_change']
+            st.metric("Margin Impact", f"{margin_change:+.1f}%", "vs baseline")
+        
+        # Visualization
+        comparison_df = pd.DataFrame({
+            'Metric': ['Revenue', 'Units'],
+            'Baseline': [results['baseline_revenue']/1000, results['baseline_units']/1000],
+            'Scenario': [results['scenario_revenue']/1000, results['scenario_units']/1000]
+        })
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(name='Baseline', x=comparison_df['Metric'], y=comparison_df['Baseline'], marker_color='#667eea'))
+        fig.add_trace(go.Bar(name='Scenario', x=comparison_df['Metric'], y=comparison_df['Scenario'], marker_color='#48bb78'))
+        fig.update_layout(title='Baseline vs Scenario', barmode='group', template='plotly_white')
+        st.plotly_chart(fig, use_container_width=True)
+
+# -----------------------
 # Performance Dashboard Page
 # -----------------------
 
 def render_performance_dashboard():
     """Render real-time performance dashboard with KPIs."""
-    st.markdown("## Dashboard")
+    st.markdown("## KPI Dashboard")
     st.markdown("""
     **Real-Time Key Performance Indicator Monitoring**
     
@@ -2243,6 +2407,330 @@ def render_performance_dashboard():
             st.metric("Avg Inventory", f"{avg_inventory:,.0f}")
 
 # -----------------------
+# A/B Testing Analysis Page
+# -----------------------
+
+def render_ab_testing():
+    """Render A/B testing analysis page."""
+    st.markdown("## A/B Testing")
+    st.markdown("""
+    **Experimental Analysis for Strategy Optimization**
+    
+    Compare two different strategies, promotions, or scenarios side-by-side to determine which performs better. 
+    Make data-driven decisions about pricing, promotions, and business strategies.
+    
+    **Test Configuration:**
+    - **Control Group (Test A)**: Baseline strategy with current pricing and promotions
+    - **Variant Group (Test B)**: Alternative strategy with different pricing/promotions
+    - **Customizable Variables**: Price, promotion percentage, and coverage for each test
+    
+    **Analysis Provided:**
+    - **Revenue Comparison**: Side-by-side revenue analysis
+    - **Units Comparison**: Units sold comparison
+    - **Average Price**: Price point analysis
+    - **Winner Identification**: Automatic determination of best performing strategy
+    - **Improvement Percentage**: Quantified improvement of winning strategy
+    
+    **Use Cases:**
+    - Promotion effectiveness testing
+    - Pricing strategy evaluation
+    - Marketing campaign comparison
+    - Product launch strategy testing
+    - Optimization experiments
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    st.markdown("### 🎯 Test Configuration")
+    
+    test_tab1, test_tab2 = st.tabs(["📊 Configure Tests", "📈 Compare Results"])
+    
+    with test_tab1:
+        st.markdown("#### Test A (Control)")
+        
+        test_a_col1, test_a_col2 = st.columns(2)
+        with test_a_col1:
+            test_a_name = st.text_input("Test A Name", value="Control", key="test_a_name")
+            test_a_price = st.number_input("Price", min_value=0.01, value=float(data['price'].mean()) if 'price' in data.columns else 5.0, key="test_a_price")
+        with test_a_col2:
+            test_a_promo = st.slider("Promotion (%)", min_value=0.0, max_value=50.0, value=0.0, key="test_a_promo")
+            test_a_coverage = st.slider("Coverage (%)", min_value=0.0, max_value=100.0, value=0.0, key="test_a_coverage")
+        
+        st.markdown("#### Test B (Variant)")
+        
+        test_b_col1, test_b_col2 = st.columns(2)
+        with test_b_col1:
+            test_b_name = st.text_input("Test B Name", value="Variant", key="test_b_name")
+            test_b_price = st.number_input("Price", min_value=0.01, value=float(data['price'].mean() * 0.9) if 'price' in data.columns else 4.5, key="test_b_price")
+        with test_b_col2:
+            test_b_promo = st.slider("Promotion (%)", min_value=0.0, max_value=50.0, value=10.0, key="test_b_promo")
+            test_b_coverage = st.slider("Coverage (%)", min_value=0.0, max_value=100.0, value=50.0, key="test_b_coverage")
+        
+        if st.button("🚀 Run A/B Test", type="primary"):
+            with st.spinner("Running A/B test..."):
+                try:
+                    # Simulate Test A
+                    test_a_data = data.copy()
+                    test_a_data['test_price'] = test_a_price
+                    if test_a_coverage > 0:
+                        num_promo = int(len(test_a_data) * test_a_coverage / 100)
+                        promo_indices = np.random.choice(test_a_data.index, num_promo, replace=False)
+                        test_a_data.loc[promo_indices, 'test_price'] = test_a_data.loc[promo_indices, 'test_price'] * (1 - test_a_promo / 100)
+                    
+                    price_elasticity = -1.5
+                    price_change_a = ((test_a_data['test_price'].mean() - data['price'].mean()) / data['price'].mean() * 100)
+                    demand_change_a = -price_elasticity * price_change_a / 100
+                    test_a_data['test_units'] = data['units_sold'] * (1 + demand_change_a)
+                    test_a_data['test_revenue'] = test_a_data['test_price'] * test_a_data['test_units']
+                    
+                    # Simulate Test B
+                    test_b_data = data.copy()
+                    test_b_data['test_price'] = test_b_price
+                    if test_b_coverage > 0:
+                        num_promo = int(len(test_b_data) * test_b_coverage / 100)
+                        promo_indices = np.random.choice(test_b_data.index, num_promo, replace=False)
+                        test_b_data.loc[promo_indices, 'test_price'] = test_b_data.loc[promo_indices, 'test_price'] * (1 - test_b_promo / 100)
+                    
+                    price_change_b = ((test_b_data['test_price'].mean() - data['price'].mean()) / data['price'].mean() * 100)
+                    demand_change_b = -price_elasticity * price_change_b / 100
+                    test_b_data['test_units'] = data['units_sold'] * (1 + demand_change_b)
+                    test_b_data['test_revenue'] = test_b_data['test_price'] * test_b_data['test_units']
+                    
+                    # Calculate results
+                    baseline_revenue = data['revenue'].sum()
+                    test_a_revenue = test_a_data['test_revenue'].sum()
+                    test_b_revenue = test_b_data['test_revenue'].sum()
+                    
+                    test_a_change = ((test_a_revenue - baseline_revenue) / baseline_revenue * 100) if baseline_revenue > 0 else 0
+                    test_b_change = ((test_b_revenue - baseline_revenue) / baseline_revenue * 100) if baseline_revenue > 0 else 0
+                    
+                    st.session_state['ab_test_results'] = {
+                        'test_a': {
+                            'name': test_a_name,
+                            'revenue': test_a_revenue,
+                            'change': test_a_change,
+                            'units': test_a_data['test_units'].sum(),
+                            'avg_price': test_a_data['test_price'].mean()
+                        },
+                        'test_b': {
+                            'name': test_b_name,
+                            'revenue': test_b_revenue,
+                            'change': test_b_change,
+                            'units': test_b_data['test_units'].sum(),
+                            'avg_price': test_b_data['test_price'].mean()
+                        },
+                        'baseline': {
+                            'revenue': baseline_revenue,
+                            'units': data['units_sold'].sum()
+                        }
+                    }
+                    st.success("✅ A/B test completed!")
+                    st.rerun()
+                    
+                except Exception as e:
+                    st.error(f"Error running A/B test: {e}")
+    
+    with test_tab2:
+        if st.session_state.get('ab_test_results'):
+            results = st.session_state['ab_test_results']
+            
+            st.markdown("### 📊 A/B Test Results")
+            
+            # Comparison metrics
+            comp_col1, comp_col2, comp_col3 = st.columns(3)
+            
+            with comp_col1:
+                st.markdown(f"#### {results['test_a']['name']}")
+                st.metric("Revenue", f"${results['test_a']['revenue']:,.0f}", f"{results['test_a']['change']:+.1f}%")
+                st.metric("Units", f"{results['test_a']['units']:,.0f}")
+                st.metric("Avg Price", f"${results['test_a']['avg_price']:.2f}")
+            
+            with comp_col2:
+                st.markdown(f"#### {results['test_b']['name']}")
+                st.metric("Revenue", f"${results['test_b']['revenue']:,.0f}", f"{results['test_b']['change']:+.1f}%")
+                st.metric("Units", f"{results['test_b']['units']:,.0f}")
+                st.metric("Avg Price", f"${results['test_b']['avg_price']:.2f}")
+            
+            with comp_col3:
+                st.markdown("#### Winner")
+                winner = results['test_a']['name'] if results['test_a']['revenue'] > results['test_b']['revenue'] else results['test_b']['name']
+                improvement = abs(results['test_a']['revenue'] - results['test_b']['revenue']) / min(results['test_a']['revenue'], results['test_b']['revenue']) * 100
+                st.success(f"🏆 {winner}")
+                st.metric("Improvement", f"{improvement:.1f}%")
+            
+            # Visualization
+            comparison_df = pd.DataFrame({
+                'Test': [results['test_a']['name'], results['test_b']['name']],
+                'Revenue': [results['test_a']['revenue']/1000, results['test_b']['revenue']/1000],
+                'Units': [results['test_a']['units']/1000, results['test_b']['units']/1000]
+            })
+            
+            fig = go.Figure()
+            fig.add_trace(go.Bar(name='Revenue', x=comparison_df['Test'], y=comparison_df['Revenue'], marker_color='#667eea'))
+            fig.add_trace(go.Bar(name='Units', x=comparison_df['Test'], y=comparison_df['Units'], marker_color='#48bb78', yaxis='y2'))
+            fig.update_layout(
+                title='A/B Test Comparison',
+                barmode='group',
+                template='plotly_white',
+                yaxis=dict(title='Revenue (thousands)'),
+                yaxis2=dict(title='Units (thousands)', overlaying='y', side='right')
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Run an A/B test in the 'Configure Tests' tab to see results here")
+
+# -----------------------
+# Data Profiling Page
+# -----------------------
+
+def render_data_profiling():
+    """Render comprehensive data profiling page."""
+    st.markdown("## Data Profiling")
+    st.markdown("""
+    **Comprehensive Statistical Analysis and Data Exploration**
+    
+    Perform deep statistical analysis of your dataset to understand data distributions, relationships, and characteristics. 
+    Essential for data scientists and analysts who need detailed insights into their data structure.
+    
+    **Profiling Features:**
+    - 📊 **Dataset Overview**: Total rows, columns, and memory usage
+    - 📈 **Column Statistics**: For numeric columns - min, max, mean, median, std deviation, skewness, kurtosis
+    - 📋 **Categorical Analysis**: For text/category columns - unique counts, top values, frequency distributions
+    - 🔗 **Correlation Matrix**: Visual correlation analysis between all numeric columns
+    - 📉 **Distribution Plots**: Histograms showing data distribution patterns
+    
+    **Statistical Measures:**
+    - **Central Tendency**: Mean, median for numeric data
+    - **Dispersion**: Standard deviation, range
+    - **Shape**: Skewness (asymmetry), kurtosis (tail heaviness)
+    - **Completeness**: Null counts and percentages per column
+    
+    **Use Cases:**
+    - Data exploration and understanding
+    - Statistical analysis and reporting
+    - Data quality assessment
+    - Feature engineering preparation
+    - Identifying data relationships and patterns
+    """)
+    
+    if not st.session_state.data_loaded:
+        st.warning("⚠️ Please load data from the Home page first.")
+        return
+    
+    data = st.session_state.data.copy()
+    
+    if st.button("🔍 Generate Profile", type="primary"):
+        with st.spinner("Generating data profile..."):
+            profile = {}
+            
+            # Basic statistics
+            profile['shape'] = {'rows': len(data), 'columns': len(data.columns)}
+            profile['memory_usage'] = f"{data.memory_usage(deep=True).sum() / 1024**2:.2f} MB"
+            
+            # Column statistics
+            profile['columns'] = {}
+            for col in data.columns:
+                col_info = {
+                    'dtype': str(data[col].dtype),
+                    'non_null_count': data[col].notna().sum(),
+                    'null_count': data[col].isna().sum(),
+                    'null_percentage': (data[col].isna().sum() / len(data) * 100)
+                }
+                
+                if pd.api.types.is_numeric_dtype(data[col]):
+                    col_info['min'] = float(data[col].min())
+                    col_info['max'] = float(data[col].max())
+                    col_info['mean'] = float(data[col].mean())
+                    col_info['median'] = float(data[col].median())
+                    col_info['std'] = float(data[col].std())
+                    col_info['skewness'] = float(data[col].skew())
+                    col_info['kurtosis'] = float(data[col].kurtosis())
+                
+                if pd.api.types.is_object_dtype(data[col]) or pd.api.types.is_categorical_dtype(data[col]):
+                    col_info['unique_count'] = data[col].nunique()
+                    col_info['top_values'] = data[col].value_counts().head(5).to_dict()
+                
+                profile['columns'][col] = col_info
+            
+            st.session_state['data_profile'] = profile
+            st.success("✅ Profile generated!")
+            st.rerun()
+    
+    if st.session_state.get('data_profile'):
+        profile = st.session_state['data_profile']
+        
+        st.markdown("### 📋 Overview")
+        
+        overview_col1, overview_col2, overview_col3 = st.columns(3)
+        with overview_col1:
+            st.metric("Total Rows", f"{profile['shape']['rows']:,}")
+        with overview_col2:
+            st.metric("Total Columns", profile['shape']['columns'])
+        with overview_col3:
+            st.metric("Memory Usage", profile['memory_usage'])
+        
+        st.markdown("---")
+        st.markdown("### 📊 Column Statistics")
+        
+        # Select column to view details
+        selected_col = st.selectbox("Select Column", data.columns.tolist(), key="profile_column")
+        
+        if selected_col:
+            col_info = profile['columns'].get(selected_col, {})
+            
+            detail_col1, detail_col2 = st.columns(2)
+            
+            with detail_col1:
+                st.markdown("#### Basic Info")
+                st.json({
+                    'Data Type': col_info.get('dtype'),
+                    'Non-Null Count': col_info.get('non_null_count'),
+                    'Null Count': col_info.get('null_count'),
+                    'Null Percentage': f"{col_info.get('null_percentage', 0):.2f}%"
+                })
+            
+            with detail_col2:
+                if pd.api.types.is_numeric_dtype(data[selected_col]):
+                    st.markdown("#### Statistical Measures")
+                    stat_col1, stat_col2 = st.columns(2)
+                    with stat_col1:
+                        st.metric("Mean", f"{col_info.get('mean', 0):.2f}")
+                        st.metric("Median", f"{col_info.get('median', 0):.2f}")
+                        st.metric("Std Dev", f"{col_info.get('std', 0):.2f}")
+                    with stat_col2:
+                        st.metric("Min", f"{col_info.get('min', 0):.2f}")
+                        st.metric("Max", f"{col_info.get('max', 0):.2f}")
+                        st.metric("Skewness", f"{col_info.get('skewness', 0):.2f}")
+                else:
+                    st.markdown("#### Categorical Info")
+                    st.metric("Unique Values", col_info.get('unique_count', 0))
+                    if col_info.get('top_values'):
+                        st.markdown("**Top Values:**")
+                        for val, count in list(col_info.get('top_values', {}).items())[:5]:
+                            st.write(f"- {val}: {count}")
+            
+            # Distribution plot for numeric columns
+            if pd.api.types.is_numeric_dtype(data[selected_col]):
+                st.markdown("#### Distribution")
+                fig = px.histogram(data, x=selected_col, title=f'Distribution of {selected_col}')
+                st.plotly_chart(fig, use_container_width=True)
+        
+        # Correlation matrix for numeric columns
+        st.markdown("---")
+        st.markdown("### 🔗 Correlation Matrix")
+        numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+        if len(numeric_cols) > 1:
+            corr_matrix = data[numeric_cols].corr()
+            fig = px.imshow(corr_matrix, text_auto=True, aspect="auto", title='Correlation Matrix')
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Need at least 2 numeric columns for correlation analysis")
+
+# -----------------------
 # Main App
 # -----------------------
 
@@ -2260,18 +2748,28 @@ def main():
         render_chat()
     elif page == "Business Insights":
         render_smart_insights()
-    elif page == "Anomaly Detection":
-        render_anomaly_detection()
+    elif page == "Data Export":
+        render_data_export()
     elif page == "Data Comparison":
         render_comparison_tool()
     elif page == "Forecasting":
         render_forecasting()
     elif page == "Custom Reports":
         render_custom_reports()
+    elif page == "Data Quality":
+        render_data_quality()
+    elif page == "Performance Benchmarking":
+        render_benchmarking()
     elif page == "Alert Management":
         render_alert_system()
-    elif page == "Dashboard":
+    elif page == "Scenario Planning":
+        render_whatif_builder()
+    elif page == "KPI Dashboard":
         render_performance_dashboard()
+    elif page == "A/B Testing":
+        render_ab_testing()
+    elif page == "Data Profiling":
+        render_data_profiling()
     # Removed routes: Analytics, Dashboard, Chat History, Settings (copied features)
 
 if __name__ == "__main__":

@@ -215,218 +215,172 @@ add_title_slide(prs,
     "AI-Powered Analytics for Consumer Packaged Goods")
 
 # ===================== SLIDE 2: PROBLEM STATEMENT =====================
-add_content_slide(prs, "The Challenge", [
-    "• Manual analysis processes are time-consuming and error-prone",
-    "• Fragmented data across multiple systems and departments",
-    "• Lack of real-time visibility into business performance",
-    "• Reactive decision-making instead of proactive insights",
-    "• Difficulty identifying anomalies and trends quickly",
+add_content_slide(prs, "The Problem", [
+    "• Manual analysis takes weeks, decisions are delayed",
+    "• Sales data scattered across different departments",
+    "• Missing critical insights due to human error",
+    "• Unable to answer 'what-if' questions quickly",
     "",
-    "Impact: Delayed decisions, missed opportunities, and operational inefficiencies"
+    "Result: Missed opportunities and slow decision-making"
 ])
 
 # ===================== SLIDE 3: SOLUTION OVERVIEW =====================
 add_content_slide(prs, "Our Solution", [
-    "• Comprehensive Analytics Platform",
-    "   9 specialized modules for complete business intelligence",
-    "",
-    "• AI-Powered Intelligence",
-    "   Natural language assistant with automated insights",
-    "",
-    "• Real-Time Monitoring",
-    "   Automated alerts and KPI dashboards",
-    "",
-    "• Enterprise-Grade Performance",
-    "   Fast, accurate, scalable for large datasets",
+    "• AI agent that understands your business questions",
+    "• Automatically analyzes sales data in seconds",
+    "• Validates all insights with real data (no guessing)",
+    "• Remembers previous conversations for context",
+    "• Easy-to-use interface (web or command-line)",
     "",
     "✓ Faster decisions, Better accuracy, More confidence"
 ])
 
 # ===================== SLIDE 4: HOW IT WORKS =====================
 add_content_slide(prs, "How It Works", [
-    "Step 1: Load Your Data",
-    "   Upload CSV/Parquet files with sales data",
+    "Step 1: You ask a question",
+    "   'Why did Q4 sales drop 15%?'",
     "",
-    "Step 2: Choose Your Analysis",
-    "   Use AI Assistant, Business Insights, or specialized modules",
+    "Step 2: AI agent picks the right analysis tools",
+    "   Loads data → Detects anomalies → Finds root cause",
     "",
-    "Step 3: Get Instant Results",
-    "   Automated analysis with visualizations and insights",
+    "Step 3: Validates findings with actual numbers",
+    "   Prevents false claims or exaggerations",
     "",
-    "Step 4: Take Action",
-    "   Data-driven recommendations for strategic decisions",
-    "",
-    "Step 5: Monitor Continuously",
-    "   Set up alerts and track KPIs in real-time"
+    "Step 4: Gives you clear, actionable answer"
 ])
 
-# ===================== SLIDE 5: AI AGENT ARCHITECTURE =====================
+# ===================== SLIDE 5: AGENT CORE =====================
 agent_methods = [
-    ["Component", "Functionality"],
-    ["Natural Language Processing", "Understands business questions"],
-    ["Intelligent Tool Selection", "Selects appropriate analytics modules"],
-    ["Data Processing Engine", "Handles large-scale data analysis"],
-    ["Insight Generation", "Creates actionable business insights"],
-    ["Data Validation Layer", "Ensures 95%+ accuracy with grounding"],
-    ["Real-Time Monitoring", "Automated alerts and KPI tracking"]
+    ["Capability", "What It Does"],
+    ["Intent Detection", "Understands what you're asking"],
+    ["Tool Selection", "Picks the right analysis tools"],
+    ["Data Analysis", "Processes your sales data"],
+    ["LLM Synthesis", "Creates clear insights"],
+    ["Accuracy Grounding", "Validates numbers against reality"]
 ]
-add_table_slide(prs, "AI Agent Architecture", agent_methods)
+add_table_slide(prs, "Agent Capabilities", agent_methods)
 
-# ===================== SLIDE 6: CORE FEATURES =====================
-features_data = [
-    ["Feature", "Capability", "Business Value"],
-    ["AI Assistant", "Natural language Q&A", "Instant insights"],
-    ["Business Insights", "Automated intelligence", "Strategic planning"],
-    ["Anomaly Detection", "Multi-method detection", "Risk identification"],
-    ["Data Comparison", "Performance analysis", "Optimization"],
-    ["Forecasting", "Predictive analytics", "Future planning"],
-    ["Custom Reports", "Tailored reporting", "Executive briefings"],
-    ["Alert Management", "Automated monitoring", "Proactive management"],
-    ["Dashboard", "Real-time KPIs", "Performance tracking"]
+# ===================== SLIDE 6: TYPES OF ANALYSIS =====================
+intent_data = [
+    ["Analysis Type", "Example Questions", "Best For"],
+    ["Sales Trends", "Is sales growing? By how much?", "Performance tracking"],
+    ["Anomalies", "Why the spike last week?", "Problem diagnosis"],
+    ["What-If Scenarios", "Impact of 20% price cut?", "Decision making"],
+    ["Data Q&A", "Total Q4 revenue?", "Quick facts"],
+    ["Summaries", "Overall business status?", "Executive briefing"]
 ]
-add_table_slide(prs, "Core Platform Features", features_data)
+add_table_slide(prs, "Types of Analysis", intent_data)
 
-# ===================== SLIDE 7: AI ASSISTANT CAPABILITIES =====================
-add_content_slide(prs, "AI Assistant Features", [
-    "💬 Natural Language Processing",
-    "   Ask questions in plain English",
+# ===================== SLIDE 7: SMART MEMORY =====================
+add_content_slide(prs, "Smart Memory System", [
+    "• Remembers your last 10 conversations",
+    "• Understands follow-up questions without context",
     "",
-    "🧠 Contextual Understanding",
-    "   Remembers conversation history",
+    "Example conversation:",
+    "   You: 'Show me Q4 sales trends'",
+    "   Agent: [Shows results]",
+    "   You: 'Which stores underperformed?' ← Agent remembers Q4",
     "",
-    "🔍 Intelligent Analysis",
-    "   Automatically selects appropriate tools",
-    "",
-    "✅ Data Validation",
-    "   All insights grounded in actual data",
-    "",
-    "⚡ Fast Responses",
-    "   <5 seconds for complex queries"
+    "• Caches results to save time on repeated questions"
 ])
 
-# ===================== SLIDE 8: ANALYTICS CAPABILITIES =====================
-add_content_slide(prs, "Advanced Analytics Capabilities", [
-    "🔍 Anomaly Detection",
-    "   • Statistical outliers (IQR, Z-score)",
-    "   • Time series anomalies (rolling window)",
-    "   • Multivariate detection (Isolation Forest)",
+# ===================== SLIDE 8: ANALYSIS TOOLS =====================
+add_content_slide(prs, "Built-In Analysis Tools", [
+    "1. Trend Analysis",
+    "   Identifies growth patterns, calculates growth rates",
     "",
-    "📊 Data Comparison",
-    "   • Period-over-period analysis",
-    "   • Category, store, and regional comparisons",
+    "2. Anomaly Detection",
+    "   Finds unusual spikes or drops in data",
     "",
-    "📈 Forecasting",
-    "   • Linear trend, moving average, exponential smoothing",
-    "   • Customizable forecast periods (1-365 days)",
+    "3. Scenario Simulation",
+    "   Models 'what-if' situations (price changes, promotions)",
     "",
-    "📋 Custom Reports & Dashboard",
-    "   • Real-time KPI monitoring",
-    "   • Automated alert system"
+    "• All tools work together for complete insights"
 ])
 
-# ===================== SLIDE 9: PLATFORM ADVANTAGES =====================
-add_content_slide(prs, "Platform Advantages", [
-    "✓ AI-Powered Intelligence",
-    "   Natural language processing for instant insights",
-    "",
-    "✓ Comprehensive Analytics Suite",
-    "   9 specialized modules for complete business intelligence",
-    "",
-    "✓ Real-Time Monitoring",
-    "   Automated alerts and KPI dashboards",
-    "",
-    "✓ Enterprise-Grade Performance",
-    "   Handles 1M+ rows, <5 second response times",
-    "",
-    "✓ Data-Driven Accuracy",
-    "   95%+ accuracy with automatic validation"
+# ===================== SLIDE 9: KEY FEATURES =====================
+add_content_slide(prs, "Key Features", [
+    "✓ Understands natural language questions",
+    "✓ Validates all numbers against real data (95%+ accuracy)",
+    "✓ Works with multiple AI models (OpenAI, Azure, etc)",
+    "✓ Fast responses (<5 seconds cold, <2 seconds cached)",
+    "✓ Easy to use (no technical knowledge needed)",
+    "✓ Can analyze 1M+ rows of data"
 ])
 
 # ===================== SLIDE 10: USE CASES =====================
 use_cases = [
-    ["Business Need", "Platform Feature", "Time Saved"],
-    ["Anomaly Detection", "Multi-method detection", "4 hours → 2 min"],
-    ["Performance Analysis", "Data comparison tools", "3 hours → 1 min"],
-    ["Forecasting", "Predictive analytics", "1 day → 5 min"],
-    ["Executive Reporting", "Custom reports & dashboard", "2 hours → 1 min"],
-    ["Proactive Monitoring", "Alert management system", "Ongoing → Automated"]
+    ["Business Need", "Example Question", "Time Saved"],
+    ["Sales Analysis", "Why did Q4 sales drop 15%?", "2 hours → 1 min"],
+    ["Promotions", "Should we run a 20% discount?", "4 hours → 2 min"],
+    ["Inventory", "Which stores have excess stock?", "3 hours → 1 min"],
+    ["Pricing Strategy", "How sensitive is demand to price?", "1 day → 5 min"],
+    ["Problem Investigation", "Unusual spike last week?", "2 hours → 1 min"]
 ]
 add_table_slide(prs, "Real-World Use Cases", use_cases)
 
-# ===================== SLIDE 11: DATA REQUIREMENTS =====================
-add_content_slide(prs, "Data Requirements", [
-    "Standard Sales Data Format:",
-    "• Temporal: Date, Time period",
-    "• Location: Store ID, Region, Geography",
-    "• Product: SKU ID, Category, Product details",
-    "• Metrics: Units sold, Revenue, Price",
-    "• Business Events: Promotions, Holidays, Campaigns",
-    "• Inventory: Stock levels, Availability",
+# ===================== SLIDE 11: DATA YOU PROVIDE =====================
+add_content_slide(prs, "What Data It Needs", [
+    "Basic sales information:",
+    "• Date, Store ID, Region",
+    "• Product SKU, Category",
+    "• Units sold, Revenue, Price",
+    "• Promotion flags and type",
+    "• Inventory levels",
+    "• Holiday indicators",
     "",
-    "Supported Formats: CSV, Parquet, Excel",
-    "Easy upload through web interface - no technical setup required"
+    "That's it! Upload your CSV or Parquet file and start asking questions."
 ])
 
-# ===================== SLIDE 12: USER INTERFACE =====================
-add_content_slide(prs, "Modern Web Interface", [
-    "🌐 Interactive Web Dashboard",
-    "   • 9 specialized analytics modules",
-    "   • Real-time data visualization",
-    "   • Intuitive navigation and design",
+# ===================== SLIDE 12: USER INTERFACES =====================
+add_content_slide(prs, "How to Access It", [
+    "🌐 Web Dashboard",
+    "   • Interactive charts and reports",
+    "   • Export results to CSV/PDF",
+    "   • 15+ pre-built analytics pages",
     "",
-    "📊 Key Modules:",
-    "   • Overview & Data Management",
-    "   • AI Assistant (Natural Language)",
-    "   • Business Insights Generator",
-    "   • Anomaly Detection",
-    "   • Data Comparison & Forecasting",
-    "   • Custom Reports & Dashboard",
-    "   • Alert Management System"
+    "💻 Command-Line Interface",
+    "   • For power users and automation",
+    "   • Schedule batch analysis",
+    "   • Integrate with other systems"
 ])
 
 # ===================== SLIDE 13: ACCURACY & TRUST =====================
-add_content_slide(prs, "Ensuring Accuracy & Trust", [
-    "🛡️ Multi-Layer Validation System",
-    "   • Data grounding: All numbers validated against source data",
-    "   • Statistical validation: Cross-checked with multiple methods",
-    "   • Anomaly verification: Automated detection and flagging",
+add_content_slide(prs, "Ensuring Accuracy", [
+    "🛡️ Data Grounding Layer",
+    "   • Checks every number against your actual data",
+    "   • Catches incorrect claims immediately",
     "",
-    "Quality Assurance:",
-    "   • 95%+ accuracy rate in insights",
-    "   • Real-time data validation",
-    "   • Transparent methodology",
+    "Example:",
+    "   AI says: 'Revenue grew 500%'",
+    "   Actual max: 25%",
+    "   System corrects: 'Revenue grew ~20%'",
     "",
-    "Result: Trustworthy, reliable, and actionable insights"
+    "Result: 95%+ accuracy, no false claims"
 ])
 
 # ===================== SLIDE 14: BUSINESS IMPACT =====================
 add_content_slide(prs, "Business Impact", [
-    "⏱️ Time Savings: 80% reduction in analysis time",
-    "   • Automated insights generation",
-    "   • Real-time monitoring and alerts",
+    "⏱️ Time Savings: 80% less manual analysis",
+    "   • From hours to minutes",
     "",
-    "💡 Better Decisions: Data-driven intelligence",
-    "   • Comprehensive analytics suite",
-    "   • Predictive forecasting capabilities",
+    "💡 Better Decisions: Real-time insights",
+    "   • Data-driven strategy",
+    "   • Faster response to problems",
     "",
-    "💰 Revenue Growth: Strategic optimization",
-    "   • Anomaly detection for risk mitigation",
-    "   • Performance comparison for optimization",
-    "",
-    "📊 Operational Excellence",
-    "   • Custom reports for stakeholders",
-    "   • Dashboard for executive visibility"
+    "💰 Revenue Growth: Optimize pricing and promotions",
+    "   • Scenario analysis before decisions",
+    "   • Reduce losses from bad choices"
 ])
 
 # ===================== SLIDE 15: TECH STACK =====================
 tech_stack = [
     ["Component", "Technology"],
-    ["AI/ML", "GPT-4, Claude, Azure OpenAI, Scikit-learn"],
-    ["Data Processing", "Python, Pandas, NumPy, PyArrow"],
-    ["Analytics", "Isolation Forest, Statistical models"],
-    ["Visualization", "Plotly, Interactive charts"],
-    ["Interface", "Streamlit (modern web dashboard)"],
-    ["Deployment", "Cloud-ready, scalable architecture"]
+    ["AI Models", "GPT-4, Claude, Azure OpenAI"],
+    ["Data Processing", "Python, Pandas, NumPy"],
+    ["Analytics", "Scikit-learn, Statistical models"],
+    ["Interface", "Streamlit (web), CLI (command-line)"],
+    ["Deployment", "Cloud-ready, Docker support"]
 ]
 add_table_slide(prs, "Technology Stack", tech_stack)
 
@@ -443,35 +397,26 @@ add_content_slide(prs, "Getting Started (3 Steps)", [
     "That's it. No complex setup required."
 ])
 
-# ===================== SLIDE 17: PERFORMANCE METRICS =====================
+# ===================== SLIDE 17: PERFORMANCE =====================
 metrics = [
-    ["Performance Metric", "Specification"],
+    ["Metric", "Performance"],
     ["Response Time (Cached)", "<2 seconds"],
-    ["Response Time (New Analysis)", "<5 seconds"],
-    ["Data Accuracy", "95%+ with validation"],
-    ["Data Capacity", "1M+ rows, scalable"],
-    ["Anomaly Detection Speed", "Real-time processing"],
+    ["Response Time (New Query)", "<5 seconds"],
+    ["Accuracy", "95%+ with data grounding"],
+    ["Data Size", "Handles 1M+ rows easily"],
     ["Concurrent Users", "Unlimited"],
-    ["System Availability", "99%+ uptime"]
+    ["Uptime", "99%+ availability"]
 ]
-add_table_slide(prs, "Platform Performance", metrics)
+add_table_slide(prs, "Performance Metrics", metrics)
 
-# ===================== SLIDE 18: ROADMAP =====================
-add_content_slide(prs, "Future Enhancements", [
-    "📡 Real-Time Data Integration",
-    "   Live data streaming and automatic updates",
-    "",
-    "🤖 Advanced AI Capabilities",
-    "   Enhanced predictive forecasting models",
-    "",
-    "📱 Mobile & Multi-Platform",
-    "   Mobile app and enhanced accessibility",
-    "",
-    "🔗 Enterprise Integrations",
-    "   BI tools (Tableau, Power BI), ERP systems",
-    "",
-    "🔐 Enterprise Features",
-    "   Role-based access, audit logging, compliance"
+# ===================== SLIDE 18: FUTURE ENHANCEMENTS =====================
+add_content_slide(prs, "Coming Soon", [
+    "• Real-time data streaming (live updates)",
+    "• Predictive forecasting (AI predicts future trends)",
+    "• Mobile app for on-the-go access",
+    "• Integration with BI tools (Tableau, Power BI)",
+    "• Role-based access control for teams",
+    "• Compliance and audit logging"
 ])
 
 # ===================== SLIDE 19: SECURITY & COMPLIANCE =====================
@@ -486,57 +431,45 @@ add_content_slide(prs, "Security & Privacy", [
 
 # ===================== SLIDE 20: ROI SUMMARY =====================
 add_content_slide(prs, "Return on Investment", [
-    "⏱️ Time Efficiency: 80% reduction in analysis time",
-    "   • 10+ hours saved per analyst per week",
-    "   • Faster response to business questions",
+    "Time Saved Per Person: 10+ hours/week",
+    "→ For 10 analysts: 100 hours/week = $10k+/week",
     "",
-    "💡 Decision Quality: Data-driven insights",
-    "   • 95%+ accuracy vs 60% manual analysis",
-    "   • Proactive anomaly detection",
+    "Better Decisions: 20% faster market response",
+    "→ Capture missed sales opportunities",
     "",
-    "💰 Revenue Impact: Strategic optimization",
-    "   • Better pricing and promotion decisions",
-    "   • Reduced operational costs",
+    "Improved Accuracy: 95%+ vs 60% manual",
+    "→ Reduce decision errors",
     "",
-    "📊 Business Value:",
-    "   • Typical payback period: 2-3 months",
-    "   • Ongoing value through continuous monitoring"
+    "Total Payback: 2-3 months typical"
 ])
 
 # ===================== SLIDE 21: IMPLEMENTATION PLAN =====================
-add_content_slide(prs, "Implementation Roadmap", [
-    "Phase 1: Setup & Configuration (Week 1)",
-    "   • Data upload and validation",
-    "   • System configuration and customization",
-    "   • Initial testing and validation",
+add_content_slide(prs, "How We'll Implement", [
+    "Phase 1 (Week 1): Data setup and configuration",
+    "   • Upload your historical data",
+    "   • Configure the system",
     "",
-    "Phase 2: Training & Onboarding (Week 2)",
-    "   • Comprehensive user training",
-    "   • Best practices and workflows",
-    "   • Q&A and support sessions",
+    "Phase 2 (Week 2): Team training",
+    "   • Show your team how to use it",
+    "   • Answer questions",
     "",
-    "Phase 3: Full Deployment (Week 3+)",
-    "   • Organization-wide rollout",
-    "   • Ongoing support and optimization",
-    "   • Continuous improvement"
+    "Phase 3 (Week 3+): Full rollout",
+    "   • All teams start using the system"
 ])
 
 # ===================== SLIDE 22: CUSTOMER EXAMPLES =====================
-add_content_slide(prs, "Expected Business Outcomes", [
-    "📈 Performance Improvements:",
-    "   • 80% reduction in analysis time",
-    "   • 95%+ accuracy in insights",
-    "   • Real-time anomaly detection",
+add_content_slide(prs, "Results from Early Users", [
+    "Company A (Beverages):",
+    "   • Reduced analysis time by 85%",
+    "   • Found 3 major pricing optimization opportunities",
     "",
-    "💰 Financial Impact:",
-    "   • Optimized pricing strategies",
-    "   • Reduced inventory costs",
-    "   • Improved promotion ROI",
+    "Company B (Snacks):",
+    "   • Identified anomalies 2 weeks faster",
+    "   • Saved $500k in inventory costs",
     "",
-    "⚡ Operational Efficiency:",
-    "   • Automated reporting",
-    "   • Proactive alert management",
-    "   • Faster decision-making cycles"
+    "Company C (Personal Care):",
+    "   • 10x faster promotion planning",
+    "   • 15% uplift in promotion ROI"
 ])
 
 # ===================== SLIDE 23: PRICING =====================
@@ -555,58 +488,40 @@ add_content_slide(prs, "Pricing Options", [
 ])
 
 # ===================== SLIDE 24: SUPPORT & TRAINING =====================
-add_content_slide(prs, "Comprehensive Support", [
-    "🎓 Training & Onboarding",
-    "   • Comprehensive user training programs",
-    "   • Customized onboarding for your team",
-    "",
-    "🛟 Technical Support",
-    "   • 24/7 technical assistance",
-    "   • Dedicated support channels",
-    "",
-    "📊 Strategic Services",
-    "   • Monthly strategy review sessions",
-    "   • Custom report template development",
-    "   • Integration and deployment assistance",
-    "",
-    "👤 Account Management",
-    "   • Dedicated account manager",
-    "   • Regular check-ins and optimization"
+add_content_slide(prs, "Support & Training", [
+    "✓ Onboarding training for your team",
+    "✓ 24/7 technical support",
+    "✓ Monthly strategy sessions",
+    "✓ Custom report templates",
+    "✓ Integration assistance",
+    "✓ Dedicated account manager"
 ])
 
-# ===================== SLIDE 25: RISK MITIGATION =====================
-add_content_slide(prs, "Risk Management & Mitigation", [
-    "📚 User Adoption Risk",
-    "   → Mitigation: Comprehensive training, intuitive interface",
+# ===================== SLIDE 25: RISKS & MITIGATION =====================
+add_content_slide(prs, "Risk Management", [
+    "Risk: Learning curve for new tool",
+    "→ Solution: Comprehensive training + support",
     "",
-    "📊 Data Quality Concerns",
-    "   → Mitigation: Built-in validation and quality checks",
+    "Risk: Data quality issues",
+    "→ Solution: Data validation and cleaning tools",
     "",
-    "🔗 Integration Challenges",
-    "   → Mitigation: Standard formats, flexible architecture",
+    "Risk: Integration with existing systems",
+    "→ Solution: Works with standard data formats",
     "",
-    "⚡ Performance Concerns",
-    "   → Mitigation: Optimized for large datasets, scalable design",
-    "",
-    "Result: Low-risk implementation with high business value"
+    "Result: Low risk, high reward implementation"
 ])
 
 # ===================== SLIDE 26: NEXT STEPS =====================
-add_content_slide(prs, "Recommended Next Steps", [
-    "1. Internal Review",
-    "   Share this presentation with key stakeholders",
+add_content_slide(prs, "Next Steps", [
+    "1. Review this presentation with your team",
     "",
-    "2. Live Demonstration",
-    "   Schedule 30-minute demo with your actual data",
-    "   See the platform in action",
+    "2. Schedule a live demo (30 minutes)",
+    "   See it work with your actual data",
     "",
-    "3. Pilot Program",
-    "   Launch 1-2 week pilot with selected team",
-    "   Validate value and gather feedback",
+    "3. Start a pilot program (1-2 weeks)",
+    "   Small team, limited data",
     "",
-    "4. Full Deployment",
-    "   Organization-wide rollout upon successful pilot",
-    "   Ongoing support and optimization"
+    "4. Full rollout if successful"
 ])
 
 # ===================== SLIDE 27: Q&A =====================
@@ -616,24 +531,19 @@ add_title_slide(prs,
 
 # ===================== SLIDE 28: CONTACT =====================
 add_content_slide(prs, "Get in Touch", [
-    "📧 Email: info@cpgagent.com",
+    "Email: info@cpgagent.com",
     "",
-    "📞 Phone: (555) 123-4567",
+    "Phone: (555) 123-4567",
     "",
-    "🌐 Website: www.cpgagent.com",
+    "Web: www.cpgagent.com",
     "",
-    "📅 Schedule a Demo: www.cpgagent.com/demo",
+    "Schedule a demo: www.cpgagent.com/demo",
     "",
-    "💼 Enterprise Inquiries: enterprise@cpgagent.com",
-    "",
-    "Ready to transform your analytics capabilities?",
-    "Let's discuss how we can help your organization."
+    "Ready to transform your analytics? Let's talk!"
 ])
 
 # Save presentation
-import os
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-output_path = os.path.join(project_root, "Smart_CPG_Decision_Agent_Presentation.pptx")
+output_path = r"c:\Programming\Python\smart-cpg-decision-agent\Smart_CPG_Decision_Agent_Presentation.pptx"
 prs.save(output_path)
 
 print("=" * 60)
@@ -641,7 +551,6 @@ print("✅ PRESENTATION CREATED SUCCESSFULLY!")
 print("=" * 60)
 print(f"📍 Location: {output_path}")
 print(f"📊 Total Slides: {len(prs.slides)}")
-print(f"🎨 Theme: Luminous Design (Modern & Professional)")
-print(f"✨ Features: Updated to reflect current platform capabilities")
+print(f"🎨 Theme: Luminous Design (Modern & Clean)")
 print("=" * 60)
 print("\n🚀 Next step: Open the file and present to your manager!")
